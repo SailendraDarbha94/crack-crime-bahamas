@@ -14,6 +14,8 @@ class QualificationType(str, Enum):
     Specialist = "Specialist"
 
 class JobPost(BaseModel):
+    id: int
+    title: str
     location: str
     job_type: JobType
     duration: Union[int, Literal['indefinite']]

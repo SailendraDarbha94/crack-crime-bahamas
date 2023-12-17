@@ -2,6 +2,9 @@
 from sqlalchemy import create_engine, MetaData, Table, Column, String, Integer, Float
 from databases import Database
 from sqlalchemy.sql.sqltypes import Enum
+from backend.users.users_models import UserRole
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 DATABASE_URL = "sqlite:///./test.db"
 
@@ -20,7 +23,19 @@ job_postings = Table(
     Column("salary", Float),
 )
 
-database = Database(DATABASE_URL)
+users = Table(
+    "users",
+    metadata,
+    Column("id", Integer, primary_key=True, index=True),
+    Column("username", String, unique=True, index=True),
+    Column("email", String, unique=True, index=True),
+    Column("hashed_password", String),
+    Column("role", Enum(UserRole)),
+)
 
+database = Database(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+Base = declarative_base()
 def create_tables():
     metadata.create_all(engine)

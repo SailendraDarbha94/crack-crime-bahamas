@@ -27,3 +27,5 @@ Thumbs.db
 
 # Ignore the ASGI server log files
 uvicorn.log
+
+*.db
