@@ -1,15 +1,58 @@
 "use client";
-const PostingCard = async (params: any) => {
+
+import { Post } from "@/constants/posts";
+
+const PostingCard = (job: Post) => {
   return (
-    <div className="m-2 p-2 bg-blue-500 rounded-md min-w-full">
-      <h2 className="text-center">Header</h2>
-      <p>Kha lenge gaali</p>
-      <div className="flex justify-around bg-red-200 text-black rounded-md">
-        <div>seh lenge thoda</div>
-        <div>blade build</div>
+    <>
+      <style jsx>{`
+        .card {
+          margin: 0.5rem;
+          padding: 0.5rem;
+          background-color: #60a5fa; /* Tailwind bg-blue-500 */
+          border-radius: 0.375rem; /* rounded-md */
+          width: 100%; /* min-w-full */
+        }
+        .header {
+          text-align: center;
+        }
+        .infoSection {
+          background-color: #bfdbfe; /* Tailwind bg-blue-300 */
+          border-radius: 0.5rem; /* rounded-lg */
+        }
+        .infoRow {
+          display: flex;
+          justify-content: space-around;
+          padding: 0.5rem;
+          color: black;
+        }
+        .yellowBackground {
+          background-color: #facc15; /* Tailwind bg-yellow-400 */
+        }
+        .redBackground {
+          background-color: #fecaca; /* Tailwind bg-red-200 */
+        }
+      `}</style>
+      <div className="card">
+        <h2 className="header">Header</h2>
+        <p>Kha lenge gaali</p>
+        <div className="infoSection">
+          <div className={`infoRow yellowBackground`}>
+            <div>Location : {job.location}</div>
+            <div>Qualification : {job.qualification}</div>
+          </div>
+          <div className={`infoRow redBackground`}>
+            <div>Type : {job.job_type}</div>
+            <div>Required for : {job.duration}</div>
+          </div>
+          <div className={`infoRow redBackground`}>
+            <div>Timings : {job.timings}</div>
+            <div>Salary : {job.salary}</div>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
-export default PostingCard;
+export default PostingCard
