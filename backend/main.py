@@ -1,8 +1,12 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from backend.database import database, create_tables
-from backend.jobs import job_router
-from backend.users.users import users_router
+from backend.db.database import database, create_tables
+from backend.apis import (
+    job_router, 
+    users_router
+)
+from fastapi.middleware.cors import CORSMiddleware
+
 
 @asynccontextmanager
 async def app_lifespan(app: FastAPI):
@@ -15,5 +19,14 @@ async def app_lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=app_lifespan)
 
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # List of allowed origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all methods
+    allow_headers=["*"],  # Allow all headers
+)
 app.include_router(job_router, prefix="/jobs", tags=["jobs"])
 app.include_router(users_router, prefix="/users", tags=["users"])

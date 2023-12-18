@@ -15,6 +15,7 @@ job_postings = Table(
     "job_postings",
     metadata,
     Column("id", Integer, primary_key=True),
+    Column("title", String),
     Column("location", String),
     Column("job_type", String),
     Column("duration", String),
