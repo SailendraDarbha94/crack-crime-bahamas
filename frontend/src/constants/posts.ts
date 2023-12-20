@@ -1,8 +1,9 @@
 
 export interface Post {
     id: string;
+    title: string;
     location: string;
-    job_type: string;
+    type: string;
     duration: number;
     qualification: string;
     timings: string;
@@ -12,8 +13,9 @@ export interface Post {
 export const JOBS:Post[] = [
     {
         id: "1",
+        title: "Dentist needed for bommasandra",
         location: "Bannerghatta",
-        job_type: "full_time",
+        type: "full_time",
         duration: 10,
         qualification: "MDS",
         timings: "10-18",
@@ -21,8 +23,9 @@ export const JOBS:Post[] = [
     },
     {
         id: "2",
+        title: "Opening for immediate joining",
         location: "Begur",
-        job_type: "part_time",
+        type: "part_time",
         duration: 10,
         qualification: "BDS",
         timings: "10-18",

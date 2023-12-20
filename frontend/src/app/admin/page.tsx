@@ -1,8 +1,54 @@
 "use client";
 
+import { supabase } from "@/lib/utils";
+import { useEffect, useState } from "react";
+
 const Page = () => {
+  const [location, setLocation] = useState<string>("");
+  const [salary, setSalary] = useState<string>("");
+  const [type, setType] = useState<string>("");
+
+  const [qualification, setQualification] = useState<string>("");
+  const [timings, setTimings] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
+  const [disabler, setDisabler] = useState<boolean>(true);
+  const validator = async () => {
+    if (location && salary && type && qualification && timings && title) {
+      setDisabler(true);
+    } else {
+      setDisabler(false);
+    }
+  };
+
+  useEffect(() => {
+    validator();
+  }, [location, salary, type, qualification, timings, title]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const createJob = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("jobs")
+      .insert([{ location, salary, type, qualification, timings, title }])
+      .select();
+    if (error) {
+      setLoading(false);
+      console.log(error);
+      //throw new Error(error.message);
+    } else {
+      setLoading(false);
+      setLocation("");
+      setSalary("");
+      setType("");
+      setQualification("");
+      setTimings("");
+      setTitle("");
+      console.log(data);
+    }
+  };
+
   return (
-    <div className="m-2 p-4">
+    <div className="p-4">
       <style jsx>{`
         .label {
           text-align: right;
@@ -20,7 +66,7 @@ const Page = () => {
           padding: 2px;
         }
       `}</style>
-      <h2 className="text-3xl text-center">Admin Panel</h2>
+      <h2 className="text-3xl text-center m-2 pb-4">Admin Panel</h2>
       <div className="flex flex-col max-w-md bg-yellow-700 rounded-lg p-2 m-2 mx-auto">
         <p className="text-center text-xl m-2 underline text-black">
           Create Job Posting
@@ -29,25 +75,53 @@ const Page = () => {
           <label className="label" htmlFor="title">
             Title
           </label>
-          <input type="text" className="inp" id="title" name="title" />
+          <input
+            type="text"
+            className="inp"
+            id="title"
+            name="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
         </div>
         <div className="holder">
           <label className="label" htmlFor="location">
             Location
           </label>
-          <input type="text" className="inp" id="location" name="location" />
+          <input
+            type="text"
+            className="inp"
+            id="location"
+            name="location"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+          />
         </div>
         <div className="holder">
           <label className="label" htmlFor="type">
             Type
           </label>
-          <input type="text" className="inp" id="type" name="type" />
+          <input
+            type="text"
+            className="inp"
+            id="type"
+            name="type"
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+          />
         </div>
         <div className="holder">
           <label className="label" htmlFor="salary">
             Salary
           </label>
-          <input type="text" className="inp" id="salary" name="salary" />
+          <input
+            type="text"
+            className="inp"
+            id="salary"
+            name="salary"
+            value={salary}
+            onChange={(e) => setSalary(e.target.value)}
+          />
         </div>
         <div className="holder">
           <label className="label" htmlFor="qualification">
@@ -58,17 +132,33 @@ const Page = () => {
             className="inp"
             id="qualification"
             name="qualification"
+            value={qualification}
+            onChange={(e) => setQualification(e.target.value)}
           />
         </div>
         <div className="holder">
           <label className="label" htmlFor="timings">
             Timings
           </label>
-          <input type="text" className="inp" id="timings" name="timings" />
+          <input
+            type="text"
+            className="inp"
+            id="timings"
+            name="timings"
+            value={timings}
+            onChange={(e) => setTimings(e.target.value)}
+          />
         </div>
-        <button className="bg-yellow-300 text-black rounded-lg shadow-xl p-2 mt-4 hover:bg-black hover:text-white w-40 mx-auto">
-        Create
-      </button>
+        {disabler ? (
+          <button
+            onClick={createJob}
+            className="bg-yellow-300 text-black rounded-lg shadow-xl p-2 mt-4 hover:bg-black hover:text-white w-40 mx-auto"
+          >
+            {loading ? "Loading..." : "Create"}
+          </button>
+        ) : (
+          <pre className="mx-auto my-2 p-2">Please fill in the form</pre>
+        )}
       </div>
     </div>
   );
