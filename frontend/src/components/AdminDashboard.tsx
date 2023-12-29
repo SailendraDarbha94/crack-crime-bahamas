@@ -1,7 +1,6 @@
 "use client";
 
 import { db } from "@/db";
-//import { supabase } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
 enum JobType {
