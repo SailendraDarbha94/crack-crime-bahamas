@@ -31,7 +31,7 @@ const Navbar = () => {
         <a href="post" className="navbar-link">
           Home
         </a>
-        <a href="admin" className="navbar-link">
+        <a href="auth" className="navbar-link">
           Admin
         </a>
         <a href="about" className="navbar-link">
