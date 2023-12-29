@@ -4,7 +4,7 @@ import Image from 'next/image'
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-4">
-      <p className='text-4xl text-white font-extrabold m-2 p-2'>Dental Jobs</p>
+      <p className='text-4xl text-white font-extrabold m-2 p-2'>Dental Job Search Made Easy</p>
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
         
         <Image src={'/dentjob.png'} width={800} height={600} alt='dental community' className='rounded-xl mx-auto' />
