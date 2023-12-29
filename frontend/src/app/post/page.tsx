@@ -7,8 +7,9 @@ import { db } from "@/db"
 
 const Page = async () => {
     const posts:any = await db.jobPosting.findMany()
-    //console.log(JSON.stringify(posts))
-    
+    // console.log(JSON.stringify(posts))
+    // const jobPosts:JobPosting[] = posts.jobs
+
     return <Feed jobs={posts} />
 }
 

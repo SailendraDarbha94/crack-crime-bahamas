@@ -1,56 +1,29 @@
 "use client";
 
-import { Post } from "@/constants/posts";
+import { JobPosting } from "../constants"
 
-const PostingCard = (job: Post) => {
+const PostingCard = (job: JobPosting) => {
   return (
     <>
-      <style jsx>
-        {`
-          .card {
-            margin: 0.5rem;
-            padding: 0.5rem;
-            background-color: #60a5fa; /* Tailwind bg-blue-500 */
-            border-radius: 0.375rem; /* rounded-md */
-            width: 100%; /* min-w-full */
-          }
-          .header {
-            text-align: center;
-          }
-          .infoSection {
-            background-color: #bfdbfe; /* Tailwind bg-blue-300 */
-            border-radius: 0.5rem; /* rounded-lg */
-          }
-          .infoRow {
-            display: flex;
-            justify-content: space-around;
-            padding: 0.5rem;
-            color: black;
-          }
-          .yellowBackground {
-            background-color: #facc15; /* Tailwind bg-yellow-400 */
-          }
-          .redBackground {
-            background-color: #fecaca; /* Tailwind bg-red-200 */
-          }
-        `}
-      </style>
-      <div className="card">
-        <h2 className="header">{job.title}</h2>
-        <div className="infoSection">
-          <div className={`infoRow yellowBackground`}>
+      <div className="bg-white text-black my-2 rounded-lg p-2 lg:mx-40">
+        <h2 className="text-center text-3xl underline mb-2 font-bold">{job.title}</h2>
+        <div className="flex flex-col">
+          <div className="flex justify-evenly text-lg font-semibold">
             <div>Location : {job.location}</div>
             <div>Type : {job.type}</div>
           </div>
-          <div className={`infoRow redBackground`}>
+          <div className="flex justify-center text-lg font-semibold">
             
             <div>Qualification : {job.qualification}</div>
             {/* <div>Required for : {job.duration}</div> */}
           </div>
-          <div className={`infoRow redBackground`}>
+          <div className="flex justify-evenly text-lg font-semibold">
             <div>Timings : {job.timings}</div>
-            <div>Salary : {job.salary}</div>
+            <div>Salary : {job.salary} Rs</div>
           </div>
+          <button className="bg-blue-700 mx-auto p-2 rounded-md text-white">
+            Apply
+          </button>
         </div>
       </div>
     </>

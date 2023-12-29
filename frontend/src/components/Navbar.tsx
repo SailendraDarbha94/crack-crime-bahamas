@@ -28,7 +28,7 @@ const Navbar = () => {
       `}</style>
 
       <div className="sticky-navbar">
-        <a href="home" className="navbar-link">
+        <a href="post" className="navbar-link">
           Home
         </a>
         <a href="admin" className="navbar-link">

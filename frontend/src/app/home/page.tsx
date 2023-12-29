@@ -33,7 +33,8 @@ const Page = () => {
           <div>
             {jobs ? (
               jobs.map((job) => {
-                return <PostingCard {...job} key={job.id} />;
+                return <div>nothing</div>;
+                //return <PostingCard {...job} key={job.id} />;
               })
             ) : (
               <div>Loading Jobs</div>
