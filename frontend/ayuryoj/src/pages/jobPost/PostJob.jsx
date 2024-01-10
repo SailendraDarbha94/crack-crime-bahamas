@@ -1,14 +1,14 @@
 import React from "react";
 import Navbar from "../../components/navbar/Navbar";
-import UserLogin from "../../components/login/UserLogin";
+import JobForm from "../../components/addJob/JobForm";
 
-const Login = () => {
+const PostJob = () => {
   return (
     <>
       <Navbar />
-      <UserLogin />
+      <JobForm />
     </>
   );
 };
 
-export default Login;
+export default PostJob;

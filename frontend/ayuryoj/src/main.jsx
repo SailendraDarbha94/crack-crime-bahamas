@@ -8,6 +8,9 @@ import './index.css'
 import Homepage from './pages/homepage/Homepage';
 import Signup1 from './pages/signup/client/Signup1';
 import Login from './pages/login/Login'
+import ClientDashboard from './pages/dashboard/client/ClientDashboard';
+import ApplicantDashboard from './pages/dashboard/applicant/ApplicantDashboard';
+import PostJob from './pages/jobPost/PostJob';
 
 const router = createBrowserRouter([
   {
@@ -22,6 +25,18 @@ const router = createBrowserRouter([
     path: "/login",
     element: <Login/>,
   },
+  {
+    path: "/dashboard1",
+    element: <ClientDashboard/>,
+  },
+  {
+    path: "/dashboard2",
+    element: <ApplicantDashboard/>,
+  },
+  {
+    path: "/post-a-job",
+    element: <PostJob/>,
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(

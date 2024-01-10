@@ -5,6 +5,7 @@ const Form1 = () => {
     fName: "",
     lName: "",
     email: "",
+    password: "",
     phoneNo: "",
     qualification: "",
     socialLinkFb: "",
@@ -51,10 +52,21 @@ const Form1 = () => {
         <div className="flex">
           <p>Email:</p>
           <input
+            type="email"
             name="email"
             onChange={handleChange}
             value={client.email}
             placeholder="Email"
+          />
+        </div>
+        <div className="flex">
+          <p>Password:</p>
+          <input
+            type="password"
+            name="password"
+            onChange={handleChange}
+            value={client.password}
+            placeholder="Password"
           />
         </div>
         <div className="flex">

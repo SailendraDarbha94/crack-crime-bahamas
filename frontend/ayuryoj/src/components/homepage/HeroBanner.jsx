@@ -18,7 +18,7 @@ const HeroBanner = () => {
               </Link>
               <button>I want to get hired.</button>
             </div>
-            <p>I already have an account</p>
+            <Link to="/login"><p>I already have an account</p></Link>
             <div className="flex">
               <button>Signup using Gmail</button>
               <button>Signup using Facebook</button>
