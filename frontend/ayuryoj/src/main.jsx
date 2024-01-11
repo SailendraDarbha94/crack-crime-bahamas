@@ -11,6 +11,7 @@ import Login from './pages/login/Login'
 import ClientDashboard from './pages/dashboard/client/ClientDashboard';
 import ApplicantDashboard from './pages/dashboard/applicant/ApplicantDashboard';
 import PostJob from './pages/jobPost/PostJob';
+import JobPosting from './pages/jobPost/JobPosting';
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
   {
     path: "/post-a-job",
     element: <PostJob/>,
+  },
+  {
+    path: "/feed",
+    element: <JobPosting />
   }
 ]);
 

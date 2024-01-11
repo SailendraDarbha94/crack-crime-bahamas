@@ -2,35 +2,43 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const Navbar = () => {
-
   const location = useLocation();
-  console.log(location)
+  console.log(location);
 
   return (
-    <div className="py-[2%] px-[5%]">
+    <div className="bg-slate-300 p-2 m-2 rounded-md">
       <div className="flex justify-between">
-        <Link to="/"><div className="">AYURYOJ</div></Link>
-        <div className="flex">
+        <Link to="/">
+          <p className="font-bold text-xl font-mono rounded-md hover:bg-black hover:text-white px-2">
+            AYURYOJ
+          </p>
+        </Link>
+        <div className="flex justify-between min-w-80">
           <div>
-            <Link to="/"><button>Home</button></Link>
-            <button>Blog</button>
-            <button>About</button>
+            <Link to="/">
+              <button className="px-2 rounded-md hover:bg-black hover:text-white h-full">Home</button>
+            </Link>
           </div>
           <div>
-            {
-              location.pathname==="/"?<Link to="/login">
-              <button>Login</button>
-            </Link>:<Link to="">
-              <img src="" alt="" />
-              <button>Username</button>
-            </Link>
-            }
-            {
-              location.pathname==="/dashboard1" && location.pathname!=="/post-a-job"?<Link to="/post-a-job">
-              <button>POST A JOB</button>
-            </Link>:<Link to="/">
-              <button>Sign Up</button>
-            </Link>
+            {location.pathname === "/" ? (
+              <Link to="/login">
+                <button className="px-2 rounded-md hover:bg-black hover:text-white h-full">Login</button>
+              </Link>
+            ) : (
+              <Link to="">
+                <img src="" alt="" />
+                <button className="px-2 rounded-md hover:bg-black hover:text-white h-full">Username</button>
+              </Link>
+            )}
+            {location.pathname === "/dashboard1" &&
+            location.pathname !== "/post-a-job" ? (
+              <Link to="/post-a-job">
+                <button>POST A JOB</button>
+              </Link>
+            ) : null
+            // <Link to="/">
+            //   <button>Sign Up</button>
+            // </Link>
             }
           </div>
         </div>
