@@ -1,37 +1,15 @@
 "use client";
-
+import React, { useState, useEffect } from "react";
+import GoogleMap from "@/components/GoogleMap";
 import { Button, Input } from "@nextui-org/react";
-import { emitWarning } from "process";
-import { useState } from "react";
 
 export default function page() {
-  const [client, setClient] = useState<any>({
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-
-  const handleChange = (e: any) => {
-    const { name, value } = e.target;
-    setClient((prevValue: any) => {
-      return {
-        ...prevValue,
-        [name]: value,
-      };
-    });
-  };
-
-  function validateEmail() {
-    console.log(client);
-    const re: any =
-      /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    console.log(re.test(client.email));
-    return re.test(client.email);
-  }
-
   return (
-    <main className="flex flex-col min-h-screen items-center justify-between p-4 bg-transparent w-[99%] mx-auto shadow-lg rounded-lg">
-      hello world
+    <main className="flex flex-wrap flex-col md:flex-row min-h-screen items-start justify-center p-4 bg-transparent w-[99%] mx-auto shadow-lg rounded-lg">
+      <div className="w-full md:w-1/2">other fields</div>
+      <div className="w-full md:w-1/2 text-center">
+        <GoogleMap />
+      </div>
     </main>
   );
 }

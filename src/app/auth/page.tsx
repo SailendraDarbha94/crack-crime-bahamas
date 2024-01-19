@@ -5,6 +5,20 @@ import { useEffect, useState } from "react";
 
 export default function page() {
 
+
+  const httpReq = async (params:any) => {
+    const res = await fetch('https://ayuryoj-backend.pankh.ai/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(params),
+      // headers: {
+      //   'Content-Type': 'application/json',
+      // }
+    })
+    console.log(res)
+    const data = await res.json()
+    console.log(data)
+  }
+
   const [disabler, setDisabler] = useState<boolean>(true)
   const [email, setEmail] = useState<string>("")
   const [password, setPassword] = useState<string>("")
@@ -16,9 +30,9 @@ export default function page() {
   //   confirmPassword: "",
   // });
 
-  const handlePasswordInput = async () => {
+  async function handlePasswordInput () {
     if(password !== "" && confirmPassword !== ""){
-      if(password === confirmPassword){
+      if(password === confirmPassword && password.length > 3){
         setDisabler(false)
       } else {
         setDisabler(true)
@@ -53,13 +67,15 @@ export default function page() {
     return re.test(email);
   }
 
+
   async function handleSubmit(){
     const validated:boolean = await validateEmail()
-    if(!validated){
-      window.alert("Invalid Email")
-      return
-    }
-    console.log(email, password)
+    // if(!validated){
+    //   window.alert("Invalid Email")
+    //   return
+    // }
+    return await httpReq({ email: email, password: password})
+    //console.log(JSON.stringify({ email: email, password: password}))
   }
 
   return (
