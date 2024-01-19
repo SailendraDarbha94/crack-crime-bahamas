@@ -12,9 +12,9 @@ export default function page () {
         confirmPassword: ""
     })
 
-    const handleChange = (e) => {
+    const handleChange = (e:any) => {
         const { name, value } = e.target;
-        setClient((prevValue) => {
+        setClient((prevValue:any) => {
           return {
             ...prevValue,
             [name]: value,

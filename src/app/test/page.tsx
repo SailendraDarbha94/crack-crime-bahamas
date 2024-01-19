@@ -7,7 +7,7 @@ export default function Page() {
     <div className="flex w-full min-h-screen flex-wrap gap-4">
       <Select label="Select an animal" className="max-w-xs">
         {animals.map((animal) => (
-          <SelectItem key={animal.value} value={animal.value} className="text-black">
+          <SelectItem key={animal.value} value={animal.value}>
             {animal.label}
           </SelectItem>
         ))}
