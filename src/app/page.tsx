@@ -11,25 +11,50 @@ export default function Home() {
   };
 
   return (
-    <main className="flex w-full flex-col items-center justify-between p-4 bg-transparent">
+    <main className="flex flex-col items-center justify-between px-4 pt-4 pb-20 bg-transparent w-[99%] mx-auto shadow-lg rounded-lg">
       <div className="flex w-full flex-wrap min-h-fit">
         <Image
           src="/doctor.png"
           alt="doctor"
-          className="rounded-lg w-1/3 p-2"
+          className="rounded-lg w-full md:w-1/3 p-2"
           width={100}
           height={100}
         />
-        <div className="w-2/3 p-2">
+        <div className="w-full md:w-2/3 p-2">
           <p className=" w-full font-serif tracking-wide text-xl">
             {INTROTEXT}
           </p>
-          <p className="w-full flex justify-center">
-            {" "}
-            <Button as={Link} color="primary" href="#" variant="shadow" className="mt-10">
-              Sign Up
-            </Button>
-          </p>
+          <div className="w-full flex flex-col items-center justify-between md:min-h-60">
+            <div className="flex flex-col items-center">
+              <p className="font-semibold text-lg m-2 p-2">
+                If you're a Dentist looking for a job opportunity
+              </p>
+              <Button
+                as={Link}
+                color="primary"
+                href="/auth"
+                variant="flat"
+                className="max-w-40"
+              >
+                User Sign Up
+              </Button>
+            </div>
+
+            <div className="flex flex-col items-center">
+              <p className="font-semibold text-lg m-2 p-2">
+                If you own a Clinic looking for a Dentist
+              </p>
+              <Button
+                as={Link}
+                color="primary"
+                href="/register"
+                variant="flat"
+                className="max-w-40"
+              >
+                Register Clinic
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
       {/* <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
