@@ -62,7 +62,7 @@ export default function Page() {
 
     if(!error && data){
       setLoading(false)
-      console.log(data)
+      router.push('/clinics')
     }
     setLoading(false)
   }
@@ -97,7 +97,7 @@ export default function Page() {
           placeholder=""
           onChange={(e) => setRegNo(e.target.value)}
         />
-        {/* <Input
+        <Input
           className="max-w-80 my-2"
           name="specialities"
           value={specialities}
@@ -105,7 +105,7 @@ export default function Page() {
           label="Specialities"
           placeholder=""
           onChange={(e) => setSpecialities(e.target.value)}
-        /> */}
+        />
         <Textarea
           label="Description"
           onChange={(e) => setDesc(e.target.value)}
