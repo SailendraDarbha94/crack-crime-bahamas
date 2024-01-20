@@ -5,7 +5,7 @@ import { Button, Input } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function page() {
+export default function Page() {
   // const httpReq = async (params:any) => {
   //   const res = await fetch('https://ayuryoj-backend.pankh.ai/auth/register', {
   //     method: 'POST',

@@ -3,7 +3,7 @@ import ClinicsList from "@/components/ClinicsList";
 import { supabase } from "@/lib/supabase";
 import React, { useEffect, useState } from "react";
 
-const page = () => {
+const Page = () => {
     const [clinics, setClinics] = useState<any>(null)
   useEffect(() => {
     async function getData() {
@@ -21,4 +21,4 @@ const page = () => {
   return <ClinicsList clinicsData={clinics} />;
 };
 
-export default page;
+export default Page;

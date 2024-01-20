@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { Coordinates } from "@/constants/interfaces";
 
-export default function page() {
+export default function Page() {
   const [name, setName] = useState<string>("");
   const [desc, setDesc] = useState<string>("");
   const [timings, setTimings] = useState<string>("");
