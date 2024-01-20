@@ -37,7 +37,7 @@ export default function Home() {
           <div className="w-full flex flex-col items-center justify-between md:min-h-60">
             <div className="flex flex-col items-center">
               <p className="font-semibold text-lg m-2 p-2">
-                If you're a Dentist looking for a job opportunity
+                If you are a Dentist looking for a job opportunity
               </p>
               <Button
                 as={Link}
