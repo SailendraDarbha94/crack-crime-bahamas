@@ -4,6 +4,7 @@ import GoogleMap from "@/components/GoogleMap";
 import { Button, Input, Textarea } from "@nextui-org/react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import { Coordinates } from "@/constants/interfaces";
 
 export default function page() {
   const [name, setName] = useState<string>("");
@@ -12,23 +13,59 @@ export default function page() {
   const [regNo, setRegNo] = useState<string>("");
   const [address, setAddress] = useState<string>("");
   const [specialities, setSpecialities] = useState<string>("");
-  const router = useRouter()
+  const [loading, setLoading] = useState<boolean>(false)
+  const [coords, setCoords] = useState<Coordinates>({
+    lat: 0,
+    lng: 0
+  })
+  const router = useRouter();
   useEffect(() => {
     async function userIsThere() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
 
-      if(!user){
-        router.push('/auth')
+      if (!user) {
+        router.push("/auth");
       }
     }
-    userIsThere()
+    userIsThere();
   }, []);
 
-  const handleAddressChange = (newAddress: string) => {
-    setAddress(newAddress);
+  const handleAddressChange = (newAddress: any) => {
+    console.log(newAddress)
+    setAddress(newAddress.address);
+    setCoords(newAddress.coords)
   };
+  async function handleSubmit() {
+    setLoading(true)
+    const obj = {
+      name: name,
+      description: desc,
+      timings: timings,
+      reg_num: regNo,
+      coordinates: coords,
+      specialties: specialities,
+      address: address
+    };
+
+    const { data, error } = await supabase
+      .from("clinics")
+      .insert([{...obj}])
+      .select();
+
+    if(error){
+      setLoading(false)
+      console.log(error)
+      return
+    }
+
+    if(!error && data){
+      setLoading(false)
+      console.log(data)
+    }
+    setLoading(false)
+  }
 
   return (
     <main className="flex flex-wrap flex-col md:flex-row min-h-screen items-start justify-center p-4 bg-transparent w-[99%] mx-auto shadow-lg rounded-lg">
@@ -89,6 +126,11 @@ export default function page() {
       </div>
       <div className="w-full md:w-1/2 text-center">
         <GoogleMap onAddressSelect={handleAddressChange} />
+      </div>
+      <div className="flex w-full justify-center items-center p-2">
+        <Button color="secondary" variant="flat" onPress={handleSubmit} isDisabled={loading}>
+          {loading ? "Loading":"Submit"}
+        </Button>
       </div>
     </main>
   );

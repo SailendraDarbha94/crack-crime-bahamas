@@ -35,7 +35,8 @@ const Nav = ({ authUser, setAuthUser }: any) => {
       console.log(data);
     }
     if (error) {
-      console.error(error);
+      window.alert("Invalid Credentials");
+      console.log(error);
     }
     if (!error) {
       onOpenChange;
@@ -47,7 +48,7 @@ const Nav = ({ authUser, setAuthUser }: any) => {
   async function logout() {
     let { error } = await supabase.auth.signOut();
     if (!error) {
-      setAuthUser(null)
+      setAuthUser(null);
       router.push("/");
     }
   }
@@ -99,30 +100,46 @@ const Nav = ({ authUser, setAuthUser }: any) => {
         </ModalContent>
       </Modal>
       <NavbarBrand>
-          <Button
-            as={Link}
-            color="primary"
-            href="/"
-            variant="shadow"
-            className="flex justify-start pr-0"
-          >
-            {authUser ? `${authUser.email.split("@")[0]}` : "Home"}
-            <img src="/faviconImage.png" alt="logo" className="h-full pl-1" />
-          </Button>
+        <Button
+          as={Link}
+          color="primary"
+          href="/"
+          variant="shadow"
+          className="flex justify-start pr-0"
+        >
+          {authUser ? `${authUser.email.split("@")[0]}` : "Home"}
+          <img src="/faviconImage.png" alt="logo" className="h-full pl-1" />
+        </Button>
 
         {/* </p> */}
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <NavbarItem>
-          <Link color="foreground" href="#" className="font-semibold">
-            FAQs
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link href="#" color="foreground" className="font-semibold">
-            About Us
-          </Link>
-        </NavbarItem>
+        {authUser ? (
+          <NavbarItem>
+            <Link href="/clinics" color="foreground" className="font-semibold">
+              Clinics List
+            </Link>
+          </NavbarItem>
+        ) : (
+          <NavbarItem>
+            <Link href="#" color="foreground" className="font-semibold">
+              About Us
+            </Link>
+          </NavbarItem>
+        )}
+                {authUser ? (
+          <NavbarItem>
+            <Link color="foreground" href="/register" className="font-semibold">
+              Register Clinic
+            </Link>
+          </NavbarItem>
+        ) : (
+          <NavbarItem>
+            <Link color="foreground" href="#" className="font-semibold">
+              FAQs
+            </Link>
+          </NavbarItem>
+        )}
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem>

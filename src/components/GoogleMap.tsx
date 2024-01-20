@@ -125,7 +125,10 @@ const GoogleMap = ({ onAddressSelect }: { onAddressSelect:Function }) => {
           onClick={() => {
             console.log("coordinates : ", coords);
             console.log("addresss : ", address);
-            onAddressSelect(address)
+            onAddressSelect({
+              address: address,
+              coords: coords
+            })
           }}
           variant="flat"
           className="w-3/12 h-full hover:bg-black hover:text-white"
