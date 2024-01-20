@@ -1,37 +1,115 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
+
 import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
   Navbar,
   NavbarBrand,
   NavbarContent,
   NavbarItem,
   Link,
   Button,
+  Input,
 } from "@nextui-org/react";
 import Image from "next/image";
-const Nav = () => {
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
+
+const Nav = ({ authUser, setAuthUser }: any) => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  async function handleSubmit() {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+    if (data && data.user) {
+      setAuthUser(data.user);
+      console.log(data);
+    }
+    if (error) {
+      console.error(error);
+    }
+    if (!error) {
+      onOpenChange;
+      router.push("/register");
+    }
+  }
+  const router = useRouter();
+
+  async function logout() {
+    let { error } = await supabase.auth.signOut();
+    if (!error) {
+      setAuthUser(null)
+      router.push("/");
+    }
+  }
+
   return (
     <Navbar className="bg-white shadow-lg my-2 p-2 rounded-2xl mx-auto w-[99%]">
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col items-center gap-1">
+                Login Form
+              </ModalHeader>
+              <ModalBody>
+                <div className="mx-auto">
+                  <Input
+                    className="w-80 my-2"
+                    name="email"
+                    value={email}
+                    type="email"
+                    label="Email"
+                    placeholder=""
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <Input
+                    className="w-80 my-2"
+                    name="password"
+                    value={password}
+                    type="password"
+                    label="Password"
+                    placeholder=""
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="primary"
+                  onPress={onClose}
+                  onClick={handleSubmit}
+                  variant="flat"
+                  className="mx-auto"
+                >
+                  Submit
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
       <NavbarBrand>
-        {/* <Image
-          src="/faviconImage.png"
-          alt="Logo"
-          className="rounded-lg shadow-slate-300"
-          width={50}
-          height={24}
-          priority
-        /> */}
-        {/* <p className="inline font-semibold text-xl font-mono"> */}
-        <Button
-          as={Link}
-          color="primary"
-          href="/"
-          variant="ghost"
-          className="flex justify-start pl-0"
-        >
-          <img src="/faviconImage.png" alt="logo" className="h-full w-10" />
-          AYURYOJ
-        </Button>
+          <Button
+            as={Link}
+            color="primary"
+            href="/"
+            variant="shadow"
+            className="flex justify-start pr-0"
+          >
+            {authUser ? `${authUser.email.split("@")[0]}` : "Home"}
+            <img src="/faviconImage.png" alt="logo" className="h-full pl-1" />
+          </Button>
+
         {/* </p> */}
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
@@ -45,22 +123,18 @@ const Nav = () => {
             About Us
           </Link>
         </NavbarItem>
-        {/* <NavbarItem>
-          <Link color="foreground" href="#">
-            Integrations
-          </Link>
-        </NavbarItem> */}
       </NavbarContent>
       <NavbarContent justify="end">
-        {/* <NavbarItem className="">
-          <Button as={Link} color="primary" href="#" variant="shadow">
-            Sign Up
-          </Button>
-        </NavbarItem> */}
         <NavbarItem>
-          <Button as={Link} color="primary" href="#" variant="shadow">
-            Login
-          </Button>
+          {authUser ? (
+            <Button onPress={logout} color="primary" href="#" variant="shadow">
+              Logout
+            </Button>
+          ) : (
+            <Button onPress={onOpen} color="primary" href="#" variant="shadow">
+              Login
+            </Button>
+          )}
         </NavbarItem>
       </NavbarContent>
     </Navbar>

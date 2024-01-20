@@ -1,15 +1,25 @@
 "use client";
 import Nav from "@/components/Nav";
 import { INTROTEXT } from "@/constants/data";
+import { supabase } from "@/lib/supabase";
 import { Button } from "@nextui-org/react";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function Home() {
-  const handleClick = async () => {
-    console.log("jamie dimon");
-  };
+  // const handleClick = async () => {
+  //   console.log("jamie dimon");
+  // };
 
+  useEffect(() => {
+    const getUser = async () => {
+      const sess = await supabase.auth.getSession();
+      const data = await sess.data.session;
+      console.log(data);
+    };
+    getUser();
+  }, []);
   return (
     <main className="flex flex-col items-center justify-between px-4 pt-4 pb-20 bg-transparent w-[99%] mx-auto shadow-lg rounded-lg">
       <div className="flex w-full flex-wrap min-h-fit">
@@ -36,7 +46,7 @@ export default function Home() {
                 variant="flat"
                 className="max-w-40"
               >
-                User Sign Up
+                User Sign-Up
               </Button>
             </div>
 

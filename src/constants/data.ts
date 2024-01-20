@@ -26,3 +26,5 @@ export const animals = [
   {label: "Otter", value: "otter", description: "A carnivorous mammal in the subfamily Lutrinae"},
   {label: "Crocodile", value: "crocodile", description: "A large semiaquatic reptile"},
 ];
+
+

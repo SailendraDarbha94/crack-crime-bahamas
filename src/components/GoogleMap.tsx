@@ -1,9 +1,10 @@
+"use client"
 import { Coordinates } from "@/constants/interfaces";
 import { Loader } from "@googlemaps/js-api-loader";
 import { Button, Input } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 
-const GoogleMap = () => {
+const GoogleMap = ({ onAddressSelect }: { onAddressSelect:Function }) => {
   const [coords, setCoords] = useState<Coordinates>({
     lat: 12.9716,
     lng: 77.5946,
@@ -82,7 +83,7 @@ const GoogleMap = () => {
         const latlngposition = await marker.getPosition()!;
 
         map.setCenter(latlngposition);
-
+        console.log(geo, marker);
         const latitude = await latlngposition.lat();
         const longitude = await latlngposition.lng();
         // console.log(
@@ -108,15 +109,15 @@ const GoogleMap = () => {
   }, []);
 
   return (
-    <div className="flex w-full mx-auto p-4 flex-wrap">
-      <div className="w-full flex justify-between items-center p-2">
+    <div className="flex w-full mx-auto flex-wrap rounded-lg shadow-lg shadow-slate-300 p-4">
+      <div className="w-full flex justify-between items-center mb-3">
         <Input
-          isRequired
+          //isRequired
           ref={searchRef}
           type="text"
-          label="Search for your area"
+          label=""
           // onChange={(e) => setSearchInput(e.target.value)}
-          defaultValue="Bengaluru"
+          defaultValue=""
           className="w-8/12"
         />
         <Button
@@ -124,18 +125,21 @@ const GoogleMap = () => {
           onClick={() => {
             console.log("coordinates : ", coords);
             console.log("addresss : ", address);
+            onAddressSelect(address)
           }}
-          variant="shadow"
+          variant="flat"
           className="w-3/12 h-full hover:bg-black hover:text-white"
         >
-          Log Loc
+          Fill Address
         </Button>
       </div>
-      <div
-        id="map_canvas"
-        className="min-h-80 w-80 mx-auto rounded-lg shadow-lg shadow-slate-700"
-        ref={mapRef}
-      />
+      <div className="w-full">
+        <div
+          id=""
+          className="min-h-80 min-w-80 mx-auto rounded-xl"
+          ref={mapRef}
+        />
+      </div>
     </div>
   );
 };

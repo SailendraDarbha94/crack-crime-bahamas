@@ -22,7 +22,7 @@ export default function page() {
   const [disabler, setDisabler] = useState<boolean>(true);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  //   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   // const [client, setClient] = useState<any>({
   //   email: "",
@@ -30,21 +30,21 @@ export default function page() {
   //   confirmPassword: "",
   // });
   const router = useRouter();
-  async function handlePasswordInput() {
-    if (password !== "" && confirmPassword !== "") {
-      if (password === confirmPassword && password.length > 3) {
-        setDisabler(false);
-      } else {
-        setDisabler(true);
-      }
-    } else {
-      setDisabler(true);
-    }
-  }
+  //   async function handlePasswordInput() {
+  //     if (password !== "" && confirmPassword !== "") {
+  //       if (password === confirmPassword && password.length > 3) {
+  //         setDisabler(false);
+  //       } else {
+  //         setDisabler(true);
+  //       }
+  //     } else {
+  //       setDisabler(true);
+  //     }
+  //   }
 
-  useEffect(() => {
-    handlePasswordInput();
-  }, [password, confirmPassword]);
+  //   useEffect(() => {
+  //     handlePasswordInput();
+  //   }, [password, confirmPassword]);
 
   // const handleChange = (e: any) => {
   //   handlePasswordInput()
@@ -57,23 +57,23 @@ export default function page() {
   //   })
   // };
 
-  function validateEmail() {
-    const re: any =
-      /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    //console.log(re.test(client.email));
-    // if(re.test(client.email) === false){
-    //   window.alert("Invalid Email")
-    // }
-    return re.test(email);
-  }
+  // function validateEmail() {
+  // const re: any =
+  //  /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  // console.log(re.test(client.email));
+  // if(re.test(client.email) === false){
+  //   window.alert("Invalid Email")
+  // }
+  // return re.test(email);
+  // }
 
   async function handleSubmit() {
     setLoading(true);
-    const validated: boolean = await validateEmail();
-    if (!validated) {
-      window.alert("Invalid Email");
-      return;
-    }
+    // const validated: boolean = await validateEmail();
+    // if (!validated) {
+    //   window.alert("Invalid Email");
+    //   return;
+    // }
     //  return await httpReq({ email: email, password: password})
     //  console.log(JSON.stringify({ email: email, password: password}))
 
@@ -96,8 +96,7 @@ export default function page() {
   return (
     <div className="flex flex-col min-h-screen items-center justify-start bg-transparent w-[99%] mx-auto shadow-lg rounded-lg">
       {/* <p className="block w-full bg-red-200 text-center">new auth route</p> */}
-      <p className="text-2xl font-bold mt-4">Sign Up for an Account</p>
-      <div className="py-10 mt-2 mb-6">
+      <div className="py-10 my-10">
         <Input
           className="w-80 my-2"
           name="email"
@@ -115,15 +114,6 @@ export default function page() {
           label="Password"
           placeholder="Choose a password"
           onChange={(e) => setPassword(e.target.value)}
-        />
-        <Input
-          className="w-80 my-2"
-          name="confirmPassword"
-          value={confirmPassword}
-          type="password"
-          label="Confirm Password"
-          placeholder="Enter your password again"
-          onChange={(e) => setConfirmPassword(e.target.value)}
         />
       </div>
       {loading ? (
