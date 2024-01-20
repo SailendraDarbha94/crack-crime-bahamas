@@ -66,7 +66,7 @@ export default function Page() {
     // }
     return re.test(email);
   }
-
+  const [registered, setRegistered] = useState<boolean>(false);
   async function handleSubmit() {
     setLoading(true);
     const validated: boolean = await validateEmail();
@@ -84,6 +84,7 @@ export default function Page() {
 
     if (data) {
       console.log(data);
+      setRegistered(true);
     }
 
     if (error) {
@@ -96,50 +97,58 @@ export default function Page() {
   return (
     <div className="flex flex-col min-h-screen items-center justify-start bg-transparent w-[99%] mx-auto shadow-lg rounded-lg">
       {/* <p className="block w-full bg-red-200 text-center">new auth route</p> */}
-      <p className="text-2xl font-bold mt-4">Sign Up for an Account</p>
-      <div className="py-10 mt-2 mb-6">
-        <Input
-          className="w-80 my-2"
-          name="email"
-          value={email}
-          type="email"
-          label="Email"
-          placeholder="Enter your email"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <Input
-          className="w-80 my-2"
-          name="password"
-          value={password}
-          type="password"
-          label="Password"
-          placeholder="Choose a password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <Input
-          className="w-80 my-2"
-          name="confirmPassword"
-          value={confirmPassword}
-          type="password"
-          label="Confirm Password"
-          placeholder="Enter your password again"
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-      </div>
-      {loading ? (
-        <p>Loading</p>
+      {registered ? (
+        <div className="flex w-full p-10 justify-center items-center">
+          <p>Please check your email</p>
+        </div>
       ) : (
-        <Button
-          color={disabler ? "danger" : "success"}
-          variant="flat"
-          onClick={handleSubmit}
-          className={
-            disabler ? "hover:cursor-not-allowed" : "hover:cursor-pointer"
-          }
-          disabled={disabler}
-        >
-          Submit
-        </Button>
+        <div className="flex justify-center items-center flex-col w-full h-full">
+          <p className="text-2xl font-bold mt-4">Sign Up for an Account</p>
+          <div className="py-10 mt-2 mb-6">
+            <Input
+              className="w-80 my-2"
+              name="email"
+              value={email}
+              type="email"
+              label="Email"
+              placeholder="Enter your email"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <Input
+              className="w-80 my-2"
+              name="password"
+              value={password}
+              type="password"
+              label="Password"
+              placeholder="Choose a password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Input
+              className="w-80 my-2"
+              name="confirmPassword"
+              value={confirmPassword}
+              type="password"
+              label="Confirm Password"
+              placeholder="Enter your password again"
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </div>
+          {loading ? (
+            <p>Loading</p>
+          ) : (
+            <Button
+              color={disabler ? "danger" : "success"}
+              variant="flat"
+              onClick={handleSubmit}
+              className={
+                disabler ? "hover:cursor-not-allowed" : "hover:cursor-pointer"
+              }
+              disabled={disabler}
+            >
+              Submit
+            </Button>
+          )}
+        </div>
       )}
     </div>
   );
