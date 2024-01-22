@@ -32,16 +32,25 @@ export default function RootLayout({
 
   const [user, setUser] = useState<any>()
   useEffect(() => {
+    const getSession = async () => {
+      const res = await supabase.auth.getSession();
+      const sess = await res.data.session;
+      console.log(sess);
+    };
+    
     async function getUser() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
+      console.log(user)
       if (user) {
         setUser(user);
       } else {
         setUser(null);
       }
-    }
+    };
+
+    getSession();
     getUser();
   }, []);
   return (

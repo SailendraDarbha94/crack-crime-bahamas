@@ -44,7 +44,6 @@ const Nav = ({ authUser, setAuthUser }: any) => {
     }
   }
   const router = useRouter();
-
   async function logout() {
     let { error } = await supabase.auth.signOut();
     if (!error) {
@@ -115,11 +114,27 @@ const Nav = ({ authUser, setAuthUser }: any) => {
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         {authUser ? (
-          <NavbarItem>
-            <Link href="/clinics" color="foreground" className="font-semibold">
-              Clinics List
-            </Link>
-          </NavbarItem>
+          authUser.role === "admin" ? (
+            <NavbarItem>
+              <Link
+                href="/clinics"
+                color="foreground"
+                className="font-semibold"
+              >
+                Clinics List
+              </Link>
+            </NavbarItem>
+          ) : (
+            <NavbarItem>
+              <Link
+                href="/jobs"
+                color="foreground"
+                className="font-semibold"
+              >
+                Jobs
+              </Link>
+            </NavbarItem>
+          )
         ) : (
           <NavbarItem>
             <Link href="#" color="foreground" className="font-semibold">
@@ -127,7 +142,7 @@ const Nav = ({ authUser, setAuthUser }: any) => {
             </Link>
           </NavbarItem>
         )}
-                {authUser ? (
+        {authUser ? (
           <NavbarItem>
             <Link color="foreground" href="/register" className="font-semibold">
               Register Clinic

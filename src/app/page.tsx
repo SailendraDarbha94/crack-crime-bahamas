@@ -12,14 +12,7 @@ export default function Home() {
   //   console.log("jamie dimon");
   // };
 
-  useEffect(() => {
-    const getUser = async () => {
-      const sess = await supabase.auth.getSession();
-      const data = await sess.data.session;
-      console.log(data);
-    };
-    getUser();
-  }, []);
+
   return (
     <main className="flex flex-col items-center justify-between px-4 pt-4 pb-20 bg-transparent w-[99%] mx-auto shadow-lg rounded-lg">
       <div className="flex w-full flex-wrap min-h-fit">
