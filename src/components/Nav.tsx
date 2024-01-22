@@ -40,7 +40,7 @@ const Nav = ({ authUser, setAuthUser }: any) => {
     }
     if (!error) {
       onOpenChange;
-      router.push("/register");
+      //router.push("/register");
     }
   }
   const router = useRouter();
