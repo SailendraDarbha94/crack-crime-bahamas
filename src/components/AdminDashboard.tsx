@@ -1,5 +1,5 @@
 "use client";
-import ClinicsList from "@/components/ClinicsList";
+
 
 import {
   Button,

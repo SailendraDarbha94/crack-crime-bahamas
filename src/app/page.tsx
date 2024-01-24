@@ -12,50 +12,42 @@ export default function Home() {
   //   console.log("jamie dimon");
   // };
 
-
   return (
     <main className="flex flex-col items-center justify-between px-4 pt-4 pb-20 bg-transparent w-[99%] mx-auto shadow-lg rounded-lg">
       <div className="flex w-full flex-wrap min-h-fit">
         <Image
-          src="/doctor.png"
+          src="/toothless.png"
           alt="doctor"
-          className="rounded-lg w-full md:w-1/3 p-2"
+          className="rounded-lg w-full md:w-1/3 p-2 max-h-96"
           width={100}
           height={100}
         />
         <div className="w-full md:w-2/3 p-2">
-          <p className=" w-full font-serif tracking-wide text-xl">
-            {INTROTEXT}
-          </p>
-          <div className="w-full flex flex-col items-center justify-between md:min-h-60">
-            <div className="flex flex-col items-center">
-              <p className="font-semibold text-lg m-2 p-2">
-                If you are a Dentist looking for a job opportunity
-              </p>
-              <Button
-                as={Link}
-                color="primary"
-                href="/auth"
-                variant="flat"
-                className="max-w-40"
-              >
-                User Sign-Up
-              </Button>
-            </div>
-
-            <div className="flex flex-col items-center">
-              <p className="font-semibold text-lg m-2 p-2">
-                If you own a Clinic looking for a Dentist
-              </p>
-              <Button
-                as={Link}
-                color="primary"
-                href="/register"
-                variant="flat"
-                className="max-w-40"
-              >
-                Register Clinic
-              </Button>
+          <h1 className="text-2xl text-center font-extrabold">
+            The #1 Platform for Dentists in the Internet Era
+          </h1>
+          <div className="w-full p-2">
+            <p className="w-full tracking-wide text-xl">{INTROTEXT}</p>
+            <ul className="">
+              <li className="text-lg shadow-md rounded-md p-2">If you're a Dentist looking for a new Job or connect with other dentists you can searh for them</li>
+              <li className="text-lg shadow-md rounded-md p-2">If you're a Clinic-Owner, you can post a job in your clinic or collaborate with other clinic owners</li>
+            </ul>
+            <div className="w-full flex flex-col items-center justify-between">
+              <div className="flex flex-col items-center text-justify">
+                <pre className="font-semibold text-lg m-2 p-2">
+                  Hello there, Dr! <br />
+                  Let us simplify your life
+                </pre>
+                <Button
+                  as={Link}
+                  color="primary"
+                  href="/auth"
+                  variant="flat"
+                  className="max-w-40"
+                >
+                  Create Account
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -86,7 +78,7 @@ export default function Home() {
         </div>
       </div> */}
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
+      {/* <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
         <Image
           className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
           src="/next.svg"
@@ -95,7 +87,7 @@ export default function Home() {
           height={37}
           priority
         />
-      </div>
+      </div> */}
 
       {/* <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
         <a
@@ -132,22 +124,7 @@ export default function Home() {
           </p>
         </a>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
+
 
         <a
           href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
@@ -166,6 +143,38 @@ export default function Home() {
           </p>
         </a>
       </div> */}
+      <div className="hidden mt-10 md:grid text-justify lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4">
+        <a
+          href="#"
+          className="group col-span-2 hover:cursor-crosshair rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+          rel="noopener noreferrer"
+        >
+          <h2 className={`mb-3 text-2xl font-semibold`}>
+            Dentist Looking for a Job{" ?"}
+            {/* <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+              -&gt;
+            </span> */}
+          </h2>
+          <p className={`m-0 text-sm opacity-50`}>
+            We've got you covered with <span className="underline font-semibold">Part-Time</span>,  <span className="underline font-semibold">Full-Time</span> and  <span className="underline font-semibold">Contract</span> Based Opportunities as well
+          </p>
+        </a>
+        <a
+          href="#"
+          className="group col-span-2 hover:cursor-crosshair rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+          rel="noopener noreferrer"
+        >
+          <h2 className={`mb-3 text-2xl font-semibold`}>
+            Own a Clinic{" ?"}
+            {/* <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+              -&gt;
+            </span> */}
+          </h2>
+          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
+            Explore starter templates for Next.js.
+          </p>
+        </a>
+      </div>
     </main>
   );
 }

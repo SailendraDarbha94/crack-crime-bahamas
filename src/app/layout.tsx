@@ -30,30 +30,27 @@ export default function RootLayout({
 }) {
   const [loading, setLoading] = useState<boolean>(false);
   const [user, setUser] = useState<any>();
-  useEffect(() => {
-    setLoading(true);
-    const getSession = async () => {
-      const res = await supabase.auth.getSession();
-      const sess = await res.data.session;
-      //console.log(sess);
-    };
 
+
+
+  useEffect(() => {
+    // const getSession = async () => {
+    //   const res = await supabase.auth.getSession();
+    //   const sess = await res.data.session;
+    //   console.log(sess);
+    // };
+    // getSession();
     async function getUser() {
-      
       const {
         data: { user },
       } = await supabase.auth.getUser();
       console.log(user)
       if (user) {
         setUser(user);
-        setLoading(false);
       } else {
         setUser(null);
-        setLoading(false);
       }
     }
-
-    getSession();
     getUser();
   }, []);
   return (
