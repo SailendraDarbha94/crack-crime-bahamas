@@ -114,27 +114,27 @@ const Nav = ({ authUser, setAuthUser }: any) => {
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         {authUser ? (
-          authUser.role === "admin" ? (
+          authUser.user_metadata.user_role === "admin" ? (
             <NavbarItem>
               <Link
-                href="/clinics"
+                href="/clinics/list"
                 color="foreground"
                 className="font-semibold"
               >
                 Clinics List
               </Link>
             </NavbarItem>
-          ) : (
+          ) : authUser.user_metadata.user_role === "clinic" ? (
             <NavbarItem>
               <Link
-                href="/jobs"
                 color="foreground"
+                href="/register"
                 className="font-semibold"
               >
-                Jobs
+                Register Clinic
               </Link>
             </NavbarItem>
-          )
+          ) : null
         ) : (
           <NavbarItem>
             <Link href="#" color="foreground" className="font-semibold">
@@ -144,8 +144,8 @@ const Nav = ({ authUser, setAuthUser }: any) => {
         )}
         {authUser ? (
           <NavbarItem>
-            <Link color="foreground" href="/register" className="font-semibold">
-              Register Clinic
+            <Link color="foreground" href="/jobs" className="font-semibold">
+              Jobs List
             </Link>
           </NavbarItem>
         ) : (

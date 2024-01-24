@@ -14,7 +14,7 @@ const users = [
     team: "Management",
     status: "active",
     age: "29",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
+    avatar: "./doctor.png",
     email: "tony.reichert@example.com",
   },
   {
@@ -24,7 +24,7 @@ const users = [
     team: "Development",
     status: "paused",
     age: "25",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
+    avatar: "./doctor.png",
     email: "zoey.lang@example.com",
   },
   {
@@ -34,7 +34,7 @@ const users = [
     team: "Development",
     status: "active",
     age: "22",
-    avatar: "https://i.pravatar.cc/150?u=a04258114e29026702d",
+    avatar: "./doctor.png",
     email: "jane.fisher@example.com",
   },
   {
@@ -44,7 +44,7 @@ const users = [
     team: "Marketing",
     status: "vacation",
     age: "28",
-    avatar: "https://i.pravatar.cc/150?u=a048581f4e29026701d",
+    avatar: "./doctor.png",
     email: "william.howard@example.com",
   },
   {
@@ -54,7 +54,7 @@ const users = [
     team: "Sales",
     status: "active",
     age: "24",
-    avatar: "https://i.pravatar.cc/150?u=a092581d4ef9026700d",
+    avatar: "./doctor.png",
     email: "kristen.cooper@example.com",
   },
 ];
