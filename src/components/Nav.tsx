@@ -115,25 +115,47 @@ const Nav = ({ authUser, setAuthUser }: any) => {
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         {authUser ? (
           authUser.user_metadata.user_role === "admin" ? (
-            <NavbarItem>
-              <Link
-                href="/clinics/list"
-                color="foreground"
-                className="font-semibold"
-              >
-                Clinics List
-              </Link>
-            </NavbarItem>
+            <>
+              <NavbarItem>
+                <Link
+                  href="/clinics"
+                  color="foreground"
+                  className="font-semibold"
+                >
+                  Clinics List
+                </Link>
+              </NavbarItem>
+              <NavbarItem>
+                <Link
+                  href="/dashboards/admin"
+                  color="foreground"
+                  className="font-semibold"
+                >
+                  Dashboard
+                </Link>
+              </NavbarItem>
+            </>
           ) : authUser.user_metadata.user_role === "clinic" ? (
-            <NavbarItem>
-              <Link
-                color="foreground"
-                href="/register"
-                className="font-semibold"
-              >
-                Register Clinic
-              </Link>
-            </NavbarItem>
+            <>
+              <NavbarItem>
+                <Link
+                  color="foreground"
+                  href="/register"
+                  className="font-semibold"
+                >
+                  Register Clinic
+                </Link>
+              </NavbarItem>
+              <NavbarItem>
+                <Link
+                  href="/dashboards/admin"
+                  color="foreground"
+                  className="font-semibold"
+                >
+                  Dashboard
+                </Link>
+              </NavbarItem>
+            </>
           ) : null
         ) : (
           <NavbarItem>
