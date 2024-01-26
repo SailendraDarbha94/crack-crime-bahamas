@@ -44,7 +44,7 @@ export default function RootLayout({
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      console.log(user)
+      //console.log(user)
       if (user) {
         setUser(user);
       } else {

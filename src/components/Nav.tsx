@@ -40,7 +40,7 @@ const Nav = ({ authUser, setAuthUser }: any) => {
     }
     if (!error) {
       onOpenChange;
-      //router.push("/register");
+      router.push("/landing");
     }
   }
   const router = useRouter();
@@ -166,7 +166,7 @@ const Nav = ({ authUser, setAuthUser }: any) => {
         )}
         {authUser ? (
           <NavbarItem>
-            <Link color="foreground" href="/jobs" className="font-semibold">
+            <Link color="foreground" href="/jobs/list" className="font-semibold">
               Jobs List
             </Link>
           </NavbarItem>

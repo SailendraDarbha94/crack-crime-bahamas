@@ -1,10 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Button, Select, SelectItem } from "@nextui-org/react";
-import { animals } from "../../constants/data";
 import { createClient } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import PostJob from "@/components/PostJob";
+
 
 export default function Page() {
   // const getClinics = async () => {

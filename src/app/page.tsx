@@ -29,8 +29,8 @@ export default function Home() {
           <div className="w-full p-2">
             <p className="w-full tracking-wide text-xl">{INTROTEXT}</p>
             <ul className="">
-              <li className="text-lg shadow-md rounded-md p-2">If you're a Dentist looking for a new Job or connect with other dentists you can searh for them</li>
-              <li className="text-lg shadow-md rounded-md p-2">If you're a Clinic-Owner, you can post a job in your clinic or collaborate with other clinic owners</li>
+              <li className="text-lg shadow-md rounded-md p-2">If you are a Dentist looking for a new Job or connect with other dentists you can searh for them</li>
+              <li className="text-lg shadow-md rounded-md p-2">If you are a Clinic-Owner, you can post a job in your clinic or collaborate with other clinic owners</li>
             </ul>
             <div className="w-full flex flex-col items-center justify-between">
               <div className="flex flex-col items-center text-justify">
@@ -156,7 +156,7 @@ export default function Home() {
             </span> */}
           </h2>
           <p className={`m-0 text-sm opacity-50`}>
-            We've got you covered with <span className="underline font-semibold">Part-Time</span>,  <span className="underline font-semibold">Full-Time</span> and  <span className="underline font-semibold">Contract</span> Based Opportunities as well
+            We got you covered with <span className="underline font-semibold">Part-Time</span>,  <span className="underline font-semibold">Full-Time</span> and  <span className="underline font-semibold">Contract</span> Based Opportunities as well
           </p>
         </a>
         <a
