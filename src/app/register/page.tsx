@@ -8,12 +8,13 @@ import { Coordinates } from "@/constants/interfaces";
 import Register from "./Register";
 
 export default function Page() {
+  const [user, setUser] = useState<any>()
   async function getUser() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
     if (user) {
-      console.log(user);
+      setUser(user)
     }
   }
 
@@ -23,7 +24,7 @@ export default function Page() {
 
   return (
     <div>
-      <Register />
+      {user && <Register user={user} />}
     </div>
   );
 }

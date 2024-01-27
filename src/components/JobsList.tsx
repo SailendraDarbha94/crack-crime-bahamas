@@ -1,6 +1,6 @@
 //@ts-nocheck
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -32,7 +32,7 @@ import { EditIcon } from "./EditIcon";
 import { DeleteIcon } from "./DeleteIcon";
 import { EyeIcon } from "./EyeIcon";
 import { columns, users } from "./data";
-
+import { supabase } from "@/lib/supabase";
 const statusColorMap = {
   active: "success",
   paused: "danger",
@@ -40,6 +40,21 @@ const statusColorMap = {
 };
 
 export default function JobsList() {
+  const [jobs, setJobs] = useState<any>(null);
+  useEffect(() => {
+    const fetchJobsList = async () => {
+      let { data: jobs, error } = await supabase.from("jobs").select("*");
+
+      if (error) {
+        console.error(error);
+      }
+      if (jobs) {
+        console.log(jobs);
+        setJobs(jobs)
+      }
+    };
+    fetchJobsList();
+  }, []);
   // const renderCell = React.useCallback((user, columnKey) => {88
   //   const cellValue = user[columnKey];
 
@@ -100,30 +115,62 @@ export default function JobsList() {
   //       return cellValue;
   //   }
   // }, []);
-
-  return (
-    <div>
-      {/* <Table aria-label="Example table with custom cells">
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn
-              key={column.uid}
-              align={column.uid === "actions" ? "center" : "start"}
-            >
-              {column.name}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody items={users}>
-          {(item) => (
-            <TableRow key={item.id}>
-              {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
-              )}
-            </TableRow>
-          )}
-        </TableBody>
-      </Table> */}
-    </div>
-  );
+  const columns = [
+    {
+      key: "created_at",
+      label: "Posted At",
+    },
+    {
+      key: "description",
+      label: "Desc.",
+    },
+    {
+      key: "experience",
+      label: "Exp",
+    },
+    {
+      key: "location",
+      label: "Address",
+    },
+    {
+      key: "qualification",
+      label: "Qualification",
+    },
+    {
+      key: "salary",
+      label: "Salary",
+    },
+    {
+      key: "",
+      label: "",
+    },
+    {
+      key: "shift",
+      label: "Shift",
+    },
+    {
+      key: "skills",
+      label: "Skills",
+    },
+    {
+      key: "title",
+      label: "Title",
+    },
+  ];
+  return jobs ? (
+    <Table aria-label="Example table with dynamic content">
+      <TableHeader columns={columns}>
+        {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+      </TableHeader>
+      <TableBody items={jobs}>
+        {(item) => (
+          <TableRow key={item.job_id}>
+            {(columnKey) => (
+              <TableCell>{getKeyValue(item, columnKey)}</TableCell>
+            )}
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
+  ) : null;
 }

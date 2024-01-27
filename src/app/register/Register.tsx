@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { Coordinates } from "@/constants/interfaces";
 
-export default function Register() {
+export default function Register({user}:any) {
   const [name, setName] = useState<string>("");
   const [desc, setDesc] = useState<string>("");
   const [timings, setTimings] = useState<string>("");
@@ -46,7 +46,8 @@ export default function Register() {
       reg_num: regNo,
       coordinates: coords,
       specialties: specialities,
-      address: address
+      address: address,
+      user_id: user.id
     };
 
     const { data, error } = await supabase

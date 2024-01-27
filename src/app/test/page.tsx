@@ -55,12 +55,6 @@ export default function Page() {
   const [userId, setUserId] = useState<any>();
   const [clinics, setClinics] = useState<any>();
   useEffect(() => {
-    // const getSession = async () => {
-    //   const res = await supabase.auth.getSession();
-    //   const sess = await res.data.session;
-    //   console.log(sess);
-    // };
-    // getSession();
     async function getUser() {
       const {
         data: { user },

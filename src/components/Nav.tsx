@@ -148,7 +148,7 @@ const Nav = ({ authUser, setAuthUser }: any) => {
               </NavbarItem>
               <NavbarItem>
                 <Link
-                  href="/dashboards/admin"
+                  href="/dashboards/clinic"
                   color="foreground"
                   className="font-semibold"
                 >

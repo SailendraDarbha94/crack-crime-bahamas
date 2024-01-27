@@ -100,6 +100,8 @@ const AdminDashboard = () => {
       console.log(error);
     }
     if (data) {
+      setEmail("")
+      setPassword("")
       console.log(data);
     }
   };

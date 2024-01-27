@@ -65,7 +65,6 @@ export default function RootLayout({
           ) : (
             <Nav authUser={user} setAuthUser={setUser} />
           )}
-
           {children}
           {/* </GlobalProvider> */}
         </NextUIProvider>
