@@ -5,6 +5,7 @@ import {
   Card,
   CardBody,
   Divider,
+  Input,
   Select,
   SelectItem,
   Tab,
@@ -16,6 +17,7 @@ import { supabase } from "@/lib/supabase";
 //import PostJob from "@/components/PostJob";
 import { httpReq } from "@/lib/http";
 import AdminDashboard from "@/components/AdminDashboard";
+import ApiTester from "@/components/ApiTester";
 
 export default function Page() {
   // const getClinics = async () => {
@@ -92,15 +94,9 @@ export default function Page() {
       setClinics(clinics);
     }
   };
-  const httpReqMaker = async () => {
-    try {
-      const res = await httpReq("/auth/current_user", "POST");
-      const data = await res?.json();
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+
+
+
   return (
     <div className="w-full min-h-screen">
       {/* <div>
@@ -114,7 +110,7 @@ export default function Page() {
       </h1>
       <Divider />
       {/* <PostJob userId={userId} clinics={clinics} /> */}
-      <div className="w-full text-center m-0 p-0">
+      <div className="w-full h-full text-center m-0 p-0">
         <Tabs aria-label="Options" className="mt-3">
           <Tab key="users" title="Users" className="w-full text-center">
             <AdminDashboard />
@@ -125,9 +121,8 @@ export default function Page() {
             reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
             pariatur.
           </Tab>
-          <Tab key="feedback" title="Feedback">
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-            officia deserunt mollit anim id est laborum.
+          <Tab key="api" title="API">
+            <ApiTester />
           </Tab>
         </Tabs>
       </div>
