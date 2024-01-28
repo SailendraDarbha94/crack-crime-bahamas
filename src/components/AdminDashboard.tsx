@@ -108,9 +108,6 @@ const AdminDashboard = () => {
 
   return (
     <div className="flex w-full flex-wrap justify-center">
-      <h1 className="text-center m-2 w-full text-2xl font-bold">
-        Admin Dashboard
-      </h1>
       <div className="w-full md:w-[48%] mx-auto p-4 h-80 bg-slate-300 shadow-lg rounded-lg">
         <p className="flex w-full h-12 justify-center items-center text-lg font-semibold">
           Create a Clinic Level User

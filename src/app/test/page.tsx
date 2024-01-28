@@ -1,11 +1,21 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Button, Select, SelectItem } from "@nextui-org/react";
-import { animals } from "../../constants/data";
-import { createClient } from "@supabase/supabase-js";
+import {
+  Button,
+  Card,
+  CardBody,
+  Divider,
+  Select,
+  SelectItem,
+  Tab,
+  Tabs,
+} from "@nextui-org/react";
+//import { animals } from "../../constants/data";
+//import { createClient } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
-import PostJob from "@/components/PostJob";
+//import PostJob from "@/components/PostJob";
 import { httpReq } from "@/lib/http";
+import AdminDashboard from "@/components/AdminDashboard";
 
 export default function Page() {
   // const getClinics = async () => {
@@ -92,33 +102,35 @@ export default function Page() {
     }
   };
   return (
-    <div className="flex w-full min-h-screen flex-wrap gap-4">
-      <div>
+    <div className="w-full min-h-screen">
+      {/* <div>
         hello try clinics
         <Button color="secondary" variant="flat" onPress={httpReqMaker}>
           test api
         </Button>
-      </div>
-
+      </div> */}
+      <h1 className="text-center w-full text-2xl font-bold my-2 p-2 max-h-fit">
+        Admin Dashboard
+      </h1>
+      <Divider />
       {/* <PostJob userId={userId} clinics={clinics} /> */}
-      {/* <Select label="Select an animal" className="max-w-xs">
-        {animals.map((animal) => (
-          <SelectItem key={animal.value} value={animal.value}>
-            {animal.label}
-          </SelectItem>
-        ))}
-      </Select>
-      <Select
-        label="Favorite Animal"
-        placeholder="Select an animal"
-        className="max-w-xs"
-      >
-        {animals.map((animal) => (
-          <SelectItem key={animal.value} value={animal.value}>
-            {animal.label}
-          </SelectItem>
-        ))}
-      </Select> */}
+      <div className="w-full text-center m-0 p-0">
+        <Tabs aria-label="Options" className="mt-3">
+          <Tab key="users" title="Users" className="w-full text-center">
+            <AdminDashboard />
+          </Tab>
+          <Tab key="clinics" title="Clinics">
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+            nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+            pariatur.
+          </Tab>
+          <Tab key="feedback" title="Feedback">
+            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+            officia deserunt mollit anim id est laborum.
+          </Tab>
+        </Tabs>
+      </div>
     </div>
   );
 }
