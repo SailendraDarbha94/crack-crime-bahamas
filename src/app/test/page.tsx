@@ -5,6 +5,7 @@ import { animals } from "../../constants/data";
 import { createClient } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import PostJob from "@/components/PostJob";
+import { httpReq } from "@/lib/http";
 
 export default function Page() {
   // const getClinics = async () => {
@@ -18,7 +19,6 @@ export default function Page() {
   //   });
   //   const data = await res.json()
   //   console.log(data)
-
 
   // };
   // const createUserProfile = async () => {
@@ -62,14 +62,14 @@ export default function Page() {
       //console.log(user)
       if (user) {
         setUserId(user.id);
-        fetchUserClinics(user.id)
+        fetchUserClinics(user.id);
       } else {
         setUserId(null);
       }
     }
     getUser();
   }, []);
-  const fetchUserClinics = async (params:string) => {
+  const fetchUserClinics = async (params: string) => {
     let { data: clinics, error } = await supabase
       .from("clinics")
       .select("*")
@@ -82,15 +82,25 @@ export default function Page() {
       setClinics(clinics);
     }
   };
+  const httpReqMaker = async () => {
+    try {
+      const res = await httpReq("/auth/current_user", "POST");
+      const data = await res?.json();
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="flex w-full min-h-screen flex-wrap gap-4">
-      {/* <div>
+      <div>
         hello try clinics
-        <Button color="secondary" variant="flat" onPress={getClinics}>
+        <Button color="secondary" variant="flat" onPress={httpReqMaker}>
           test api
         </Button>
-      </div> */}
-      <PostJob userId={userId} clinics={clinics} />
+      </div>
+
+      {/* <PostJob userId={userId} clinics={clinics} /> */}
       {/* <Select label="Select an animal" className="max-w-xs">
         {animals.map((animal) => (
           <SelectItem key={animal.value} value={animal.value}>
