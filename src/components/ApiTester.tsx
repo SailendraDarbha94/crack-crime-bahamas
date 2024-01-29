@@ -50,7 +50,7 @@ export default function ApiTester () {
         variant="flat"
         color="secondary"
       >
-        API Call
+        Call API
       </Button>
       {response ? (
         <pre>

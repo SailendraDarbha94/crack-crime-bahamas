@@ -116,7 +116,7 @@ const Nav = ({ authUser, setAuthUser }: any) => {
         {authUser ? (
           authUser.user_metadata.user_role === "admin" ? (
             <>
-              <NavbarItem>
+              {/* <NavbarItem>
                 <Link
                   href="/clinics"
                   color="foreground"
@@ -124,7 +124,7 @@ const Nav = ({ authUser, setAuthUser }: any) => {
                 >
                   Clinics List
                 </Link>
-              </NavbarItem>
+              </NavbarItem> */}
               <NavbarItem>
                 <Link
                   href="/dashboards/admin"

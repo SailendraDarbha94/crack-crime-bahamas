@@ -18,6 +18,7 @@ import { supabase } from "@/lib/supabase";
 import { httpReq } from "@/lib/http";
 import AdminDashboard from "@/components/AdminDashboard";
 import ApiTester from "@/components/ApiTester";
+import ClinicsList from "@/components/ClinicsList";
 
 export default function Page() {
   // const getClinics = async () => {
@@ -95,8 +96,6 @@ export default function Page() {
     }
   };
 
-
-
   return (
     <div className="w-full min-h-screen">
       {/* <div>
@@ -116,10 +115,7 @@ export default function Page() {
             <AdminDashboard />
           </Tab>
           <Tab key="clinics" title="Clinics">
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-            nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur.
+            <ClinicsList />
           </Tab>
           <Tab key="api" title="API">
             <ApiTester />

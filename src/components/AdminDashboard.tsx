@@ -14,14 +14,11 @@ import {
 } from "@nextui-org/react";
 import { createClient } from "@supabase/supabase-js";
 import React, { useEffect, useState } from "react";
-import { supabase as Client } from "@/lib/supabase";
 
 const AdminDashboard = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [clinics, setClinics] = useState<any>();
-  const [user, setUser] = useState<any>();
   const [usersList, setUsersList] = useState<any>();
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL as string,
@@ -33,37 +30,8 @@ const AdminDashboard = () => {
       },
     }
   );
-  useEffect(() => {
-    async function getUser() {
-      const {
-        data: { user },
-      } = await Client.auth.getUser();
-      console.log(user);
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-      }
-    }
-    getUser();
-  }, []);
+
   const adminAuthClient = supabase.auth.admin;
-  const fetchUserClinics = async () => {
-    setLoading(true);
-    let { data: clinics, error } = await supabase
-      .from("clinics")
-      .select("*")
-      .eq("user_id", user.id);
-    console.log(clinics);
-    if (error) {
-      console.error(error);
-      setLoading(false);
-    }
-    if (clinics) {
-      setClinics(clinics);
-      setLoading(false);
-    }
-  };
   const fetchAllUsers = async () => {
     setLoading(true);
     const {
@@ -100,8 +68,8 @@ const AdminDashboard = () => {
       console.log(error);
     }
     if (data) {
-      setEmail("")
-      setPassword("")
+      setEmail("");
+      setPassword("");
       console.log(data);
     }
   };
@@ -154,14 +122,6 @@ const AdminDashboard = () => {
               >
                 List All Users
               </Button>
-              <Button
-                color="primary"
-                onPress={fetchUserClinics}
-                variant="flat"
-                className="mx-auto mb-2"
-              >
-                List Clinics
-              </Button>
             </>
           ) : (
             <>
@@ -172,14 +132,6 @@ const AdminDashboard = () => {
                 className="mx-auto mb-2"
               >
                 Hide Users
-              </Button>
-              <Button
-                color="primary"
-                onPress={() => setClinics(null)}
-                variant="flat"
-                className="mx-auto mb-2"
-              >
-                Hide Clinics
               </Button>
             </>
           )}
@@ -231,38 +183,6 @@ const AdminDashboard = () => {
             })}
           </div>
         ) : null}
-                    {clinics && clinics.map((clinic:any) => {
-              return(
-                <Card key={clinic.clinic_id} className="w-full my-1">
-                  <CardHeader className="flex flex-wrap gap-3">
-                    <Chip className="m-1 text-md">{clinic.name}</Chip>
-                    <Chip className="text-small m-1 text-default-500">
-                      {clinic.reg_num}
-                    </Chip>
-                  </CardHeader>
-                  <Divider />
-                  <CardBody>
-                    {/* <pre>
-                      User MetaData
-                      <br />
-                      <code>{JSON.stringify(user.user_metadata)}</code>
-                    </pre> */}
-                    <p>{clinic.address}</p>
-                  </CardBody>
-                  <Divider />
-                  {/* <CardFooter>
-                    <Button
-                      color="danger"
-                      onPress={() => deleteUser(user.id as string)}
-                      variant="flat"
-                      className="mx-auto text-center"
-                    >
-                      {loading ? <Spinner size="sm" /> : "Delete User"}
-                    </Button>
-                  </CardFooter> */}
-                </Card>
-              )
-            })}
       </div>
     </div>
   );
