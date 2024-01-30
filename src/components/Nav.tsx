@@ -53,7 +53,7 @@ const Nav = ({ authUser, setAuthUser }: any) => {
   }
 
   return (
-    <Navbar className="bg-white shadow-lg z-10 my-2 p-2 rounded-2xl mx-auto w-[99%]">
+    <Navbar className="bg-white shadow-lg z-30 my-2 p-2 rounded-2xl mx-auto w-[99%]">
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (

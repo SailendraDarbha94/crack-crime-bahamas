@@ -7,8 +7,6 @@ const Page = () => {
 
 
         <div>
-            
-            Jobs Board
             <JobsList />
         </div>
     )
