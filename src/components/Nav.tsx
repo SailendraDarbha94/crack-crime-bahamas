@@ -102,7 +102,7 @@ const Nav = ({ authUser, setAuthUser }: any) => {
         <Button
           as={Link}
           color="primary"
-          href="/"
+          href={authUser ? '/landing' : '/'}
           variant="shadow"
           className="flex justify-start pr-0"
         >
@@ -165,11 +165,26 @@ const Nav = ({ authUser, setAuthUser }: any) => {
           </NavbarItem>
         )}
         {authUser ? (
-          <NavbarItem>
-            <Link color="foreground" href="/jobs/list" className="font-semibold">
-              Jobs List
-            </Link>
-          </NavbarItem>
+          <>
+            <NavbarItem>
+              <Link
+                color="foreground"
+                href="/jobs/list"
+                className="font-semibold"
+              >
+                Jobs List
+              </Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Link
+                color="foreground"
+                href="/profile"
+                className="font-semibold"
+              >
+                Profile
+              </Link>
+            </NavbarItem>
+          </>
         ) : (
           <NavbarItem>
             <Link color="foreground" href="#" className="font-semibold">
