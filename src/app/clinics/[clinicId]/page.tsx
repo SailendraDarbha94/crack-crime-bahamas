@@ -1,4 +1,5 @@
 "use client";
+import PostJob from "@/components/PostJob";
 import { httpReq } from "@/lib/http";
 import { supabase } from "@/lib/supabase";
 import ToastContext from "@/lib/toastContext";
@@ -52,7 +53,7 @@ const Page = ({ params }: { params: { clinicId: string } }) => {
       router.back();
     }
   }
-
+  const [post, setPost] = useState<boolean>(false);
   return (
     <div className="flex w-full min-h-screen justify-center">
       {clinic ? (
@@ -78,13 +79,16 @@ const Page = ({ params }: { params: { clinicId: string } }) => {
 
           <Divider />
           <Button
-            color="success"
-            onPress={deleteClinic}
+            color="secondary"
+            onPress={() => setPost(!post)}
             variant="flat"
             className="mx-auto my-2 text-center"
           >
             Post a Job
           </Button>
+          {post ? (
+            <PostJob clinicId={clinicId} address={clinic.address}   />
+          ):null}
           <Divider />
           <CardBody>
             <div className="flex flex-wrap w-full justify-around">
@@ -116,14 +120,15 @@ const Page = ({ params }: { params: { clinicId: string } }) => {
                     return (
                       <div
                         key={job.job_id}
-                        className="min-w-96 font-thin bg-blue-200 rounded-lg p-2"
+                        className="min-w-96 font-semibold my-2 bg-blue-200 rounded-lg p-2"
                       >
                         Title : {job.title}
                         <br />
-                        Applicants :{" "}
-                        <pre className="inline">
-                          <code className="text-wrap">{job.applicants}</code>
-                        </pre>
+                        Applicants :{" "}{job.applicants && job.applicants.map((app:any) => {
+                          return (
+                            <span className="block">{app}</span>
+                          )
+                        })}
                       </div>
                     );
                   })}

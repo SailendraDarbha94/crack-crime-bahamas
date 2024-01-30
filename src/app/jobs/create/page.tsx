@@ -96,7 +96,7 @@ export default function Page() {
           test api
         </Button>
       </div> */}
-      <PostJob userId={userId} clinics={clinics} />
+      {/* <PostJob userId={userId} clinics={clinics} /> */}
       {/* <Select label="Select an animal" className="max-w-xs">
         {animals.map((animal) => (
           <SelectItem key={animal.value} value={animal.value}>
