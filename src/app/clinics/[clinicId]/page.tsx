@@ -126,7 +126,7 @@ const Page = ({ params }: { params: { clinicId: string } }) => {
                         <br />
                         Applicants :{" "}{job.applicants && job.applicants.map((app:any) => {
                           return (
-                            <span className="block">{app}</span>
+                            <span key={app} className="block">{app}</span>
                           )
                         })}
                       </div>
