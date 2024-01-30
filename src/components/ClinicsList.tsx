@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -19,9 +19,11 @@ import {
 } from "@nextui-org/react";
 import { httpReq } from "@/lib/http";
 import { useRouter } from "next/navigation";
+import ToastContext from "@/lib/toastContext";
 
 const ClinicsList = () => {
   //const [loading, setLoading] = useState<boolean>(false)
+  const { toast } = useContext(ToastContext)
   const [clinics, setClinics] = useState<any>(null);
   const router = useRouter();
   useEffect(() => {
@@ -31,6 +33,7 @@ const ClinicsList = () => {
 
       if (data) {
         console.log(data);
+        toast("Clinics List Fetched Successfully")
         setClinics(data);
       }
     }
@@ -78,57 +81,59 @@ const ClinicsList = () => {
           )}
         </TableHeader> */}
       {
-        clinics
-          ? // <TableBody items={clinics}>
-            //   {(item: any) => (
-            //     <TableRow key={item.clinic_id}>
-            //       {(columnKey) => (
-            //         <TableCell>{getKeyValue(item, columnKey)}</TableCell>
-            //       )}
-            //     </TableRow>
-            //   )}
-            // </TableBody>
-            clinics.map((clinic: any) => {
-              return (
-                <Card key={clinic.clinic_id} className="w-full my-2 shadow-xl">
-                  <CardHeader className="flex flex-wrap gap-3">
-                    <h1 className="text-xl text-center w-full font-bold">
-                      {clinic.name}
-                    </h1>
-                  </CardHeader>
-                  <Divider />
-                  <CardBody>
-                    <div className="flex w-full justify-around">
-                      <Chip className="text-small m-1 text-default-500">
-                        Register Number :{" "}
-                        {clinic.reg_num ? clinic.reg_num : "N/A"}
-                      </Chip>
-                      <Chip className="text-small m-1 text-default-500">
-                        Timings : {clinic.timings ? clinic.timings : "N/A"}
-                      </Chip>
-                      <Chip className="text-small m-1 text-default-500">
-                        Specialties :{" "}
-                        {clinic.specialties ? clinic.specialties : "N/A"}
-                      </Chip>
-                    </div>
-                  </CardBody>
-                  <Divider />
-                  <CardFooter>
-                    <Button
-                      color="secondary"
-                      onPress={() =>
-                        router.push(`/clinics/${clinic.clinic_id}`)
-                      }
-                      variant="flat"
-                      className="mx-auto text-center"
-                    >
-                      View Clinic
-                    </Button>
-                  </CardFooter>
-                </Card>
-              );
-            })
-          : null
+        clinics ? (
+          // <TableBody items={clinics}>
+          //   {(item: any) => (
+          //     <TableRow key={item.clinic_id}>
+          //       {(columnKey) => (
+          //         <TableCell>{getKeyValue(item, columnKey)}</TableCell>
+          //       )}
+          //     </TableRow>
+          //   )}
+          // </TableBody>
+          clinics.map((clinic: any) => {
+            return (
+              <Card key={clinic.clinic_id} className="w-full my-2 shadow-xl">
+                <CardHeader className="flex flex-wrap gap-3">
+                  <h1 className="text-xl text-center w-full font-bold">
+                    {clinic.name}
+                  </h1>
+                </CardHeader>
+                <Divider />
+                <CardBody>
+                  <div className="flex w-full justify-around">
+                    <Chip className="text-small m-1 text-default-500">
+                      Register Number :{" "}
+                      {clinic.reg_num ? clinic.reg_num : "N/A"}
+                    </Chip>
+                    <Chip className="text-small m-1 text-default-500">
+                      Timings : {clinic.timings ? clinic.timings : "N/A"}
+                    </Chip>
+                    <Chip className="text-small m-1 text-default-500">
+                      Specialties :{" "}
+                      {clinic.specialties ? clinic.specialties : "N/A"}
+                    </Chip>
+                  </div>
+                </CardBody>
+                <Divider />
+                <CardFooter>
+                  <Button
+                    color="secondary"
+                    onPress={() => router.push(`/clinics/${clinic.clinic_id}`)}
+                    variant="flat"
+                    className="mx-auto text-center"
+                  >
+                    View Clinic
+                  </Button>
+                </CardFooter>
+              </Card>
+            );
+          })
+        ) : (
+          <div className="flex w-full justify-center items-center min-h-96">
+            <Spinner size="lg" />
+          </div>
+        )
         // (
         //   <TableBody emptyContent={"Loading Data..."}>{[]}</TableBody>
         // )

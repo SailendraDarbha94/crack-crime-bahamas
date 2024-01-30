@@ -16,6 +16,8 @@ import {
 import { Dispatch, createContext, useEffect, useState } from "react";
 import GlobalProvider from "./GlobalProvider";
 import { supabase } from "@/lib/supabase";
+import Toast from "@/components/Toast";
+import ToastContext from "@/lib/toastContext";
 const inter = Inter({ subsets: ["latin"] });
 
 // export const metadata: Metadata = {
@@ -30,8 +32,6 @@ export default function RootLayout({
 }) {
   const [loading, setLoading] = useState<boolean>(false);
   const [user, setUser] = useState<any>();
-
-
 
   useEffect(() => {
     // const getSession = async () => {
@@ -53,20 +53,45 @@ export default function RootLayout({
     }
     getUser();
   }, []);
+
+  const toast = async (params: string) => {
+    await setToastMessage(params);
+    await console.log(params);
+    await setIsVisible(true);
+  };
+
+  const [isVisible, setIsVisible] = useState(true);
+  const [toastMessage, setToastMessage] = useState<string>("");
+  // const [message, setMessage] = useState<string>("")
+  useEffect(() => {
+    // Set a timer for 2 seconds
+    const timer = setTimeout(() => {
+      setIsVisible(false);
+    }, 2000);
+
+    // Clean up the timer when the component unmounts
+    return () => clearTimeout(timer);
+  }, [isVisible]);
+
   return (
     <html lang="en">
       <body className="bg-white">
         <NextUIProvider>
-          {/* <GlobalProvider> */}
-          {loading ? (
-            <div className="flex w-full justify-center items-center p-2">
-              <Spinner />
-            </div>
-          ) : (
-            <Nav authUser={user} setAuthUser={setUser} />
-          )}
-          {children}
-          {/* </GlobalProvider> */}
+          <ToastContext.Provider value={{ toast }}>
+            {/* <GlobalProvider> */}
+            {loading ? (
+              <div className="flex w-full justify-center items-center p-2">
+                <Spinner />
+              </div>
+            ) : (
+              <>
+                <Nav authUser={user} setAuthUser={setUser} />
+                {isVisible && <Toast message={toastMessage} />}
+              </>
+            )}
+            {children}
+            {/* </GlobalProvider> */}
+          </ToastContext.Provider>
         </NextUIProvider>
       </body>
     </html>
