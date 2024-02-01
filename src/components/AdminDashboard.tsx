@@ -19,6 +19,8 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [normalEmail, setNormalEmail] = useState<string>("");
+  const [normalPassword, setNormalPassword] = useState<string>("");
   const [usersList, setUsersList] = useState<any>();
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL as string,
@@ -73,43 +75,95 @@ const AdminDashboard = () => {
       console.log(data);
     }
   };
+  const createUser = async () => {
+    const { data, error } = await adminAuthClient.createUser({
+      email: normalEmail,
+      password: normalPassword,
+      email_confirm: true,
+    });
 
+    if (error) {
+      console.log(error);
+    }
+    if (data) {
+      setNormalEmail("");
+      setNormalPassword("");
+      console.log(data);
+    }
+  };
   return (
     <div className="flex w-full flex-wrap justify-center">
-      <div className="w-full md:w-[48%] mx-auto p-4 h-80 bg-slate-300 shadow-lg rounded-lg">
-        <p className="flex w-full h-12 justify-center items-center text-lg font-semibold">
-          Create a Clinic Level User
-        </p>
-        <Divider />
-        <div className="flex flex-col w-full h-full justify-start p-2 items-center">
-          <Input
-            className="w-80 my-2"
-            name="email"
-            value={email}
-            type="email"
-            label="Email"
-            placeholder=""
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Input
-            className="w-80 my-2"
-            name="password"
-            value={password}
-            type="password"
-            label="Password"
-            placeholder=""
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Button
-            color="primary"
-            onPress={createClinicLevelUser}
-            variant="flat"
-            className="mx-auto my-auto"
-          >
-            Submit
-          </Button>
+      <div className="w-full md:w-[48%] mx-auto">
+        <div className="w-full p-4 h-80 bg-slate-300 shadow-lg rounded-lg">
+          <p className="flex w-full h-12 justify-center items-center text-lg font-semibold">
+            Create a Clinic Level User
+          </p>
+          <Divider />
+          <div className="flex flex-col w-full h-full justify-start p-2 items-center">
+            <Input
+              className="w-80 my-2"
+              name="email"
+              value={email}
+              type="email"
+              label="Email"
+              placeholder=""
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <Input
+              className="w-80 my-2"
+              name="password"
+              value={password}
+              type="password"
+              label="Password"
+              placeholder=""
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Button
+              color="primary"
+              onPress={createClinicLevelUser}
+              variant="flat"
+              className="mx-auto my-auto"
+            >
+              Submit
+            </Button>
+          </div>
+        </div>
+        <div className="w-full mt-4 p-4 h-80 bg-slate-300 shadow-lg rounded-lg">
+          <p className="flex w-full h-12 justify-center items-center text-lg font-semibold">
+            Create a Normal User
+          </p>
+          <Divider />
+          <div className="flex flex-col w-full h-full justify-start p-2 items-center">
+            <Input
+              className="w-80 my-2"
+              name="email"
+              value={email}
+              type="email"
+              label="Email"
+              placeholder=""
+              onChange={(e) => setNormalEmail(e.target.value)}
+            />
+            <Input
+              className="w-80 my-2"
+              name="password"
+              value={password}
+              type="password"
+              label="Password"
+              placeholder=""
+              onChange={(e) => setNormalPassword(e.target.value)}
+            />
+            <Button
+              color="primary"
+              onPress={createUser}
+              variant="flat"
+              className="mx-auto my-auto"
+            >
+              Submit
+            </Button>
+          </div>
         </div>
       </div>
+
       <div className="w-full md:w-[48%] mx-auto p-4 bg-slate-300 shadow-lg rounded-lg">
         <div className="flex w-full ">
           {!usersList ? (

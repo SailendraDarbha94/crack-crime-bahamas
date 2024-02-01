@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import ToastContext from "@/lib/toastContext";
 import {
   Button,
   Input,
@@ -8,22 +9,32 @@ import {
   divider,
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
-const PostJob = ({ clinics, userId }: any) => {
+const PostJob = ({ clinicId, address }: any) => {
   const [qualification, setQualification] = useState<string>("");
   const [shift, setShift] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [experience, setExperience] = useState<string>("");
   const [skills, setSkills] = useState<string>("");
   const [salary, setSalary] = useState<string>("");
-  const [location, setLocation] = useState<string>("");
-  const [job_poster_id, setJobPosterId] = useState<string>("");
+  //const [location, setLocation] = useState<string>("");
+  const [user, setUser] = useState<any>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
 
+  useEffect(() => {
+    async function fetchUser() {
+      const {data} = await supabase.auth.getUser()
+      if(data){
+        setUser(data.user)
+      }
+    }
+    fetchUser()
+  },[])
 
-  const router = useRouter()
+  const router = useRouter();
+  const {toast} = useContext(ToastContext);
 
   const createJob = async () => {
     const { data, error } = await supabase
@@ -36,25 +47,37 @@ const PostJob = ({ clinics, userId }: any) => {
           experience,
           skills,
           salary,
-          location,
+          location : address,
           title,
-          job_poster_id: userId,
+          clinic_id: clinicId,
+          job_poster_id: user.id,
         },
       ])
       .select();
 
     if (error) {
+      toast("An Error Occured! Please try again later")
       console.error(error);
     }
     if (data) {
+      toast("Job Posted Successfully")
       console.log(data);
-      router.push('/jobs/list')
+      router.refresh()
     }
   };
 
   return (
     <div className="flex flex-wrap w-full">
       <div className="flex flex-col w-2/3 items-center mx-auto">
+      <Input
+          className="w-80 my-2"
+          name="title"
+          value={title}
+          type="text"
+          label="Job Title"
+          placeholder=""
+          onChange={(e) => setTitle(e.target.value)}
+        />
         <Input
           className="w-80 my-2"
           name="qualification"
@@ -109,11 +132,11 @@ const PostJob = ({ clinics, userId }: any) => {
           placeholder=""
           onChange={(e) => setSalary(e.target.value)}
         />
-        <Select
-          //label=""
+        {/* <Select
+          label=""
           placeholder="Select the clinic"
           className="max-w-xs"
-          //onClick={fetchUserClinics}
+          onClick={fetchUserClinics}
         >
           {clinics &&
             clinics.map((clinic: any) => (
@@ -128,24 +151,25 @@ const PostJob = ({ clinics, userId }: any) => {
                 {clinic.name}
               </SelectItem>
             ))}
-        </Select>
-        <Input
-          disabled
+        </Select> */}
+        {/* <Input
+          //disabled
           className="w-80 my-2"
           name="address"
           value={location}
           type="text"
-          label="Address autofilled after selecting Clinic"
+          label=""
           placeholder=""
-          //onChange={(e) => setSalary(e.target.value)}
+          onChange={(e) => setLocation(e.target.value)}
         />
-      </div>
+        */}
+      </div> 
       <div className="w-full text-center max-h-fit">
         <Button
-          color="primary"
+          color="secondary"
           onPress={createJob}
           variant="flat"
-          className="mx-auto"
+          className="mx-auto mb-2"
         >
           Submit
         </Button>

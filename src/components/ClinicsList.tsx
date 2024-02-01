@@ -93,7 +93,7 @@ const ClinicsList = () => {
           // </TableBody>
           clinics.map((clinic: any) => {
             return (
-              <Card key={clinic.clinic_id} className="w-full my-2 shadow-xl">
+              <Card key={clinic.clinic_id} className="w-full z-10 my-2 shadow-xl">
                 <CardHeader className="flex flex-wrap gap-3">
                   <h1 className="text-xl text-center w-full font-bold">
                     {clinic.name}

@@ -34,7 +34,7 @@ const Page = () => {
             </CardBody>
             <Divider />
             <CardFooter>
-              <Link href="/jobs" className="mx-auto p-2 rounded-md">Search Jobs</Link>
+              <Link href="/jobs/list" className="mx-auto p-2 rounded-md">Search Jobs</Link>
               {/* <Link
                 isExternal
                 showAnchorIcon

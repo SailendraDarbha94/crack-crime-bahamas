@@ -61,7 +61,7 @@ const ClinicDashboard = () => {
           Post a Job
         </p>
         <Divider />
-        <PostJob userId={userId} clinics={clinics} />
+        {/* Job userId={userId} clinics={clinics} /> */}
       </div>
       <div className="hidden md:block w-full md:w-[48%] mx-auto p-4 bg-slate-300 shadow-lg rounded-lg">
         More Content Coming Soon
