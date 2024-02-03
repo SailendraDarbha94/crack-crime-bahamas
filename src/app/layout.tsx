@@ -14,7 +14,6 @@ import {
   NavbarMenuItem,
 } from "@nextui-org/react";
 import { Dispatch, createContext, useEffect, useState } from "react";
-import GlobalProvider from "./GlobalProvider";
 import { supabase } from "@/lib/supabase";
 import Toast from "@/components/Toast";
 import ToastContext from "@/lib/toastContext";
@@ -78,7 +77,6 @@ export default function RootLayout({
       <body className="bg-white">
         <NextUIProvider>
           <ToastContext.Provider value={{ toast }}>
-            {/* <GlobalProvider> */}
             {loading ? (
               <div className="flex w-full justify-center items-center p-2">
                 <Spinner />
@@ -90,7 +88,6 @@ export default function RootLayout({
               </>
             )}
             {children}
-            {/* </GlobalProvider> */}
           </ToastContext.Provider>
         </NextUIProvider>
       </body>
