@@ -1,0 +1,31 @@
+.rect {
+    position: relative;
+  }
+  
+  .triangle {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 200px solid transparent;
+    border-right: 200px solid transparent;
+    border-bottom-width: 150px;
+    border-bottom-style: solid;
+    cursor: pointer;
+  }
+  
+  .rectangle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: white;
+    cursor: pointer;
+  }
+  
+  .triangle:hover, .rectangle:hover {
+    opacity: 0.7;
+  }
+  
+  .rectangle:hover {
+    background-color: #ccc;
+  }
+  
