@@ -9,6 +9,7 @@ import NavBarCallLink from "@/components/NavBarCallLink";
 export interface CardProps {
   id: number;
   url: string;
+  route: string
   alt: string;
   text: string;
   btn: string;
@@ -22,7 +23,7 @@ export default function Home() {
 
   const [quote, setQuote] = useState<string>("");
   const [author, setAuthor] = useState<string>("");
-  const [navbarHeight, setNavbarHeight] = useState<string>("h-14");
+  
   const url = "https://api.api-ninjas.com/v1/quotes?category=courage";
   const fetchQuote = async () => {
     try {
@@ -54,13 +55,15 @@ export default function Home() {
       alt: "plums",
       text: "Are you Suspicious?",
       btn: "Post a Tip",
+      route: "/how-it-works"
     },
     {
       id: 2,
       url: "/lemon.png",
       alt: "lemons",
-      text: "Crime Prevention",
+      text: "How it Works",
       btn: "Learn More",
+      route: "/how-it-works"
     },
     {
       id: 3,
@@ -68,23 +71,18 @@ export default function Home() {
       alt: "strawberries",
       text: "Safety Tips",
       btn: "Read More",
+      route: "/safety-tips"
     },
     {
       id: 4,
       url: "/tomato.png",
       alt: "tomatoes",
-      text: "Report a Crime",
-      btn: "Report Now",
+      text: "Mission & Vision",
+      btn: "Read Now",
+      route: "/mission-vision"
     }
   ];
 
-  const toggleNavbar = () => {
-    if (navbarHeight === "h-14") {
-      setNavbarHeight("h-4/6");
-    } else {
-      setNavbarHeight("h-14");
-    }
-  };
   return (
     <main className="flex min-h-screen w-full max-w-screen flex-col p-4 md:p-24">
       <div>
@@ -116,27 +114,6 @@ export default function Home() {
               <BasicCard key={card.id} {...card} />
           );
         })}
-      </div>
-      <div
-        className={`min-w-screen flex flex-col w-full z-50 transition-height fixed bottom-0 left-0 bg-slate-300 p-2 hover:cursor-pointer ${navbarHeight}`}
-      >
-        <Button
-          radius="full"
-          className="bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg mx-auto"
-          onPress={toggleNavbar}
-        >
-          {navbarHeight === "h-14" ? "Show More" : "Show Less"}
-        </Button>
-        <div
-          className={`${
-            navbarHeight === "h-14" ? "hidden" : "block"
-          } flex flex-col`}
-        >
-          <NavBarCallLink title="Emergency" number="911" />
-          <NavBarCallLink title="Family Islands" number="242-300-8477" />
-          <NavBarCallLink title="Nassau" number="328-8477" />
-          <NavBarCallLink title="Help" number="919" />
-        </div>
       </div>
     </main>
   );
