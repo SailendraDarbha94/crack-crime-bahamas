@@ -3,7 +3,7 @@
 const Page = () => {
   return (
     <div className="min-w-screen min-h-screen">
-      <main className="mx-auto max-w-3xl pt-20">
+      <main className="mx-auto text-center max-w-3xl pt-20">
         <section className="mb-8">
           <h2 className="text-2xl font-bold mb-2">Step 1: Report Any Crime</h2>
           <p className="mb-4">
