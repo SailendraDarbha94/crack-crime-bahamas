@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import BasicCard from "@/components/BasicCard";
 import bg from "../../public/advert.jpeg";
 import NavBarCallLink from "@/components/NavBarCallLink";
+
 export interface CardProps {
   id: number;
   url: string;
@@ -23,30 +24,44 @@ export default function Home() {
     //console.log(buttonRef.current?.id)
   };
 
+  
+  
+
+
+  const fetchRes = async () => {
+    const res = await fetch('/api/test')
+    const { data } = await res.json()
+    
+    console.log(data)
+  }
+  useEffect(() => {
+    fetchRes()
+  },[])
+
   const [quote, setQuote] = useState<string>("");
   const [author, setAuthor] = useState<string>("");
 
-  const url = "https://api.api-ninjas.com/v1/quotes?category=courage";
-  const fetchQuote = async () => {
-    try {
-      const res = await fetch(url, {
-        headers: {
-          "X-Api-Key": process.env.NEXT_PUBLIC_NINJA_KEY!,
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
-      console.log(data[0]);
-      setQuote(data[0].quote);
-      setAuthor(data[0].author);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  // const url = "https://api.api-ninjas.com/v1/quotes?category=courage";
+  // const fetchQuote = async () => {
+  //   try {
+  //     const res = await fetch(url, {
+  //       headers: {
+  //         "X-Api-Key": process.env.NEXT_PUBLIC_NINJA_KEY!,
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //     const data = await res.json();
+  //     console.log(data[0]);
+  //     setQuote(data[0].quote);
+  //     setAuthor(data[0].author);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchQuote();
-  }, []);
+  // useEffect(() => {
+  //   fetchQuote();
+  // }, []);
 
   const buttonRef = useRef<HTMLButtonElement>(null);
 

@@ -1,6 +1,12 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 const Page = () => {
+
+
+
+
   return (
     <div className="min-w-screen min-h-screen">
       <main className="mx-auto text-center max-w-3xl pt-20">
