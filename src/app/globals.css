@@ -7,10 +7,15 @@
   src: url("../../public/fonts/Nunito/Nunito-VariableFont_wght.ttf");
 }
 
+@font-face {
+  font-family: "Honk";
+  src: url("../../public//fonts/Honk/Honk-Regular-VariableFont_MORF\,SHLN.ttf");
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 241, 241, 0;
-  --background-end-rgb: 21, 21, 21;
+  --background-start-rgb: 58, 91, 255;
+  --background-end-rgb: 194, 201, 255;
 }
 
 @media (prefers-color-scheme: dark) {

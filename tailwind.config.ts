@@ -8,7 +8,8 @@ const config: Config = {
   ],
   theme: {
     fontFamily: {
-      nunito: ["Nunito", "sans-serif"]
+      nunito: ["Nunito", "sans-serif"],
+      honk: ["Honk"]
     },
     extend: {
       backgroundImage: {
