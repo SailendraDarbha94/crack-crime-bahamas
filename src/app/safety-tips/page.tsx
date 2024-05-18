@@ -5,7 +5,7 @@ const Page = () => {
     <div className="min-w-screen min-h-screen">
       <main className="mx-auto max-w-3xl pt-20">
         <section className="mb-8">
-          <h2 className="text-2xl font-bold mb-2">
+          <h2 className="text-2xl font-bold mb-2 dark:text-amber-400">
             Stay Aware of Your Surroundings
           </h2>
           <p className="mb-4">

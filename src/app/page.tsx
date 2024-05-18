@@ -1,180 +1,53 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import Image from "next/image";
-import type { Metadata } from "next";
-import ExpandingTriangles from "@/components/ui/ExpandingTriangles";
-import { Button, Divider } from "@nextui-org/react";
-import { useEffect, useRef, useState } from "react";
-import BasicCard from "@/components/BasicCard";
-import bg from "../../public/advert.jpeg";
-import NavBarCallLink from "@/components/NavBarCallLink";
-
-export interface CardProps {
-  id: number;
-  url: string;
-  route: string;
-  alt: string;
-  text: string;
-  btn: string;
-}
 
 export default function Home() {
-  const toggleButton = (el: any) => {
-    console.log(el);
-    //console.log(buttonRef.current?.id)
-  };
-
-  
-  
-
-
-  const fetchRes = async () => {
-    const res = await fetch('/api/test')
-    const { data } = await res.json()
-    
-    console.log(data)
-  }
-  useEffect(() => {
-    fetchRes()
-  },[])
-
-  const [quote, setQuote] = useState<string>("");
-  const [author, setAuthor] = useState<string>("");
-
-  // const url = "https://api.api-ninjas.com/v1/quotes?category=courage";
-  // const fetchQuote = async () => {
-  //   try {
-  //     const res = await fetch(url, {
-  //       headers: {
-  //         "X-Api-Key": process.env.NEXT_PUBLIC_NINJA_KEY!,
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-  //     const data = await res.json();
-  //     console.log(data[0]);
-  //     setQuote(data[0].quote);
-  //     setAuthor(data[0].author);
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchQuote();
-  // }, []);
-
-  const buttonRef = useRef<HTMLButtonElement>(null);
-
-  const cards: CardProps[] = [
-    {
-      id: 1,
-      url: "/plum.png",
-      alt: "plums",
-      text: "Are you Suspicious?",
-      btn: "Post a Tip",
-      route: "/how-it-works",
-    },
-    {
-      id: 2,
-      url: "/lemon.png",
-      alt: "lemons",
-      text: "How it Works",
-      btn: "Learn More",
-      route: "/how-it-works",
-    },
-    {
-      id: 3,
-      url: "/strawberry.png",
-      alt: "strawberries",
-      text: "Safety Tips",
-      btn: "Read More",
-      route: "/safety-tips",
-    },
-    {
-      id: 4,
-      url: "/tomato.png",
-      alt: "tomatoes",
-      text: "Mission & Vision",
-      btn: "Read Now",
-      route: "/mission-vision",
-    },
-  ];
-
   return (
     <main className="flex min-h-screen w-full max-w-screen flex-col md:p-24">
-      <div className="">
-        <img
-          src="/homepagetop.png"
-          alt="citizens standing together"
-          className="w-full"
-        />
-        {/* <h1 className="text-3xl md:text-6xl font-bold text-blue-900">
-          Welcome to Crack-Crime-Bahamas
-        </h1>
-        <p className="mt-4 md:ml-3 text-md mb-4">Your safety is our Priority</p> */}
-      </div>
-      <h1 className="text-3xl text-center font-bold py-2">CrackCrimeBahamas</h1>
-      <Divider />
-      {/* <div
-        className="w-full h-40"
-        style={{
-          backgroundImage: `url(${bg.src})`,
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-        }}
-      ></div> */}
-      {/* <div className="w-full p-4">
-        <pre className="text-wrap italic font-semibold">
-          {quote ? quote : ""}
-        </pre>
-        <pre className="text-right text-wrap">{author ? "-" + author : ""}</pre>
-      </div> */}
-      <Divider />
-      <div className="flex w-full min-h-fit flex-wrap bg-slate-300 items-center">
-        <div className="bg-red-100 h-40 flex justify-center items-center w-1/2 md:w-1/3">
-          <img
-            src="/tiles/tip.jpeg"
-            alt="missing persons list"
-            className="w-full h-full"
-          />
+      <h1 className="text-center text-8xl font-honk">Crack Crime Bahamas</h1>
+      <section className="">
+        <div className="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
+          <div className="mr-auto place-self-center lg:col-span-7">
+            <h1 className="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-black">
+              Payments tool for software companies
+            </h1>
+            <p className="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
+              From checkout to global sales tax compliance, companies around the
+              world use Flowbite to simplify their payment stack.
+            </p>
+            <a
+              href="#"
+              className="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900"
+            >
+              Get started
+              <svg
+                className="w-5 h-5 ml-2 -mr-1"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                  clip-rule="evenodd"
+                ></path>
+              </svg>
+            </a>
+            <a
+              href="#"
+              className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
+            >
+              Speak to Sales
+            </a>
+          </div>
+          <div className="hidden lg:mt-0 lg:col-span-5 lg:flex">
+            <img
+              src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/hero/phone-mockup.png"
+              alt="mockup"
+            />
+          </div>
         </div>
-        <div className="bg-teal-300 h-40 flex justify-center items-center w-1/2 md:w-1/3">
-          <h1 className="text-2xl font-semibold">Who We Are</h1>
-        </div>
-        <div className="bg-red-400 h-40 flex justify-center items-center w-1/2 md:w-1/3">
-          <img
-            src="/tiles/wanted.jpeg"
-            alt="missing persons list"
-            className="w-full h-full"
-          />
-        </div>
-        <div className="bg-red-900 h-40 flex justify-center items-center w-1/2 md:w-1/3">
-          <img
-            src="/tiles/help.jpeg"
-            alt="missing persons list"
-            className="w-full h-full"
-          />
-        </div>
-        <div className="bg-red-50 h-40 flex justify-center items-center w-1/2 md:w-1/3">
-          <img
-            src="/tiles/missing.jpeg"
-            alt="missing persons list"
-            className="w-full h-full"
-          />
-        </div>
-        <div className="bg-red-300 h-40 flex justify-center items-center w-1/2 md:w-1/3">
-          <img
-            src="/tiles/emergency.jpeg"
-            alt="missing persons list"
-            className="w-full h-full"
-          />
-        </div>
-        {/* {cards.map((card: any, index: number) => {
-          return (
-              <BasicCard key={card.id} {...card} />
-          );
-        })} */}
-      </div>
+      </section>
     </main>
   );
 }

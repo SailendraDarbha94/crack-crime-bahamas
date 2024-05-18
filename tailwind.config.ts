@@ -8,6 +8,10 @@ const config: Config = {
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    fontFamily: {
+      nunito: ["Nunito", "sans-serif"],
+      honk: ["Honk", "honk"]
+    },
     extend: {
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
