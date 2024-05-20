@@ -5,7 +5,7 @@ export default function Footer() {
         <div className="mx-auto max-w-screen-xl">
           <div className="md:flex md:justify-between">
             <div className="mb-6 md:mb-0">
-              <a href="https://flowbite.com" className="flex items-center">
+              <a href="/" className="flex items-center">
                 <img
                   src="/newfavicon.png"
                   className="mr-3 h-8"
@@ -29,25 +29,27 @@ export default function Footer() {
                   </li>
                   <li>
                     <a
-                      href="https://tailwindcss.com/"
+                      href="https://www.royalbahamaspolice.org/community/announcements/"
                       className="hover:underline"
+                      target="_blank"
+                      rel="noopener"
                     >
-                      Contact Us
+                      Announcements
                     </a>
                   </li>
                 </ul>
               </div>
               <div>
                 <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">
-                  Download App
+                  More
                 </h2>
                 <ul className="text-gray-600 dark:text-gray-400">
                   <li className="mb-4">
                     <a
-                      href="https://github.com/themesberg/flowbite"
+                      href="/login"
                       className="hover:underline "
                     >
-                      iPhone
+                      Admin Login
                     </a>
                   </li>
                   <li>
@@ -55,7 +57,7 @@ export default function Footer() {
                       href="https://discord.gg/4eeurUVvTy"
                       className="hover:underline"
                     >
-                      Android
+                      Contact Us
                     </a>
                   </li>
                 </ul>
