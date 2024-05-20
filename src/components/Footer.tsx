@@ -7,12 +7,12 @@ export default function Footer() {
             <div className="mb-6 md:mb-0">
               <a href="https://flowbite.com" className="flex items-center">
                 <img
-                  src="https://flowbite.com/docs/images/logo.svg"
+                  src="/newfavicon.png"
                   className="mr-3 h-8"
                   alt="FlowBite Logo"
                 />
                 <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                  Flowbite
+                  Crime Stoppers
                 </span>
               </a>
             </div>
@@ -23,8 +23,8 @@ export default function Footer() {
                 </h2>
                 <ul className="text-gray-600 dark:text-gray-400">
                   <li className="mb-4">
-                    <a href="https://flowbite.com" className="hover:underline">
-                      Flowbite
+                    <a rel="noopener" href="https://www.royalbahamaspolice.org/crimeprevention/" target="_blank" className="hover:underline">
+                      Crime Prevention Tips
                     </a>
                   </li>
                   <li>
@@ -32,14 +32,14 @@ export default function Footer() {
                       href="https://tailwindcss.com/"
                       className="hover:underline"
                     >
-                      Tailwind CSS
+                      Contact Us
                     </a>
                   </li>
                 </ul>
               </div>
               <div>
                 <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">
-                  Follow us
+                  Download App
                 </h2>
                 <ul className="text-gray-600 dark:text-gray-400">
                   <li className="mb-4">
@@ -47,7 +47,7 @@ export default function Footer() {
                       href="https://github.com/themesberg/flowbite"
                       className="hover:underline "
                     >
-                      Github
+                      iPhone
                     </a>
                   </li>
                   <li>
@@ -55,7 +55,7 @@ export default function Footer() {
                       href="https://discord.gg/4eeurUVvTy"
                       className="hover:underline"
                     >
-                      Discord
+                      Android
                     </a>
                   </li>
                 </ul>
@@ -66,12 +66,12 @@ export default function Footer() {
                 </h2>
                 <ul className="text-gray-600 dark:text-gray-400">
                   <li className="mb-4">
-                    <a href="#" className="hover:underline">
+                    <a href="/legal/privacy" className="hover:underline">
                       Privacy Policy
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="hover:underline">
+                    <a href="/legal/terms" className="hover:underline">
                       Terms &amp; Conditions
                     </a>
                   </li>
@@ -82,14 +82,14 @@ export default function Footer() {
           <hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
           <div className="sm:flex sm:items-center sm:justify-between">
             <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
-              © 2022{" "}
-              <a href="https://flowbite.com" className="hover:underline">
-                Flowbite™
+              © 2024{" "}
+              <a href="/" className="hover:underline">
+                CrackCrimeBahamas™
               </a>
               . All Rights Reserved.
             </span>
             <div className="flex mt-4 space-x-6 sm:justify-center sm:mt-0">
-              <a
+              {/* <a
                 href="#"
                 className="text-gray-500 hover:text-gray-900 dark:hover:text-white"
               >
@@ -105,7 +105,7 @@ export default function Footer() {
                     clip-rule="evenodd"
                   />
                 </svg>
-              </a>
+              </a> */}
               <a
                 href="#"
                 className="text-gray-500 hover:text-gray-900 dark:hover:text-white"
@@ -137,7 +137,9 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href="#"
+                href="https://github.com/SailendraDarbha94/crack-crime-bahamas"
+                target="_blank"
+                rel="noopener"
                 className="text-gray-500 hover:text-gray-900 dark:hover:text-white"
               >
                 <svg
@@ -153,7 +155,7 @@ export default function Footer() {
                   />
                 </svg>
               </a>
-              <a
+              {/* <a
                 href="#"
                 className="text-gray-500 hover:text-gray-900 dark:hover:text-white"
               >
@@ -169,7 +171,7 @@ export default function Footer() {
                     clip-rule="evenodd"
                   />
                 </svg>
-              </a>
+              </a> */}
             </div>
           </div>
         </div>
