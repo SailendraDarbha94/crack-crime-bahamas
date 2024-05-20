@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Crime Stoppers",
-  description: "Your safety is our priority.",
+  description: "Safety is Key",
 };
 
 export default function RootLayout({
@@ -15,6 +16,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         {children}
+        <Footer />
       </body>
     </html>
   );

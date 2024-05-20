@@ -2,33 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face{
-  font-family: "Honk";
-  src: url("../../public/fonts/Honk/Honk-Regular-VariableFont_MORF\,SHLN.ttf");
-}
-
 @font-face {
   font-family: "Nunito";
   src: url("../../public/fonts/Nunito/Nunito-VariableFont_wght.ttf");
 }
 
+@font-face {
+  font-family: "Honk";
+  src: url("../../public//fonts/Honk/Honk-Regular-VariableFont_MORF\,SHLN.ttf");
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 255, 255, 0;
-  --background-end-rgb: 0, 0, 0;
+  --background-start-rgb: 58, 91, 255;
+  --background-end-rgb: 194, 201, 255;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 51, 51, 51;
+    --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
   }
 }
 
 body {
-  margin: 0;
-  padding: 0;
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
