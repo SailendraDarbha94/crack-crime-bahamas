@@ -63,7 +63,7 @@ const Modal = ({
   return (
     <>
       <span
-        className="inline-block text-blue-500 underline hover:cursor-pointer px-2"
+        className="inline-block hover:cursor-pointer hover:underline"
         onClick={openModal}
       >
         {word}

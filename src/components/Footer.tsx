@@ -1,3 +1,5 @@
+import Modal from "./Modal";
+
 export default function Footer() {
   return (
     <div className="w-full">
@@ -53,12 +55,7 @@ export default function Footer() {
                     </a>
                   </li>
                   <li>
-                    <a
-                      href="#"
-                      className="hover:underline"
-                    >
-                      Contact Us
-                    </a>
+                    <Modal word="Contact Us" heading="Get In Touch With Us" content="1-242-322-3320,crimestoppersbahamas@gmail.com" />
                   </li>
                 </ul>
               </div>
