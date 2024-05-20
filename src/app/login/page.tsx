@@ -1,8 +1,8 @@
 const Page = () => {
   return (
     <div className="min-h-screen p-4 md:p-12 lg:p-24">
-      <section className="bg-gray-50 dark:bg-gray-900 font-nunito mb-10 mx-auto max-w-md rounded-lg">
-        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+      <section className="bg-gray-50 dark:bg-gray-900 font-nunito mb-10 mx-auto max-w-lg rounded-lg">
+        <div className="flex flex-col items-center justify-center px-8 py-4 mx-auto md:h-screen lg:py-0">
           <a
             href="#"
             className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
@@ -52,7 +52,7 @@ const Page = () => {
                     required={true}
                   />
                 </div>
-                <div className="flex items-center justify-between">
+                {/* <div className="flex items-center justify-between">
                   <div className="flex items-start">
                     <div className="flex items-center h-5">
                       <input
@@ -78,14 +78,14 @@ const Page = () => {
                   >
                     forgot password?
                   </a>
-                </div>
+                </div> */}
                 <button
                   type="submit"
-                  className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                  className="w-full rounded-lg bg-slate-200 hover:bg-slate-300 dark:hover:bg-blue-700 dark:text-white focus:ring-4 dark:bg-blue-600 focus:outline-none font-medium text-lg px-5 py-2.5 text-center"
                 >
                   Sign in
                 </button>
-                <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+                {/* <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                   Don&apos;t have an account yet?{" "}
                   <a
                     href="#"
@@ -93,7 +93,7 @@ const Page = () => {
                   >
                     Sign up
                   </a>
-                </p>
+                </p> */}
               </form>
             </div>
           </div>

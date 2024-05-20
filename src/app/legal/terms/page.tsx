@@ -24,7 +24,7 @@ const Page = () => {
       </div>
       <div className="my-8">
         <h1 className="text-3xl font-semibold">User Accounts</h1>
-        <p className="tracking-wide mt-2 text-lg">
+        <div className="tracking-wide mt-2 text-lg">
           <ul className="list-disc list-inside font-thin">
             <li>
               <span className="font-semibold">Registration</span>: To use our
@@ -41,11 +41,11 @@ const Page = () => {
               least 16 years old to use our services.
             </li>
           </ul>
-        </p>
+        </div>
       </div>
       <div className="my-8">
         <h1 className="text-3xl font-semibold">Submitting Tips</h1>
-        <p className="tracking-wide mt-2 text-lg">
+        <div className="tracking-wide mt-2 text-lg">
           <ul className="list-disc list-inside font-thin">
             <li>
               <span className="font-semibold">Content Ownership</span>: You
@@ -63,11 +63,11 @@ const Page = () => {
               rights.
             </li>
           </ul>
-        </p>
+        </div>
       </div>
       <div className="my-8">
         <h1 className="text-3xl font-semibold">Your Rights</h1>
-        <p className="tracking-wide mt-2 text-lg">
+        <div className="tracking-wide mt-2 text-lg">
           <ul className="list-disc list-inside font-thin">
             <li>
               <span className="font-semibold">Encryption</span>: All tips are
@@ -82,17 +82,17 @@ const Page = () => {
               for details on how we collect, use, and protect your information.
             </li>
           </ul>
-        </p>
+        </div>
       </div>
       <div className="my-8">
         <h1 className="text-3xl font-semibold">Prohibited Uses</h1>
-        <p className="tracking-wide mt-2 text-lg">
+        <div className="tracking-wide mt-2 text-lg">
           <ul className="list-disc list-inside font-thin">
             <li>Use our services for any unlawful purpose.</li>
             <li>Submit false or misleading information.</li>
             <li>Attempt to gain unauthorized access to our systems.</li>
           </ul>
-        </p>
+        </div>
       </div>
       <div className="my-8">
         <h1 className="text-3xl font-semibold">Termination</h1>

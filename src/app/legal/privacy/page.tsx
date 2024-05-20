@@ -16,7 +16,7 @@ const Page = () => {
       </div>
       <div className="my-8">
         <h1 className="text-3xl font-semibold">Information We collect</h1>
-        <p className="tracking-wide mt-2 text-lg">
+        <div className="tracking-wide mt-2 text-lg">
           <ul className="list-disc list-inside font-thin">
             <li>
               <span className="font-semibold">Personal Information</span>: Name,
@@ -32,11 +32,11 @@ const Page = () => {
               enchance your experience
             </li>
           </ul>
-        </p>
+        </div>
       </div>
       <div className="my-8">
         <h1 className="text-3xl font-semibold">How We Use Your Information</h1>
-        <p className="tracking-wide mt-2 text-lg">
+        <div className="tracking-wide mt-2 text-lg">
           <ul className="list-disc list-inside font-thin">
             <li>
               <span className="font-semibold">Providing Services</span>: To
@@ -51,7 +51,7 @@ const Page = () => {
               you regarding your submissions or for promotional purposes.
             </li>
           </ul>
-        </p>
+        </div>
       </div>
       <div className="my-8">
         <h1 className="text-3xl font-semibold">Data Security</h1>
@@ -63,7 +63,7 @@ const Page = () => {
       </div>
       <div className="my-8">
         <h1 className="text-3xl font-semibold">Your Rights</h1>
-        <p className="tracking-wide mt-2 text-lg">
+        <div className="tracking-wide mt-2 text-lg">
           <ul className="list-disc list-inside font-thin">
             <li>
               <span className="font-semibold">Acess</span>: You can request a
@@ -78,7 +78,7 @@ const Page = () => {
               the deletion of your data.
             </li>
           </ul>
-        </p>
+        </div>
       </div>
       <div className="my-8">
         <h1 className="text-3xl font-semibold">Changes to this policy</h1>
@@ -94,7 +94,6 @@ const Page = () => {
           <a href="#" className="text-blue-500 underline">
             Contact us
           </a>
-          .
         </p>
       </div>
     </div>
