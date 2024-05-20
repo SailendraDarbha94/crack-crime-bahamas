@@ -72,12 +72,12 @@ const Modal = ({
         <h2 className="text-2xl mb-4 dark:text-black font-nunito">{heading}</h2>
         <p className="font-nunito text-lg text-wrap tracking-wide">
           {lines &&
-            lines.map((line: string) => {
+            lines.map((line: string, index) => {
               return (
-                <>
+                <p key={index}>
                   {line}
                   <br />
-                </>
+                </p>
               );
             })}
         </p>
