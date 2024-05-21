@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -7,12 +7,15 @@ const Page = () => {
   const [password, setPassword] = useState<string>("");
   const router = useRouter();
   const handleLogin = async () => {
-    if(!username || !password){
-      alert("error")
-      return
+    if (!username || !password) {
+      alert("error");
+      return;
     }
-    if( username === process.env.NEXT_PUBLIC_USERNAME && password === process.env.NEXT_PUBLIC_PASSWORD){
-      router.push("/admin")
+    if (
+      username === process.env.NEXT_PUBLIC_USERNAME &&
+      password === process.env.NEXT_PUBLIC_PASSWORD
+    ) {
+      router.push("/admin");
     }
   };
 
@@ -32,7 +35,7 @@ const Page = () => {
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Admin Login
               </h1>
-              <form className="space-y-4 md:space-y-6" action="#">
+              <div className="space-y-4 md:space-y-6">
                 <div>
                   <label
                     htmlFor="email"
@@ -97,7 +100,7 @@ const Page = () => {
                   </a>
                 </div> */}
                 <button
-                  type="submit"
+                  //type="submit"
                   onClick={handleLogin}
                   className="w-full rounded-lg bg-slate-200 hover:bg-slate-300 dark:hover:bg-blue-700 dark:text-white focus:ring-4 dark:bg-blue-600 focus:outline-none font-medium text-lg px-5 py-2.5 text-center"
                 >
@@ -112,7 +115,7 @@ const Page = () => {
                     Sign up
                   </a>
                 </p> */}
-              </form>
+              </div>
             </div>
           </div>
         </div>

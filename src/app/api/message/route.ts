@@ -13,7 +13,5 @@ export async function POST(req:Request) {
     const { acknowledged, insertedId } = await mongoDb.collection("dev").insertOne(body)
     if(acknowledged){
         return Response.json({data: insertedId})
-    } else {
-        return Response.json({data: "An Error Occured!"})
     }
 }
