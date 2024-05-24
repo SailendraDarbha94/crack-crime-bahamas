@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center p-4 md:p-12 lg:p-24">
       <h1 className="md:text-6xl lg:text-8xl text-4xl font-honk font-bold mb-10 bg-black w-screen text-center">
-        Bahamas Crime Stoppers
+        Crack Crime Bahamas
       </h1>
       <section className="bg-white dark:bg-gray-900 rounded-lg font-nunito mb-10 w-full">
         <div className="grid w-full px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
