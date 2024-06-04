@@ -10,7 +10,7 @@ import { aboutUsParagraphs } from "@/constants/moreAboutUsTexts";
 const Page = () => {
   return (
     <div className="flex min-h-screen flex-col items-center p-4 md:p-12 lg:p-24">
-      <section className="bg-white dark:bg-gray-900 rounded-lg font-nunito mb-10">
+      <section className=" dark:bg-gray-900 rounded-lg font-nunito mb-10">
         <div className="gap-8 items-center py-8 px-4 mx-auto max-w-screen-xl xl:gap-16 md:grid md:grid-cols-2 sm:py-16 lg:px-6">
           <div className="">
             <Image
@@ -22,9 +22,9 @@ const Page = () => {
             />
           </div>
           <div className="mt-4 md:mt-0">
-            <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+            <h2 className="mb-4 text-3xl md:text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
               Help combat crime by reporting what you see and what you know to{" "}
-              <span className="text-blue-500 underline">
+              <span className="text-blue-700 dark:text-blue-500 underline">
                 Crime Stoppers Bahamas{" "}
               </span>
             </h2>
@@ -35,7 +35,7 @@ const Page = () => {
             </p>
             <a
               href="/member"
-              className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
+              className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 border border-gray-900 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
             >
               Become a Member
             </a>
@@ -54,7 +54,7 @@ const Page = () => {
       })}
       <section className="bg-white dark:bg-gray-900 rounded-lg font-nunito mb-10">
         <div className="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
-          <h2 className="mb-8 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+          <h2 className="mb-8 text-3xl md:text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
             Frequently asked questions
           </h2>
           <div className="grid pt-8 text-left border-t border-gray-200 md:gap-16 dark:border-gray-700 md:grid-cols-2">

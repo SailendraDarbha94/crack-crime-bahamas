@@ -15,20 +15,24 @@ const Page = () => {
       username === process.env.NEXT_PUBLIC_USERNAME &&
       password === process.env.NEXT_PUBLIC_PASSWORD
     ) {
+
+      await localStorage.setItem('token', JSON.stringify({
+        token: "something"
+      }))
       router.push("/admin");
     }
   };
 
   return (
-    <div className="min-h-screen p-4 md:p-12 lg:p-24">
-      <section className="bg-gray-50 dark:bg-gray-900 font-nunito mb-10 mx-auto max-w-lg rounded-lg">
-        <div className="flex flex-col items-center justify-center px-8 py-4 mx-auto md:h-screen lg:py-0">
-          <a
+    <div className="min-h-screen p-4 pt-24 md:pt-0">
+      <section className="font-nunito mb-10 mx-auto max-w-lg rounded-lg">
+        <div className="flex flex-col items-center justify-center px-3 md:px-8 py-4 mx-auto md:h-screen lg:py-0">
+        <a
             href="#"
             className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
           >
             <img className="w-8 h-8 mr-2" src="/newfavicon.png" alt="logo" />
-            Crime Stoppers Bahamas
+            Crack Crime Bahamas
           </a>
           <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">

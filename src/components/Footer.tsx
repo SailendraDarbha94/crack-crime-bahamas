@@ -2,7 +2,7 @@ import Modal from "./Modal";
 
 export default function Footer() {
   return (
-    <div className="w-full">
+    <div className="w-full pb-14 md:pb-0">
       <footer className="p-4 bg-white sm:p-6 dark:bg-gray-800">
         <div className="mx-auto max-w-screen-xl">
           <div className="md:flex md:justify-between">
@@ -11,10 +11,10 @@ export default function Footer() {
                 <img
                   src="/newfavicon.png"
                   className="mr-3 h-8"
-                  alt="FlowBite Logo"
+                  alt="Logo"
                 />
                 <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                  Crime Stoppers
+                  CrackCrimeBahamas
                 </span>
               </a>
             </div>

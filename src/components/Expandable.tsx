@@ -21,7 +21,7 @@ const Expandable = ({
     <section className="bg-white dark:bg-gray-900 rounded-lg my-8">
       <div className="py-8 px-4">
         <div id="initial-content" className="">
-          <h2 className="mb-4 text-4xl tracking-tight font-bold text-center text-blue-500">{heading}</h2>
+          <h2 className="mb-4 text-3xl md:text-4xl tracking-tight font-bold font-nunito text-center text-blue-500">{heading}</h2>
           <p className="font-medium font-nunito text-lg tracking-wide">{initialContent}</p>
           {isExpanded ? null : (
             <button
