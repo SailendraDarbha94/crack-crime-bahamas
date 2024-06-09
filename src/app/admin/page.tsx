@@ -1,16 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Page = () => {
   const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<any[]>([]);
+  const [missingPersons, setMissingPersons] = useState<any[]>([]);
   const [members, setMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   const fetchMembers = async () => {
     setLoading(true);
     setMessages([]);
+    setMissingPersons([]);
     try {
       const res = await fetch("/api/member");
       const { data } = await res.json();
@@ -28,6 +30,7 @@ const Page = () => {
   const fetchMessages = async () => {
     setLoading(true);
     setMembers([]);
+    setMissingPersons([]);
     try {
       const res = await fetch("/api/message");
       const { data } = await res.json();
@@ -42,6 +45,51 @@ const Page = () => {
     }
   };
 
+  const fetchWantedPersons = async () => {
+    setLoading(true);
+    setMembers([]);
+    setMessages([]);
+    try {
+      const res = await fetch("/api/wanted");
+      const { data } = await res.json();
+      console.log(data);
+      if (data) {
+        setLoading(false);
+      }
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+      alert("An Error Occured! Please try again later");
+    }
+  };
+
+  const fetchMissingPersons = async () => {
+    setLoading(true);
+    setMembers([]);
+    setMessages([]);
+    try {
+      const res = await fetch("/api/missing");
+      const { data } = await res.json();
+      console.log(data);
+      if (data) {
+        setMissingPersons(data);
+        setLoading(false);
+      }
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+      alert("An Error Occured! Please try again later");
+    }
+  };
+
+  // const getIdToken = async () => {
+  //   const token = await localStorage.getItem('token');
+  //   console.log(token); 
+  // }
+
+  // useEffect(() => {
+  //   getIdToken();
+  // },[])
   // const postData = async () => {
   //   const res = await fetch("/api/message", {
   //     method: "POST",
@@ -102,6 +150,18 @@ const Page = () => {
             onClick={fetchMessages}
           >
             Fetch Messages
+          </button>
+          <button
+            className="w-40 block my-4 text-center rounded-lg bg-blue-700 text-white"
+            onClick={fetchMissingPersons}
+          >
+            Fetch Missing Persons
+          </button>
+          <button
+            className="w-40 block my-4 text-center rounded-lg bg-blue-700 text-white"
+            onClick={fetchWantedPersons}
+          >
+            Fetch Wanted Persons
           </button>
           <hr />
           <div>

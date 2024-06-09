@@ -3,46 +3,55 @@
 import { useState } from "react";
 
 const Page = () => {
+  const [wantedFor, setWantedFor] = useState<string>("");
   const [name, setName] = useState<string>("");
-  const [address, setAddress] = useState<string>("");
-  const [mobile, setMobile] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [support, setSupport] = useState<string>("");
+  const [age, setAge] = useState<string>("");
+  const [last_known_address, setLastKnownAddress] = useState<string>("");
+  const [gender, setGender] = useState<string>("");
+  const [alias, setAlias] = useState<string>("");
+  //   const [imageUrl, setImageURL] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const registerMember = async () => {
-    setLoading(true)
+
+  const registerMissingPerson = async () => {
+    setLoading(true);
     try {
-      const res = await fetch("/api/member", {
+      const res = await fetch("/api/wanted", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           _name: name,
-          _address: address,
-          _mobile: mobile,
-          _email: email,
-          _support: support,
+          _wanted_for: wantedFor,
+          _age: age,
+          _gender: gender,
+          _alias: alias,
+          _created_at: new Date().getTime(),
+          _updated_at: new Date().getTime(),
+          _last_known_address: last_known_address,
         }),
       });
+
       const data = await res.json();
+
       if (data) {
         console.log(data);
         setName("");
-        setAddress("");
-        setEmail("");
-        setMobile("");
-        setSupport("");
-        setLoading(false)
+        setAge("");
+        setAlias("");
+        setGender("");
+        setLastKnownAddress("");
+        setLoading(false);
       }
+      setLoading(false);
     } catch (err) {
       console.error(err);
-      setLoading(false)
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen p-4 pt-24 md:pt-0">
+    <div className="min-h-screen p-4 pt-14">
       <section className="font-nunito mb-10 mx-auto max-w-lg rounded-lg">
         <div className="flex flex-col items-center justify-center px-3 md:px-8 py-4 mx-auto md:h-screen lg:py-0">
           <a
@@ -55,7 +64,7 @@ const Page = () => {
           <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-4 md:p-6 space-y-4 md:space-y-6 sm:p-8 w-fu">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                Membership Form
+                Wanted Person Report
               </h1>
               <form className="space-y-4 md:space-y-6" action="#">
                 <div>
@@ -78,110 +87,93 @@ const Page = () => {
                 </div>
                 <div>
                   <label
-                    htmlFor="email"
+                    htmlFor="charged"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
-                    E-Mail
+                    Wanted For
                   </label>
-                  <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="abc@example.com"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  <textarea
+                    //type="text"
+                    name="charged"
+                    id="charged"
+                    value={wantedFor}
+                    className="bg-gray-50 border h-24 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
                     required={true}
+                    onChange={(e) => setWantedFor(e.target.value)}
                   />
                 </div>
                 <div>
                   <label
-                    htmlFor="address"
+                    htmlFor="age"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
-                    Address
+                    Age of the Suspect
                   </label>
                   <input
-                    type="text"
-                    name="address"
-                    id="address"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
+                    type="age"
+                    name="age"
+                    id="age"
+                    value={age}
+                    onChange={(e) => setAge(e.target.value)}
                     placeholder=""
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required={true}
+                    required={false}
                   />
                 </div>
                 <div>
                   <label
-                    htmlFor="mobile"
+                    htmlFor="gender"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
-                    Mobile
+                    Gender of the Suspect
                   </label>
                   <input
                     type="text"
-                    name="mobile"
-                    id="mobile"
-                    value={mobile}
-                    onChange={(e) => setMobile(e.target.value)}
+                    name="gender"
+                    id="gender"
+                    value={gender}
+                    onChange={(e) => setGender(e.target.value)}
                     placeholder=""
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required={true}
+                    required={false}
                   />
                 </div>
                 <div>
-                  <p>Select Your Annual Membership Fees</p>
-                  <div className="m-2 inline-block text-green-600">
-                    <input
-                      type="radio"
-                      id="friend"
-                      name="friend"
-                      value="friend"
-                      onChange={(e) => setSupport(e.target.value)}
-                    />
-                    <label htmlFor="friend">$25(Friend)</label>
-                  </div>
-                  <div className="m-2 inline-block text-blue-500">
-                    <input
-                      type="radio"
-                      id="supporter"
-                      name="supporter"
-                      value="supporter"
-                      onChange={(e) => setSupport(e.target.value)}
-                    />
-                    <label htmlFor="supporter">$100(Supporter)</label>
-                  </div>
-                  <div className="m-2 inline-block text-amber-900">
-                    <input
-                      type="radio"
-                      id="bronze"
-                      name="bronze"
-                      value="bronze"
-                      onChange={(e) => setSupport(e.target.value)}
-                    />
-                    <label htmlFor="bronze">$250(Bronze)</label>
-                  </div>
-                  <div className="m-2 inline-block text-gray-400">
-                    <input
-                      type="radio"
-                      id="silver"
-                      name="silver"
-                      value="silver"
-                      onChange={(e) => setSupport(e.target.value)}
-                    />
-                    <label htmlFor="silver">$500(Silver)</label>
-                  </div>
-                  <div className="m-2 inline-block text-amber-400">
-                    <input
-                      type="radio"
-                      id="gold"
-                      name="gold"
-                      value="gold"
-                      onChange={(e) => setSupport(e.target.value)}
-                    />
-                    <label htmlFor="gold">$1000(Gold)</label>
-                  </div>
+                  <label
+                    htmlFor="alias"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Known Aliases
+                  </label>
+                  <input
+                    type="text"
+                    name="alias"
+                    id="alias"
+                    value={alias}
+                    onChange={(e) => setAlias(e.target.value)}
+                    placeholder=""
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    required={false}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="last_known_address"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Last Known Address
+                  </label>
+                  <input
+                    type="text"
+                    name="last_known_address"
+                    id="last_known_address"
+                    value={last_known_address}
+                    onChange={(e) => setLastKnownAddress(e.target.value)}
+                    placeholder=""
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    required={false}
+                  />
                 </div>
                 {/* <div className="flex items-center justify-between">
                     <div className="flex items-start">
@@ -233,10 +225,10 @@ const Page = () => {
                 ) : (
                   <button
                     type="submit"
-                    onClick={registerMember}
+                    onClick={registerMissingPerson}
                     className="w-full rounded-lg bg-slate-200 hover:bg-slate-300 dark:hover:bg-blue-700 dark:text-white focus:ring-4 dark:bg-blue-600 focus:outline-none font-medium text-lg px-5 py-2.5 text-center"
                   >
-                    Sign in
+                    Submit
                   </button>
                 )}
 
