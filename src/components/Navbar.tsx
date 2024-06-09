@@ -145,7 +145,7 @@ const Navbar = () => {
       </div>
       <div
         className="h-14 bg-yellow-300 dark:bg-gray-600 w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
-        onClick={() => paths.includes("admin") ? routeNavigator("/admin") : routeNavigator("/admin")}
+        onClick={() => paths.includes("admin") ? routeNavigator("/admin") : routeNavigator("/login")}
       >
         {paths.includes("admin") ? "Admin Page":"Admin Login"}
       </div>

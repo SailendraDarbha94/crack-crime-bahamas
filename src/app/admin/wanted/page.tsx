@@ -3,19 +3,17 @@
 import { useState } from "react";
 
 const Page = () => {
-
-    const [description, setDescription] = useState<string>("");
+  const [wantedFor, setWantedFor] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [age, setAge] = useState<string>("");
   const [last_known_address, setLastKnownAddress] = useState<string>("");
   const [gender, setGender] = useState<string>("");
   const [alias, setAlias] = useState<string>("");
-//   const [imageUrl, setImageURL] = useState<string>("");
+  //   const [imageUrl, setImageURL] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
-
   const registerMissingPerson = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       const res = await fetch("/api/wanted", {
         method: "POST",
@@ -24,7 +22,7 @@ const Page = () => {
         },
         body: JSON.stringify({
           _name: name,
-          _description: description,
+          _wanted_for: wantedFor,
           _age: age,
           _gender: gender,
           _alias: alias,
@@ -34,9 +32,7 @@ const Page = () => {
         }),
       });
 
-
       const data = await res.json();
-
 
       if (data) {
         console.log(data);
@@ -45,12 +41,12 @@ const Page = () => {
         setAlias("");
         setGender("");
         setLastKnownAddress("");
-        setLoading(false)
+        setLoading(false);
       }
-      setLoading(false)
+      setLoading(false);
     } catch (err) {
       console.error(err);
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -91,20 +87,20 @@ const Page = () => {
                 </div>
                 <div>
                   <label
-                    htmlFor="description"
+                    htmlFor="charged"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
-                    Description
+                    Wanted For
                   </label>
                   <textarea
                     //type="text"
-                    name="description"
-                    id="description"
-                    value={description}
+                    name="charged"
+                    id="charged"
+                    value={wantedFor}
                     className="bg-gray-50 border h-24 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder=""
                     required={true}
-                    onChange={(e) => setDescription(e.target.value)}
+                    onChange={(e) => setWantedFor(e.target.value)}
                   />
                 </div>
                 <div>
@@ -112,7 +108,7 @@ const Page = () => {
                     htmlFor="age"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
-                    Age of the Missing Person
+                    Age of the Suspect
                   </label>
                   <input
                     type="age"
@@ -130,7 +126,7 @@ const Page = () => {
                     htmlFor="gender"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
-                    Gender of the Missing Person
+                    Gender of the Suspect
                   </label>
                   <input
                     type="text"

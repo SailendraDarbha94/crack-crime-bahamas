@@ -1,9 +1,6 @@
 import dbConnect from "@/lib/dbConnect";
 import Wanted from "@/models/Wanted";
 
-
-import { NextApiRequest, NextApiResponse } from "next";
-
 export async function POST(req:Request) {
   const body = await req.json()
   console.log(body);
@@ -17,6 +14,7 @@ export async function POST(req:Request) {
 }
 
 export async function GET(req:Request) {
+  console.log("WANTED GET REQUEST RECEIVED : ==================================================", req)
   await dbConnect();
   try {
     const wanteds = await Wanted.find({});

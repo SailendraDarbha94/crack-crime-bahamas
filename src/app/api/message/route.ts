@@ -8,6 +8,7 @@ export async function GET() {
 }
 
 export async function POST(req:Request) {
+    console.log("MESSAGE POST REQUEST RECEIVED : ==================================================", req)
     const body = await req.json()
     const mongoDb = (await mongoClient).db("messages");
     const { acknowledged, insertedId } = await mongoDb.collection("dev").insertOne(body)

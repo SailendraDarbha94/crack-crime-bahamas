@@ -45,6 +45,24 @@ const Page = () => {
     }
   };
 
+  const fetchWantedPersons = async () => {
+    setLoading(true);
+    setMembers([]);
+    setMessages([]);
+    try {
+      const res = await fetch("/api/wanted");
+      const { data } = await res.json();
+      console.log(data);
+      if (data) {
+        setLoading(false);
+      }
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+      alert("An Error Occured! Please try again later");
+    }
+  };
+
   const fetchMissingPersons = async () => {
     setLoading(true);
     setMembers([]);
@@ -138,6 +156,12 @@ const Page = () => {
             onClick={fetchMissingPersons}
           >
             Fetch Missing Persons
+          </button>
+          <button
+            className="w-40 block my-4 text-center rounded-lg bg-blue-700 text-white"
+            onClick={fetchWantedPersons}
+          >
+            Fetch Wanted Persons
           </button>
           <hr />
           <div>
