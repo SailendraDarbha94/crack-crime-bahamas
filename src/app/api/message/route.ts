@@ -3,8 +3,11 @@ import mongoClient from "@/lib/mongo";
 export async function GET() {
     const mongoDb = (await mongoClient).db("messages");
     const data = await mongoDb.collection("dev").find({}).toArray();
-    //console.log("server hitted")
-    return Response.json({data : data})
+    if(data) {
+        return Response.json({data : data})
+    } else {
+        return Response.json({data : "request failed"})
+    }
 }
 
 export async function POST(req:Request) {

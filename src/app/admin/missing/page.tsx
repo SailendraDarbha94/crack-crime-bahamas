@@ -23,13 +23,13 @@ const Page = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: name,
-          age: age,
-          gender: gender,
-          alias: alias,
-          created_at: new Date().getTime(),
-          updated_at: new Date().getTime(),
-          last_known_address: last_known_address,
+          _name: name,
+          _age: age,
+          _gender: gender,
+          _alias: alias,
+          _created_at: new Date().getTime(),
+          _updated_at: new Date().getTime(),
+          _last_known_address: last_known_address,
         }),
       });
 
