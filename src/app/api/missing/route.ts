@@ -1,27 +1,43 @@
 import dbConnect from "@/lib/dbConnect";
+import mongoClient from "@/lib/mongo";
 import Missing from "@/models/Missing";
 
-import { NextApiRequest, NextApiResponse } from "next";
 
 export async function POST(req:Request) {
+  // const body = await req.json()
+  // console.log(body);
+  // await dbConnect();
+  // const missingPerson = await Missing.create(body);
+  // if(missingPerson){
+  //   return Response.json({ data: missingPerson });
+  // } else {
+  //   return Response.json({ data: "request failure"})
+  // }
+  console.log("MESSAGE POST REQUEST RECEIVED : ==================================================", req)
   const body = await req.json()
-  console.log(body);
-  await dbConnect();
-  const missingPerson = await Missing.create(body);
-  if(missingPerson){
-    return Response.json({ data: missingPerson });
+  const mongoDb = (await mongoClient).db("test");
+  const { acknowledged, insertedId } = await mongoDb.collection("missings").insertOne(body)
+  if(acknowledged){
+      return Response.json({data: insertedId})
   } else {
-    return Response.json({ data: "request failure"})
+    return Response.json({data: "request failed"})
   }
 }
 
 export async function GET(req:Request) {
-  await dbConnect();
-  try {
-    const missings = await Missing.find({});
-    return Response.json({ data: missings });
-  } catch (error) {
-    return Response.json({ data: "request failure"})
+  // await dbConnect();
+  // try {
+  //   const missings = await Missing.find({});
+  //   return Response.json({ data: missings });
+  // } catch (error) {
+  //   return Response.json({ data: "request failure"})
+  // }
+  const mongoDb = (await mongoClient).db("test");
+  const data = await mongoDb.collection("missings").find({}).toArray();
+  if(data) {
+      return Response.json({data : data})
+  } else {
+      return Response.json({data : "request failed"})
   }
 }
 
