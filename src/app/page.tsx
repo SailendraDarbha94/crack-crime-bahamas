@@ -4,7 +4,7 @@ import Image from "next/image";
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center p-4 md:p-12 lg:p-24">
-      <h1 className="md:text-6xl lg:text-8xl text-4xl font-honk font-bold mb-10 bg-black w-screen text-center">
+      <h1 className="md:text-6xl lg:text-8xl text-4xl font-nunito font-extrabold mb-10 w-screen text-center">
         Crack Crime Bahamas
       </h1>
       <section className="bg-white dark:bg-gray-900 rounded-lg font-nunito mb-10 w-full">
@@ -58,7 +58,7 @@ export default function Home() {
               Features of our App
             </h2>
             <p className="text-gray-500 sm:text-xl dark:text-gray-400">
-              We here at Bahamas Crime Stoppers believe that safety is one of
+              We here at Crack Crime Bahamas believe that safety is one of
               the fundamental human rights and are steadfast in our commitment
               to keeping our communities safe.
             </p>

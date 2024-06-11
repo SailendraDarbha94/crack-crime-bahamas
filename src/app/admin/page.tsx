@@ -1,5 +1,8 @@
 "use client";
 
+import app from "@/lib/firebase";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const Page = () => {
@@ -8,6 +11,7 @@ const Page = () => {
   const [missingPersons, setMissingPersons] = useState<any[]>([]);
   const [members, setMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
 
   const fetchMembers = async () => {
     setLoading(true);
@@ -84,7 +88,7 @@ const Page = () => {
 
   // const getIdToken = async () => {
   //   const token = await localStorage.getItem('token');
-  //   console.log(token); 
+  //   console.log(token);
   // }
 
   // useEffect(() => {
@@ -106,18 +110,35 @@ const Page = () => {
   //   }
   //   console.log(data)
   // };
+  const logoutUser = async () => {
+    setLoading(true);
+    const auth = await getAuth(app);
+    try {
+      await signOut(auth);
+      setLoading(false);
+      router.push("/");
+    } catch (err) {
+      setLoading(false);
+      console.log(JSON.stringify(err));
+    }
+  };
   return (
-    <div className="min-h-screen w-full p-4 md:p-14 lg:p-24">
+    <div className="min-h-fit p-4 md:p-14 lg:p-24">
       <h1 className="text-4xl mb-2 font-nunito">Admin Dashboard</h1>
-      <h1 className="text-2xl mt-2 font-nunito">Page Under Construction</h1>
-      <a
-        href="/"
-        className="font-nunito mt-8 block w-40 text-center bg-blue-700 text-white rounded-lg p-2"
+      <h1 className="text-2xl mt-2 font-nunito">
+        Page Under Construction
+      </h1>
+      <button
+        onClick={logoutUser}
+        className="w-full max-w-sm rounded-lg bg-emerald-300 hover:bg-emerald-700 hover:text-white dark:hover:bg-blue-700 dark:text-white focus:ring-4 dark:bg-blue-600 focus:outline-none font-medium text-lg px-5 py-2.5 text-center"
       >
-        Go Home
-      </a>
+        Logout
+      </button>
       {loading ? (
-        <div role="status" className="flex justify-center min-h-96 items-center">
+        <div
+          role="status"
+          className="flex justify-center min-h-96 items-center"
+        >
           <svg
             aria-hidden="true"
             className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
