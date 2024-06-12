@@ -13,24 +13,6 @@ const Page = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
-  const fetchMembers = async () => {
-    setLoading(true);
-    setMessages([]);
-    setMissingPersons([]);
-    try {
-      const res = await fetch("/api/member");
-      const { data } = await res.json();
-      if (data) {
-        setMembers(data);
-        setLoading(false);
-      }
-    } catch (err) {
-      setLoading(false);
-      console.log(err);
-      alert("An Error Occured! Please try again later");
-    }
-  };
-
   const fetchMessages = async () => {
     setLoading(true);
     setMembers([]);
@@ -76,7 +58,6 @@ const Page = () => {
       const { data } = await res.json();
       console.log(data);
       if (data) {
-        setMissingPersons(data);
         setLoading(false);
       }
     } catch (err) {
@@ -110,30 +91,13 @@ const Page = () => {
   //   }
   //   console.log(data)
   // };
-  const logoutUser = async () => {
-    setLoading(true);
-    const auth = await getAuth(app);
-    try {
-      await signOut(auth);
-      setLoading(false);
-      router.push("/");
-    } catch (err) {
-      setLoading(false);
-      console.log(JSON.stringify(err));
-    }
-  };
+
   return (
     <div className="min-h-fit p-4 md:p-14 lg:p-24">
       <h1 className="text-4xl mb-2 font-nunito">Admin Dashboard</h1>
       <h1 className="text-2xl mt-2 font-nunito">
-        Page Under Construction
+        Site Under Construction
       </h1>
-      <button
-        onClick={logoutUser}
-        className="w-full max-w-sm rounded-lg bg-emerald-300 hover:bg-emerald-700 hover:text-white dark:hover:bg-blue-700 dark:text-white focus:ring-4 dark:bg-blue-600 focus:outline-none font-medium text-lg px-5 py-2.5 text-center"
-      >
-        Logout
-      </button>
       {loading ? (
         <div
           role="status"
@@ -160,12 +124,6 @@ const Page = () => {
       ) : (
         <div className="mt-20 font-nunito text-lg">
           <h1 className="underline text-xl mb-10">Testing Apis</h1>
-          <button
-            className="w-40 block my-4 text-center rounded-lg bg-blue-700 text-white"
-            onClick={fetchMembers}
-          >
-            Fetch Members
-          </button>
           <button
             className="w-40 block my-4 text-center rounded-lg bg-blue-700 text-white"
             onClick={fetchMessages}

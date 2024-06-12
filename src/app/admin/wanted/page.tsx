@@ -12,7 +12,8 @@ const Page = () => {
   //   const [imageUrl, setImageURL] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const registerMissingPerson = async () => {
+  const registerWantedPerson = async () => {
+    const currentTime = Date.now()
     setLoading(true);
     try {
       const res = await fetch("/api/wanted", {
@@ -21,20 +22,19 @@ const Page = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          _name: name,
-          _wanted_for: wantedFor,
-          _age: age,
-          _gender: gender,
-          _alias: alias,
-          _created_at: new Date().getTime(),
-          _updated_at: new Date().getTime(),
-          _last_known_address: last_known_address,
+          name: name,
+          wanted_for: wantedFor,
+          age: age,
+          gender: gender,
+          alias: alias,
+          created_at: currentTime,
+          last_known_address: last_known_address,
         }),
       });
 
       const data = await res.json();
 
-      if (data) {
+      if (data !== "request failure") {
         console.log(data);
         setName("");
         setAge("");
@@ -225,7 +225,7 @@ const Page = () => {
                 ) : (
                   <button
                     type="submit"
-                    onClick={registerMissingPerson}
+                    onClick={registerWantedPerson}
                     className="w-full rounded-lg bg-slate-200 hover:bg-slate-300 dark:hover:bg-blue-700 dark:text-white focus:ring-4 dark:bg-blue-600 focus:outline-none font-medium text-lg px-5 py-2.5 text-center"
                   >
                     Submit

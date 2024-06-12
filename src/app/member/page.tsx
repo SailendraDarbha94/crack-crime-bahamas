@@ -10,7 +10,8 @@ const Page = () => {
   const [support, setSupport] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const registerMember = async () => {
-    setLoading(true)
+    setLoading(true);
+    const currentTime = Date.now();
     try {
       const res = await fetch("/api/member", {
         method: "POST",
@@ -18,15 +19,16 @@ const Page = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          _name: name,
-          _address: address,
-          _mobile: mobile,
-          _email: email,
-          _support: support,
+          name: name,
+          address: address,
+          mobile: mobile,
+          email: email,
+          support: support,
+          created_at: currentTime
         }),
       });
       const data = await res.json();
-      if (data) {
+      if (data !== "request failure") {
         console.log(data);
         setName("");
         setAddress("");
@@ -182,6 +184,16 @@ const Page = () => {
                     />
                     <label htmlFor="gold">$1000(Gold)</label>
                   </div>
+                  <div className="m-2 inline-block text-fuchsia-500">
+                    <input
+                      type="radio"
+                      id="platinum"
+                      name="platinum"
+                      value="platinum"
+                      onChange={(e) => setSupport(e.target.value)}
+                    />
+                    <label htmlFor="platinum">$2500(Platinum)</label>
+                  </div>
                 </div>
                 {/* <div className="flex items-center justify-between">
                     <div className="flex items-start">
@@ -232,11 +244,10 @@ const Page = () => {
                   </div>
                 ) : (
                   <button
-                    type="submit"
                     onClick={registerMember}
                     className="w-full rounded-lg bg-slate-200 hover:bg-slate-300 dark:hover:bg-blue-700 dark:text-white focus:ring-4 dark:bg-blue-600 focus:outline-none font-medium text-lg px-5 py-2.5 text-center"
                   >
-                    Sign in
+                    Submit
                   </button>
                 )}
 

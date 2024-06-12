@@ -1,15 +1,16 @@
 "use client";
 
+import app from "@/lib/firebase";
+import { getAuth, signOut } from "firebase/auth";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 const Navbar = () => {
   const router = useRouter();
   const path = usePathname();
-  const paths:string[] = path.split("/");
+  const paths: string[] = path.split("/");
   const [height, setHeight] = useState<string>("h-14");
 
-  
   const toggleNavbar = () => {
     console.log(paths);
     if (height === "h-14") {
@@ -22,6 +23,21 @@ const Navbar = () => {
   const routeNavigator = (route: string) => {
     setHeight("h-14");
     router.push(route);
+  };
+
+  const [loading, setLoading] = useState<boolean>(false);
+  const logoutUser = async () => {
+    setLoading(true);
+    setHeight("h-14")
+    const auth = await getAuth(app);
+    try {
+      await signOut(auth);
+      setLoading(false);
+      router.push("/");
+    } catch (err) {
+      setLoading(false);
+      console.log(JSON.stringify(err));
+    }
   };
 
   return (
@@ -124,30 +140,52 @@ const Navbar = () => {
           </svg>
         </div>
       ) : null}
-      <div
-        className="h-14 bg-amber-500 dark:bg-gray-900 w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
-        onClick={() => routeNavigator("/")}
-      >
-        <img src="/newfavicon.png" alt="logo" className="h-8 w-8 mx-2" />
-        Crack Crime Bahamas
-      </div>
+      {paths.includes("admin") ? (
+        <div
+          className="h-14 bg-red-500 text-white w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
+          onClick={logoutUser}
+        >
+          Logout
+        </div>
+      ) : (
+        <div
+          className="h-14 bg-amber-500 dark:bg-gray-900 w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
+          onClick={() => routeNavigator("/")}
+        >
+          <img src="/newfavicon.png" alt="logo" className="h-8 w-8 mx-2" />
+          Crack Crime Bahamas
+        </div>
+      )}
+
       <div
         className="h-14 bg-amber-400 dark:bg-gray-800 w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
-        onClick={() => paths.includes("admin") ? routeNavigator("/admin/missing") : routeNavigator("/member")}
+        onClick={() =>
+          paths.includes("admin")
+            ? routeNavigator("/admin/missing")
+            : routeNavigator("/member")
+        }
       >
-        {paths.includes("admin") ? "Add Missing Person":"Become A Sponsor"}
+        {paths.includes("admin") ? "Add Missing Person" : "Become A Sponsor"}
       </div>
       <div
         className="h-14 bg-amber-300 dark:bg-gray-700 w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
-        onClick={() => paths.includes("admin") ? routeNavigator("/admin/wanted") : routeNavigator("/more-about-us")}
+        onClick={() =>
+          paths.includes("admin")
+            ? routeNavigator("/admin/wanted")
+            : routeNavigator("/more-about-us")
+        }
       >
-        {paths.includes("admin") ? "Add Wanted Person":"More About Us"}
+        {paths.includes("admin") ? "Add Wanted Person" : "More About Us"}
       </div>
       <div
         className="h-14 bg-yellow-300 dark:bg-gray-600 w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
-        onClick={() => paths.includes("admin") ? routeNavigator("/admin") : routeNavigator("/login")}
+        onClick={() =>
+          paths.includes("admin")
+            ? routeNavigator("/admin")
+            : routeNavigator("/login")
+        }
       >
-        {paths.includes("admin") ? "Admin Page":"Admin Login"}
+        {paths.includes("admin") ? "Admin Account Home" : "Admin Login"}
       </div>
       <div
         className={`bg-yellow-200 dark:bg-gray-500 w-full h-16 px-4 flex justify-between items-center hover:cursor-pointer border-black`}

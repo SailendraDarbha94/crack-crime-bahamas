@@ -15,6 +15,7 @@ const Page = () => {
 
 
   const registerMissingPerson = async () => {
+    const currentTime = Date.now()
     setLoading(true)
     try {
       const res = await fetch("/api/missing", {
@@ -23,21 +24,16 @@ const Page = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          _name: name,
-          _age: age,
-          _gender: gender,
-          _alias: alias,
-          _created_at: new Date().getTime(),
-          _updated_at: new Date().getTime(),
-          _last_known_address: last_known_address,
+          name: name,
+          age: age,
+          gender: gender,
+          alias: alias,
+          created_at: currentTime,
+          last_known_address: last_known_address,
         }),
       });
-
-
       const data = await res.json();
-
-
-      if (data) {
+      if (data !== "request failure") {
         console.log(data);
         setName("");
         setAge("");
