@@ -140,20 +140,21 @@ const Page = () => {
         <div className="mt-20 font-nunito text-lg">
           <h1 className="underline text-xl mb-10">Testing Apis</h1>
           <button
-            className="w-40 block my-4 text-center rounded-lg bg-blue-700 text-white"
+          disabled
+            className="w-40 block my-4 line-through text-center rounded-lg bg-red-700 text-white"
             onClick={fetchMessages}
           >
             Fetch Messages
           </button>
           <button
             className="w-40 block my-4 text-center rounded-lg bg-blue-700 text-white"
-            onClick={fetchMissingPersons}
+            onClick={() => router.push("/admin/missing")}
           >
             Fetch Missing Persons
           </button>
           <button
             className="w-40 block my-4 text-center rounded-lg bg-blue-700 text-white"
-            onClick={fetchWantedPersons}
+            onClick={() => router.push("/admin/wanted")}
           >
             Fetch Wanted Persons
           </button>
