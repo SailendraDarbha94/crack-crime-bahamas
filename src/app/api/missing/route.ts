@@ -3,6 +3,8 @@ import app from "@/lib/firebase";
 import mongoClient from "@/lib/mongo";
 import Missing from "@/models/Missing";
 import { getDatabase, ref, child, get, set, push, update } from "firebase/database";
+import { getStorage, uploadBytes } from "firebase/storage";
+import { ref  as newRef } from "firebase/storage"
 
 export async function POST(req: Request) {
   // const body = await req.json()
@@ -26,7 +28,6 @@ export async function POST(req: Request) {
   // } else {
   //   return Response.json({data: "request failed"})
   // }
-
   const db = await getDatabase(app);
   const body = await req.json();
   const newKey = await push(child(ref(db), 'missings')).key;

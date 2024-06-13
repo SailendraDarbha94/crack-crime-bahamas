@@ -35,7 +35,8 @@ export async function POST(req:Request) {
     // }
     const db = await getDatabase(app);
     const body = await req.json();
-    const newKey = await push(child(ref(db), 'members')).key;
+    body['created_at'] = Date.now();
+    const newKey = await push(child(ref(db), 'messages')).key;
     try {
       const updates:any = {};
       updates['/messages/' + newKey] = body;

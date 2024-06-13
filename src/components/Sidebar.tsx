@@ -33,25 +33,25 @@ const Sidebar = () => {
       </a>
       <a
         href="/admin"
-        className="bg-yellow-300 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
+        className="bg-yellow-300 dark:bg-yellow-600 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
       >
         Home
       </a>
       <a
         href="/admin/missing"
-        className="bg-yellow-300 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
+        className="bg-yellow-300 dark:bg-yellow-600 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
       >
         Missing +
       </a>
       <a
         href="/admin/wanted"
-        className="bg-yellow-300 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
+        className="bg-yellow-300 dark:bg-yellow-600 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
       >
         Wanted +
       </a>
       <a
         href="/admin/member"
-        className="bg-yellow-300 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
+        className="bg-yellow-300 dark:bg-yellow-600 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
       >
         Membership Requests
       </a>

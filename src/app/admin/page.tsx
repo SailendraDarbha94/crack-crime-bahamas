@@ -2,6 +2,7 @@
 
 import app from "@/lib/firebase";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { getBytes, getStorage, ref } from "firebase/storage";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -11,7 +12,21 @@ const Page = () => {
   const [missingPersons, setMissingPersons] = useState<any[]>([]);
   const [members, setMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [file, setFile] = useState<any>(null);
   const router = useRouter();
+
+
+  useEffect(() => {
+    const storage = getStorage(app);
+    const storageRef = ref(storage, '/missings/safety.png')
+
+    getBytes(storageRef).then((arrayBuffer) => {
+      console.log("LOADED FILE",arrayBuffer)
+      const blob = new Blob([arrayBuffer], { type: 'image/jpeg' });
+      const url = URL.createObjectURL(blob);
+      setFile(url)
+    })
+  },[])
 
   const fetchMessages = async () => {
     setLoading(true);
@@ -180,16 +195,9 @@ const Page = () => {
               </div>
             ) : null}
           </div>
-          {/* <div className="mt-10">
-          <label htmlFor="message">Message</label>
-          <input value={message} type="text" name="message" id="message" className="mx-4 rounded-lg text-black p-2 focus:outline-none" onChange={e => setMessage(e.target.value)} />
-        </div>
-        <button
-          className="w-40 block my-4 text-center rounded-lg bg-blue-700 text-white"
-          onClick={postData}
-        >
-          Post
-        </button> */}
+          <div>
+            {file && <img alt="missing" src={file} />}
+          </div>
         </div>
       )}
     </div>
