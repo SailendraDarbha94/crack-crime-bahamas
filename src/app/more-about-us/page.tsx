@@ -25,7 +25,7 @@ const Page = () => {
             <h2 className="mb-4 text-3xl md:text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
               Help combat crime by reporting what you see and what you know to{" "}
               <span className="text-blue-700 dark:text-blue-500 underline">
-                Crime Stoppers Bahamas{" "}
+                Crack Crime Bahamas{" "}
               </span>
             </h2>
             <p className="mb-6 font-light text-gray-500 md:text-lg dark:text-gray-400">

@@ -1,5 +1,9 @@
 "use client";
 
+import app from "@/lib/firebase";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { getBytes, getStorage, ref } from "firebase/storage";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const Page = () => {
@@ -8,24 +12,21 @@ const Page = () => {
   const [missingPersons, setMissingPersons] = useState<any[]>([]);
   const [members, setMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [file, setFile] = useState<any>(null);
+  const router = useRouter();
 
-  const fetchMembers = async () => {
-    setLoading(true);
-    setMessages([]);
-    setMissingPersons([]);
-    try {
-      const res = await fetch("/api/member");
-      const { data } = await res.json();
-      if (data) {
-        setMembers(data);
-        setLoading(false);
-      }
-    } catch (err) {
-      setLoading(false);
-      console.log(err);
-      alert("An Error Occured! Please try again later");
-    }
-  };
+
+  useEffect(() => {
+    const storage = getStorage(app);
+    const storageRef = ref(storage, '/missings/safety.png')
+
+    getBytes(storageRef).then((arrayBuffer) => {
+      console.log("LOADED FILE",arrayBuffer)
+      const blob = new Blob([arrayBuffer], { type: 'image/jpeg' });
+      const url = URL.createObjectURL(blob);
+      setFile(url)
+    })
+  },[])
 
   const fetchMessages = async () => {
     setLoading(true);
@@ -72,7 +73,6 @@ const Page = () => {
       const { data } = await res.json();
       console.log(data);
       if (data) {
-        setMissingPersons(data);
         setLoading(false);
       }
     } catch (err) {
@@ -84,7 +84,7 @@ const Page = () => {
 
   // const getIdToken = async () => {
   //   const token = await localStorage.getItem('token');
-  //   console.log(token); 
+  //   console.log(token);
   // }
 
   // useEffect(() => {
@@ -106,18 +106,18 @@ const Page = () => {
   //   }
   //   console.log(data)
   // };
+
   return (
-    <div className="min-h-screen w-full p-4 md:p-14 lg:p-24">
+    <div className="min-h-fit p-4 md:p-14 lg:p-24">
       <h1 className="text-4xl mb-2 font-nunito">Admin Dashboard</h1>
-      <h1 className="text-2xl mt-2 font-nunito">Page Under Construction</h1>
-      <a
-        href="/"
-        className="font-nunito mt-8 block w-40 text-center bg-blue-700 text-white rounded-lg p-2"
-      >
-        Go Home
-      </a>
+      <h1 className="text-2xl mt-2 font-nunito">
+        Site Under Construction
+      </h1>
       {loading ? (
-        <div role="status" className="flex justify-center min-h-96 items-center">
+        <div
+          role="status"
+          className="flex justify-center min-h-96 items-center"
+        >
           <svg
             aria-hidden="true"
             className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
@@ -140,26 +140,21 @@ const Page = () => {
         <div className="mt-20 font-nunito text-lg">
           <h1 className="underline text-xl mb-10">Testing Apis</h1>
           <button
-            className="w-40 block my-4 text-center rounded-lg bg-blue-700 text-white"
-            onClick={fetchMembers}
-          >
-            Fetch Members
-          </button>
-          <button
-            className="w-40 block my-4 text-center rounded-lg bg-blue-700 text-white"
+          disabled
+            className="w-40 block my-4 line-through text-center rounded-lg bg-red-700 text-white"
             onClick={fetchMessages}
           >
             Fetch Messages
           </button>
           <button
             className="w-40 block my-4 text-center rounded-lg bg-blue-700 text-white"
-            onClick={fetchMissingPersons}
+            onClick={() => router.push("/admin/missing")}
           >
             Fetch Missing Persons
           </button>
           <button
             className="w-40 block my-4 text-center rounded-lg bg-blue-700 text-white"
-            onClick={fetchWantedPersons}
+            onClick={() => router.push("/admin/wanted")}
           >
             Fetch Wanted Persons
           </button>
@@ -201,16 +196,9 @@ const Page = () => {
               </div>
             ) : null}
           </div>
-          {/* <div className="mt-10">
-          <label htmlFor="message">Message</label>
-          <input value={message} type="text" name="message" id="message" className="mx-4 rounded-lg text-black p-2 focus:outline-none" onChange={e => setMessage(e.target.value)} />
-        </div>
-        <button
-          className="w-40 block my-4 text-center rounded-lg bg-blue-700 text-white"
-          onClick={postData}
-        >
-          Post
-        </button> */}
+          <div>
+            {file && <img alt="missing" src={file} />}
+          </div>
         </div>
       )}
     </div>
