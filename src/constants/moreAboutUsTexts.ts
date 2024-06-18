@@ -36,7 +36,7 @@ export const aboutUsParagraphs: AboutUsParagraphs[] = [
     id: 3,
     heading: "How It Works",
     initialContent: `If you have ANY information on ANY crime then call at ANY time, 365 days a year.
-    Your call will be automatically answered in USA or Canada. Phone lines are not police lines and are sponsored by Crime Stoppers.
+    Your call will be automatically answered in USA. Phone lines are not police lines and are sponsored by Crime Stoppers.
     Your call cannot be traced as there is no Caller Id, or any similar features attached to the lines.
     In Nassau/New Providence/Paradise Island call 328-TIPS(8477) or in the Family Islands call 1-242-300-8477 (TOLL free number).`,
     moreContent: `The overseas operator will take the relevant information and you will NEVER be asked for your name or where you calling from, you remain Anonymous (no names asked).

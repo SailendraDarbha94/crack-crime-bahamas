@@ -1,118 +1,48 @@
 "use client";
-
 import app from "@/lib/firebase";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-import { getBytes, getStorage, ref } from "firebase/storage";
+import { dateReader } from "@/lib/utils";
+import { child, get, getDatabase, ref, remove } from "firebase/database";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const Page = () => {
-  const [message, setMessage] = useState<string>("");
-  const [messages, setMessages] = useState<any[]>([]);
-  const [missingPersons, setMissingPersons] = useState<any[]>([]);
-  const [members, setMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [file, setFile] = useState<any>(null);
   const router = useRouter();
 
-
-  useEffect(() => {
-    const storage = getStorage(app);
-    const storageRef = ref(storage, '/missings/safety.png')
-
-    getBytes(storageRef).then((arrayBuffer) => {
-      console.log("LOADED FILE",arrayBuffer)
-      const blob = new Blob([arrayBuffer], { type: 'image/jpeg' });
-      const url = URL.createObjectURL(blob);
-      setFile(url)
-    })
-  },[])
+  const [messages, setMessages] = useState<any>(null);
+  const [messageIndices, setMessageIndices] = useState<any>(null);
 
   const fetchMessages = async () => {
-    setLoading(true);
-    setMembers([]);
-    setMissingPersons([]);
     try {
-      const res = await fetch("/api/message");
-      const { data } = await res.json();
-      if (data) {
-        setMessages(data);
-        setLoading(false);
+      const db = getDatabase(app);
+      const dbRef = ref(db);
+      const data = await get(child(dbRef, "messages"));
+      if (data.exists()) {
+        const messages = await data.val();
+        const indices = Object.keys(messages);
+        console.log(messages);
+        setMessages(messages);
+        setMessageIndices(indices);
       }
     } catch (err) {
-      console.log(err);
-      setLoading(false);
-      alert("An Error Occured! Please try again later");
+      JSON.stringify(err);
     }
   };
 
-  const fetchWantedPersons = async () => {
-    setLoading(true);
-    setMembers([]);
-    setMessages([]);
+  const deleteMessage = async (id:string) => {
     try {
-      const res = await fetch("/api/wanted");
-      const { data } = await res.json();
-      console.log(data);
-      if (data) {
-        setLoading(false);
-      }
+      const db = getDatabase(app);
+      const postRef = ref(db, `messages/${id}`)
+      await remove(postRef);
+      console.log("post deleted successfullyy")
+      fetchMessages();
     } catch (err) {
-      console.log(err);
-      setLoading(false);
-      alert("An Error Occured! Please try again later");
+      console.log("could not delete_______",JSON.stringify(err))
     }
-  };
-
-  const fetchMissingPersons = async () => {
-    setLoading(true);
-    setMembers([]);
-    setMessages([]);
-    try {
-      const res = await fetch("/api/missing");
-      const { data } = await res.json();
-      console.log(data);
-      if (data) {
-        setLoading(false);
-      }
-    } catch (err) {
-      console.log(err);
-      setLoading(false);
-      alert("An Error Occured! Please try again later");
-    }
-  };
-
-  // const getIdToken = async () => {
-  //   const token = await localStorage.getItem('token');
-  //   console.log(token);
-  // }
-
-  // useEffect(() => {
-  //   getIdToken();
-  // },[])
-  // const postData = async () => {
-  //   const res = await fetch("/api/message", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       message: message,
-  //     }),
-  //   });
-  //   const data = await res.json()
-  //   if(data){
-  //       setMessage("")
-  //   }
-  //   console.log(data)
-  // };
+  }
 
   return (
-    <div className="min-h-fit p-4 md:p-14 lg:p-24">
-      <h1 className="text-4xl mb-2 font-nunito">Admin Dashboard</h1>
-      <h1 className="text-2xl mt-2 font-nunito">
-        Site Under Construction
-      </h1>
+    <div className="min-h-fit font-nunito flex flex-wrap p-4 md:p-14">
       {loading ? (
         <div
           role="status"
@@ -137,14 +67,13 @@ const Page = () => {
           <span className="sr-only">Loading...</span>
         </div>
       ) : (
-        <div className="mt-20 font-nunito text-lg">
-          <h1 className="underline text-xl mb-10">Testing Apis</h1>
+        <div className="w-full md:w-2/5 font-nunito text-lg">
+          <h1 className="underline text-xl mb-10">Site Under Construction</h1>
           <button
-          disabled
-            className="w-40 block my-4 line-through text-center rounded-lg bg-red-700 text-white"
-            onClick={fetchMessages}
+            className="w-40 block my-4 text-center rounded-lg bg-blue-700 text-white"
+            onClick={messages ? (() => setMessages(null)) : fetchMessages}
           >
-            Fetch Messages
+            {messages ? "Hide Messages" : "Fetch Messages"}
           </button>
           <button
             className="w-40 block my-4 text-center rounded-lg bg-blue-700 text-white"
@@ -158,49 +87,21 @@ const Page = () => {
           >
             Fetch Wanted Persons
           </button>
-          <hr />
-          <div>
-            {members ? (
-              <div>
-                {members.map((member: any) => {
-                  return (
-                    <div
-                      key={member._id}
-                      className="bg-blue-200 text-black rounded-lg my-4 p-4 font-nunito font-semibold"
-                    >
-                      <p>Name : {member._name}</p>
-                      <p>Email : {member._email}</p>
-                      <p>Phone : {member._mobile}</p>
-                      <p>Level : {member._support}</p>
-                      <p>Address : {member._address}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : null}
-          </div>
-          <div>
-            {messages ? (
-              <div>
-                {messages.map((message: any) => {
-                  return (
-                    <div
-                      key={message._id}
-                      className="bg-blue-200 text-black rounded-lg my-4 p-4 font-nunito font-semibold"
-                    >
-                      <p>id : {message._id}</p>
-                      <p>Tip : {message.message}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : null}
-          </div>
-          <div>
-            {file && <img alt="missing" src={file} />}
-          </div>
         </div>
       )}
+      {messages ? (
+        <div className="bg-green-500 w-full md:w-3/5">
+          {messageIndices.map((messageId:any) => {
+            return (
+              <div key={messageId} className="bg-sky-300 p-2 m-2 max-w-full">
+                <p>Content : {messages[messageId].message}</p>
+                <p>Created : {dateReader(messages[messageId].created_at)}</p>
+                <button className="bg-red-500 mx-auto block p-2 rounded-lg text-slate-50" onClick={() => deleteMessage(messageId)}>Delete</button>
+              </div>
+            )
+          })}
+        </div>
+      ) : null}
     </div>
   );
 };

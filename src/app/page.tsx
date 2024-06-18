@@ -58,9 +58,9 @@ export default function Home() {
               Features of our App
             </h2>
             <p className="text-gray-500 sm:text-xl dark:text-gray-400">
-              We here at Crack Crime Bahamas believe that safety is one of
-              the fundamental human rights and are steadfast in our commitment
-              to keeping our communities safe.
+              We here at Crack Crime Bahamas believe that safety is one of the
+              fundamental human rights and are steadfast in our commitment to
+              keeping our communities safe.
             </p>
           </div>
           <div className="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0">
@@ -81,8 +81,7 @@ export default function Home() {
                 Anonymity
               </h3>
               <p className="text-gray-500 dark:text-gray-400">
-                You have a right to remain anonymous when giving information
-                that is potentially helpful in stopping crime.
+                Helpful in stopping crime and keeping you safe
               </p>
             </div>
             <div>
@@ -186,7 +185,7 @@ export default function Home() {
               </h3>
               <p className="text-gray-500 dark:text-gray-400">
                 Heroic deeds should be incentivized and motivated hence we have
-                a rewards program for helpful information.
+                a rewards program for helpful information that leads to an arrest
               </p>
             </div>
           </div>
@@ -199,11 +198,10 @@ export default function Home() {
               Meet the Team
             </h2>
             <p className="mb-4">
-              Marisa Ahwai is the brains behind the vision and she laid the
-              founding principles of this organisation in 2001. We have
-              successfully helped prevent numerous crimes and saved many lives
-              but our mission is to make the entire Bahamas Islands the safest
-              commmunity in the world.
+              Marisa Ahwai is the current chairman and stands on the shoulders
+              of the principals who had the vision to see the need for public
+              police partnership in solving crime in 2001, started the program
+              under the umbrella of Crime Stoppers International.
             </p>
             <p>
               We are a Non Governmental Organisation and we depend on donations,
