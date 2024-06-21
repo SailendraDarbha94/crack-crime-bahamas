@@ -13,6 +13,7 @@ const Page = () => {
   const [messageIndices, setMessageIndices] = useState<any>(null);
 
   const fetchMessages = async () => {
+    setLoading(true)
     try {
       const db = getDatabase(app);
       const dbRef = ref(db);
@@ -23,9 +24,11 @@ const Page = () => {
         console.log(messages);
         setMessages(messages);
         setMessageIndices(indices);
+        setLoading(false)
       }
     } catch (err) {
       JSON.stringify(err);
+      setLoading(false)
     }
   };
 
