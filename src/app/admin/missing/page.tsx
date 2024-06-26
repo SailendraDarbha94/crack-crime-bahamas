@@ -4,6 +4,7 @@ import app from "@/lib/firebase";
 import { useEffect, useState } from "react";
 import AddMissing from "./AddMissing";
 import { child, get, getDatabase, ref, remove } from "firebase/database";
+import { ref as StorageRef, deleteObject, getStorage } from "firebase/storage";
 import MissingListItem from "./MissingListItem";
 import { useRouter } from "next/navigation";
 
@@ -29,12 +30,15 @@ const Page = () => {
     }
   };
 
-  const deleteMissingPost = async (id: string) => {
+  const deleteMissingPost = async (id: string, path:string) => {
     try {
       const db = getDatabase(app);
+      const storage = getStorage(app);
       const postRef = ref(db, `missings/${id}`)
+      const imageRef = StorageRef(storage, path);
+      await deleteObject(imageRef);
       await remove(postRef);
-      console.log("post deleted successfullyy")
+      console.log("post deleted successfully")
       fetchMissingPersons()
     } catch (err) {
       console.log("could not delete_______",JSON.stringify(err))
@@ -78,7 +82,7 @@ const Page = () => {
                   <div className="flex justify-center">
                     <button
                       className="bg-red-300 p-2 rounded-md"
-                      onClick={() => deleteMissingPost(missing)}
+                      onClick={() => deleteMissingPost(missing, missings[missing].image)}
                     >
                       Delete
                     </button>

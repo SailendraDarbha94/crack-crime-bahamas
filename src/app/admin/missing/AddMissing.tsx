@@ -9,6 +9,7 @@ const AddMissing = () => {
   const [last_known_address, setLastKnownAddress] = useState<string>("");
   const [gender, setGender] = useState<string>("");
   const [alias, setAlias] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const storage = getStorage(app);
@@ -61,6 +62,9 @@ const AddMissing = () => {
           alias: alias,
           created_at: currentTime,
           last_known_address: last_known_address,
+          country_code: "BAH",
+          current_status: "",
+          description: description,
           image: metaData ? metaData.fullPath : noImageMessage,
         }),
       });
@@ -72,6 +76,7 @@ const AddMissing = () => {
         setAlias("");
         setGender("");
         setLastKnownAddress("");
+        setDescription("");
         setSelectedFile(null);
         setLoading(false);
       }
@@ -82,6 +87,7 @@ const AddMissing = () => {
       setAge("");
       setAlias("");
       setGender("");
+      setDescription("");
       setLastKnownAddress("");
       setSelectedFile(null);
       console.error(JSON.stringify(err));
@@ -178,6 +184,24 @@ const AddMissing = () => {
                     id="alias"
                     value={alias}
                     onChange={(e) => setAlias(e.target.value)}
+                    placeholder=""
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    required={false}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="alias"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Description
+                  </label>
+                  <input
+                    type="text"
+                    name="alias"
+                    id="alias"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                     placeholder=""
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required={false}
