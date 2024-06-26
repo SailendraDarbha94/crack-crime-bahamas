@@ -18,7 +18,7 @@ const AddWanted = () => {
     if (!fileName) {
       return false;
     }
-    const fileRef = await ref(storage, `/missings/${fileName}`);
+    const fileRef = await ref(storage, `/wanteds/${fileName}`);
     const result = await getDownloadURL(fileRef).catch((err) => {
       console.log(JSON.stringify(err));
     });
@@ -31,7 +31,7 @@ const AddWanted = () => {
 
   const fileSaver = async () => {
     if (selectedFile) {
-      const storageRef = ref(storage, `/missings/${selectedFile.name}`);
+      const storageRef = ref(storage, `/wanteds/${selectedFile.name}`);
       const { metadata } = await uploadBytes(storageRef, selectedFile);
       return metadata;
     } else {
@@ -40,7 +40,10 @@ const AddWanted = () => {
   };
 
   const storage = getStorage(app);
-  const registerWantedPerson = async () => {
+
+
+  const registerWantedPerson = async (e:any) => {
+    e.preventDefault();
     setLoading(true);
     let noImageMessage = "Image Not Available";
     try {
@@ -106,7 +109,7 @@ const AddWanted = () => {
     setSelectedFile(file);
   };
   return (
-    <div className="min-h-screen p-4 pt-14">
+    <div className="p-4 pt-14">
       <section className="font-nunito mb-10 mx-auto max-w-lg rounded-lg">
         <div className="flex flex-col items-center justify-center px-3 md:px-8 mx-auto md:h-screen lg:py-0">
           <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
@@ -114,7 +117,7 @@ const AddWanted = () => {
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Wanted Person Report
               </h1>
-              <form className="space-y-4 md:space-y-6" action="#">
+              <form className="space-y-2" onSubmit={registerWantedPerson}>
                 <div>
                   <label
                     htmlFor="name"
@@ -135,15 +138,14 @@ const AddWanted = () => {
                 </div>
                 <div>
                   <label
-                    htmlFor="charged"
+                    htmlFor="wantedFor"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
                     Wanted For
                   </label>
                   <textarea
-                    //type="text"
-                    name="charged"
-                    id="charged"
+                    name="wantedFor"
+                    id="wantedFor"
                     value={wantedFor}
                     className="bg-gray-50 border h-24 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder=""
@@ -262,33 +264,6 @@ const AddWanted = () => {
                     />
                   )}
                 </div>
-                {/* <div className="flex items-center justify-between">
-                    <div className="flex items-start">
-                      <div className="flex items-center h-5">
-                        <input
-                          id="remember"
-                          aria-describedby="remember"
-                          type="checkbox"
-                          className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                          required={true}
-                        />
-                      </div>
-                      <div className="ml-3 text-sm">
-                        <label
-                          htmlFor="remember"
-                          className="text-gray-500 dark:text-gray-300"
-                        >
-                          Remember me
-                        </label>
-                      </div>
-                    </div>
-                    <a
-                      href="#"
-                      className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
-                    >
-                      forgot password?
-                    </a>
-                  </div> */}
                 {loading ? (
                   <div role="status" className="flex justify-center">
                     <svg
@@ -312,22 +287,11 @@ const AddWanted = () => {
                 ) : (
                   <button
                     type="submit"
-                    onClick={registerWantedPerson}
                     className="w-full rounded-lg bg-slate-200 hover:bg-slate-300 dark:hover:bg-blue-700 dark:text-white focus:ring-4 dark:bg-blue-600 focus:outline-none font-medium text-lg px-5 py-2.5 text-center"
                   >
                     Submit
                   </button>
                 )}
-
-                {/* <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                    Don&apos;t have an account yet?{" "}
-                    <a
-                      href="#"
-                      className="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                    >
-                      Sign up
-                    </a>
-                  </p> */}
               </form>
             </div>
           </div>

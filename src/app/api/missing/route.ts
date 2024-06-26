@@ -2,6 +2,7 @@ import app from "@/lib/firebase";
 import { getDatabase, ref, child, get, push, update } from "firebase/database";
 
 export async function POST(req: Request) {
+  console.log("MISSING POST REQUEST RECEIVED : ==================================================", req)
   const db = await getDatabase(app);
   const body = await req.json();
   const newKey = await push(child(ref(db), 'missings')).key;

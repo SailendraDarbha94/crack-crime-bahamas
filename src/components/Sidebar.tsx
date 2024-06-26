@@ -31,11 +31,18 @@ const Sidebar = () => {
       >
         <img className="w-10 h-10 mr-2" src="/newfavicon.png" alt="logo" />
       </a>
+      
       <a
         href="/admin"
         className="bg-yellow-300 dark:bg-yellow-600 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
       >
         Home
+      </a>
+      <a
+        href="/admin/messages"
+        className="bg-yellow-300 dark:bg-yellow-600 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
+      >
+        Manage Messages
       </a>
       <a
         href="/admin/missing"
@@ -54,6 +61,24 @@ const Sidebar = () => {
         className="bg-yellow-300 dark:bg-yellow-600 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
       >
         Membership Requests
+      </a>
+      <a
+        href="/admin/adverts"
+        className="bg-yellow-300 dark:bg-yellow-600 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
+      >
+        Advertisements
+      </a>
+      <a
+        href="#"
+        className="bg-yellow-300 dark:bg-yellow-600 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
+      >
+        Donors
+      </a>
+      <a
+        href="#"
+        className="bg-yellow-300 dark:bg-yellow-600 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
+      >
+        Annual Contributors
       </a>
       <a
         href="/admin/adverts"
