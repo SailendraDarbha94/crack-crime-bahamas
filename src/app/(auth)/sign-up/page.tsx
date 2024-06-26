@@ -7,7 +7,6 @@ import app from "@/lib/firebase";
 const Page = () => {
   const auth = getAuth(app);
   const db = getDatabase(app);
-  //const usersRef = ref(db, `users`)
   const createNewUser = async () => {
     let userCreated: boolean = false;
     if (password !== confirmPassword) {

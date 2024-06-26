@@ -6,7 +6,7 @@ export interface AboutUsParagraphs {
 }
 
 export interface FAQs {
-  id: number,
+  id: number;
   question: string;
   answer: string;
 }
@@ -36,7 +36,7 @@ export const aboutUsParagraphs: AboutUsParagraphs[] = [
     id: 3,
     heading: "How It Works",
     initialContent: `If you have ANY information on ANY crime then call at ANY time, 365 days a year.
-    Your call will be automatically answered in USA or Canada. Phone lines are not police lines and are sponsored by Crime Stoppers.
+    Your call will be automatically answered in USA. Phone lines are not police lines and are sponsored by Crime Stoppers.
     Your call cannot be traced as there is no Caller Id, or any similar features attached to the lines.
     In Nassau/New Providence/Paradise Island call 328-TIPS(8477) or in the Family Islands call 1-242-300-8477 (TOLL free number).`,
     moreContent: `The overseas operator will take the relevant information and you will NEVER be asked for your name or where you calling from, you remain Anonymous (no names asked).
@@ -46,44 +46,50 @@ export const aboutUsParagraphs: AboutUsParagraphs[] = [
   },
 ];
 
-
-export const frequentlyAskedQuestionsFirstBlock:FAQs[] = [
+export const frequentlyAskedQuestionsFirstBlock: FAQs[] = [
   {
     id: 1,
     question: "How many crimes have you stopped so far",
-    answer: "Crime Stoppers Bahamas has partnered with the police to help solve 188 major crimes in recent times."
+    answer:
+      "Crime Stoppers Bahamas received 78 tips last year. In recent times partnered with police to solve 807 major crimes, recovered $$59,270 in property and $676,000 in narcotics.",
   },
   {
     id: 2,
     question: "When was last CSI event and where was it held",
-    answer: "The 37th Annual Crime Stoppers International Conference was held in Port-of-Spain, Trinidad from October 1-5."
+    answer:
+      "The 37th Annual Crime Stoppers International Conference was held in Port-of-Spain, Trinidad from October 1-5.",
   },
   {
-    id:3,
+    id: 3,
     question: "How can I support Crime Stoppers Bahamas",
-    answer: "You can support us by becoming a member, providing a tip or sending a donation cheque to Crime Stoppers Bahamas, P.O. Box N 665, Nassau, Bahamas. Thank you for your consideration."
+    answer:
+      "You can support us by donating or becoming an annual sponsor.Cheques can be sent to Crime Stoppers Bahamas P.O. Box  N665, Nassau, Bahamas or online donations given through our CrackCrimeBahamas App or or website at www.crimestoppersbahamas.com",
   },
   {
     id: 4,
     question: "When did Crime Stoppers Officialy start",
-    answer: "Crime Stoppers Bahamas was officially launched on November 27, 2001."
+    answer:
+      "Crime Stoppers Bahamas was officially launched on November 27, 2001.",
   },
-]
+];
 
-export const frequentlyAskedQuestionsSecondBlock:FAQs[] = [
+export const frequentlyAskedQuestionsSecondBlock: FAQs[] = [
   {
     id: 1,
-    question: "What is Crime Watch",
-    answer: "The National Crime Prevention Unit (NCPO) of The Royal Bahamas Police Force is responsible for partnering with the community to prevent crime. They have a number of programmes in place including assisting neigbourhoods and businesses to form crime watch group"
+    question: "What is Neighbourhood Watch",
+    answer:
+      "The National Crime Prevention Unit (NCPO) of The Royal Bahamas Police Force is responsible for partnering with the community to prevent crime. They have a number of programmes in place including assisting neigbourhoods and businesses to form crime watch group.",
   },
   {
     id: 2,
     question: "How can I give a tip",
-    answer: "You can download our app and send a tip anonymously or call us at 328-8477 if you are in Nassau or 1242-300-8477 if you are in Family Islands"
+    answer:
+      "You can download our app and send a tip anonymously or call us at 328-8477 if you are in Nassau or 1242-300-8477 if you are in Family Islands.",
   },
   {
     id: 3,
     question: "Is Crime Stoppers a Police Initiative",
-    answer: "We are a Non Governmental Organisation that is affiliated with the Local Police but we are not part of any Law Enforcement Agencies"
+    answer:
+      "We are a Non Governmental Organisation that is affiliated with the Local Police but we are not part of any Law Enforcement Agency.",
   },
-]
+];

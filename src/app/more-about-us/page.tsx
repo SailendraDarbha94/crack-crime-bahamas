@@ -24,9 +24,9 @@ const Page = () => {
           <div className="mt-4 md:mt-0">
             <h2 className="mb-4 text-3xl md:text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
               Help combat crime by reporting what you see and what you know to{" "}
-              <span className="text-blue-700 dark:text-blue-500 underline">
+              <a className="text-blue-700 dark:text-blue-500 underline" href="/">
                 Crack Crime Bahamas{" "}
-              </span>
+              </a>
             </h2>
             <p className="mb-6 font-light text-gray-500 md:text-lg dark:text-gray-400">
               Our initiative helps you protect your friends and loved ones and

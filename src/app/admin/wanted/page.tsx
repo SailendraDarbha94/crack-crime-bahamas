@@ -6,6 +6,7 @@ import { child, get, getDatabase, ref, remove } from "firebase/database";
 import { useRouter } from "next/navigation";
 import AddWanted from "./AddWanted";
 import MissingListItem from "../missing/MissingListItem";
+import { deleteObject, getStorage, ref as StorageRef } from "firebase/storage";
 
 const Page = () => {
   const [showWanted, setShowWanted] = useState<boolean>(false);
@@ -30,15 +31,18 @@ const Page = () => {
     }
   };
 
-  const deleteWantedPost = async (id: string) => {
+  const deleteWantedPost = async (id: string, path: string) => {
     try {
       const db = getDatabase(app);
-      const postRef = ref(db, `wanteds/${id}`)
+      const postRef = ref(db, `wanteds/${id}`);
+      const storage = getStorage(app);
+      const imageRef = StorageRef(storage, path);
+      await deleteObject(imageRef);
       await remove(postRef);
-      console.log("post deleted successfullyy")
+      console.log("post deleted successfullyy");
       fetchWantedPersons();
     } catch (err) {
-      console.log("could not delete_______",JSON.stringify(err))
+      console.log("could not delete_______", JSON.stringify(err));
     }
   };
 
@@ -63,7 +67,7 @@ const Page = () => {
           {addWanted ? "Hide Wanted Form" : "Add Wanted Suspect"}
         </button>
       </div>
-      {addWanted ? <AddWanted /> : null}
+      <div className=" min-h-fit">{addWanted ? <AddWanted /> : null}</div>
       {showWanted ? (
         <div className="w-full">
           {wantedIndices &&
@@ -77,7 +81,9 @@ const Page = () => {
                   <div className="flex justify-center">
                     <button
                       className="bg-red-300 p-2 rounded-md"
-                      onClick={() => deleteWantedPost(wanted)}
+                      onClick={() =>
+                        deleteWantedPost(wanted, wanteds[wanted].image)
+                      }
                     >
                       Delete
                     </button>

@@ -11,7 +11,7 @@ const AddWanted = () => {
   const [last_known_address, setLastKnownAddress] = useState<string>("");
   const [gender, setGender] = useState<string>("");
   const [alias, setAlias] = useState<string>("");
-  //   const [imageUrl, setImageURL] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<any>(null);
   const fileNameChecker = async (fileName: string | null) => {
@@ -64,6 +64,9 @@ const AddWanted = () => {
           gender: gender,
           alias: alias,
           created_at: currentTime,
+          country_code: "BAH",
+          current_status: "",
+          description: description,
           last_known_address: last_known_address,
           image: metaData ? metaData.fullPath : noImageMessage,
         }),
@@ -79,6 +82,7 @@ const AddWanted = () => {
         setGender("");
         setWantedFor("");
         setLastKnownAddress("");
+        setDescription("");
         setSelectedFile(null);
         setLoading(false);
       }
@@ -89,6 +93,7 @@ const AddWanted = () => {
       setAge("");
       setAlias("");
       setGender("");
+      setDescription("");
       setLastKnownAddress("");
       setSelectedFile(null);
       console.error(err);
@@ -104,13 +109,6 @@ const AddWanted = () => {
     <div className="min-h-screen p-4 pt-14">
       <section className="font-nunito mb-10 mx-auto max-w-lg rounded-lg">
         <div className="flex flex-col items-center justify-center px-3 md:px-8 mx-auto md:h-screen lg:py-0">
-          {/* <a
-            href="#"
-            className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
-          >
-            <img className="w-8 h-8 mr-2" src="/newfavicon.png" alt="logo" />
-            Crack Crime Bahamas
-          </a> */}
           <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-4 md:p-6 space-y-4 md:space-y-6 sm:p-8 w-fu">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
@@ -166,6 +164,24 @@ const AddWanted = () => {
                     id="age"
                     value={age}
                     onChange={(e) => setAge(e.target.value)}
+                    placeholder=""
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    required={false}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="description"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Description
+                  </label>
+                  <input
+                    type="description"
+                    name="description"
+                    id="description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                     placeholder=""
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required={false}

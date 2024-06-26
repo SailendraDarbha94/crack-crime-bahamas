@@ -11,14 +11,16 @@ export default function Home() {
         <div className="grid w-full px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
           <div className="mr-auto place-self-center lg:col-span-7">
             <h1 className="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-3xl xl:text-5xl dark:text-white">
-              Crime Stoppers Assemble
+              Crime Stoppers Bahamas
             </h1>
             <p className="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
               The worst amongst us have no chance of perpetrating any criminal
               acts if the the rest of us come together.
             </p>
             <a
-              href="#"
+              href="https://play.google.com/store/apps/details?id=com.anonymous.CrackCrimeBahamas"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-black-200 rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900"
             >
               Download App
@@ -58,9 +60,9 @@ export default function Home() {
               Features of our App
             </h2>
             <p className="text-gray-500 sm:text-xl dark:text-gray-400">
-              We here at Crack Crime Bahamas believe that safety is one of
-              the fundamental human rights and are steadfast in our commitment
-              to keeping our communities safe.
+              We here at Crack Crime Bahamas believe that safety is one of the
+              fundamental human rights and are steadfast in our commitment to
+              keeping our communities safe.
             </p>
           </div>
           <div className="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0">
@@ -81,8 +83,7 @@ export default function Home() {
                 Anonymity
               </h3>
               <p className="text-gray-500 dark:text-gray-400">
-                You have a right to remain anonymous when giving information
-                that is potentially helpful in stopping crime.
+                Helpful in stopping crime and keeping you safe
               </p>
             </div>
             <div>
@@ -186,7 +187,7 @@ export default function Home() {
               </h3>
               <p className="text-gray-500 dark:text-gray-400">
                 Heroic deeds should be incentivized and motivated hence we have
-                a rewards program for helpful information.
+                a rewards programme for helpful information that leads to an arrest
               </p>
             </div>
           </div>
@@ -199,11 +200,10 @@ export default function Home() {
               Meet the Team
             </h2>
             <p className="mb-4">
-              Marisa Ahwai is the brains behind the vision and she laid the
-              founding principles of this organisation in 2001. We have
-              successfully helped prevent numerous crimes and saved many lives
-              but our mission is to make the entire Bahamas Islands the safest
-              commmunity in the world.
+              Marisa Ahwai is the current chairman and stands on the shoulders
+              of the principals who had the vision to see the need for public
+              police partnership in solving crime in 2001, started the program
+              under the umbrella of Crime Stoppers International.
             </p>
             <p>
               We are a Non Governmental Organisation and we depend on donations,
