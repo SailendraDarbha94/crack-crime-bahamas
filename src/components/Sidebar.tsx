@@ -56,12 +56,12 @@ const Sidebar = () => {
       >
         Manage Wanteds
       </a>
-      <a
+      {/* <a
         href="/admin/member"
         className="bg-yellow-300 dark:bg-yellow-600 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
       >
         Membership Requests
-      </a>
+      </a> */}
       <a
         href="/admin/adverts"
         className="bg-yellow-300 dark:bg-yellow-600 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
@@ -80,15 +80,9 @@ const Sidebar = () => {
       >
         Annual Contributors
       </a>
-      <a
-        href="/admin/adverts"
-        className="bg-yellow-300 dark:bg-yellow-600 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
-      >
-        Advertisements
-      </a>
       <button
       onClick={logoutUser}
-        className="bg-red-500 text-white my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
+        className="bg-red-500 mt-auto text-white my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
       >
         Logout
       </button>

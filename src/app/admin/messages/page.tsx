@@ -3,6 +3,8 @@ import app from "@/lib/firebase";
 import { dateReader } from "@/lib/utils";
 import { child, get, getDatabase, ref, remove } from "firebase/database";
 import { useEffect, useState } from "react";
+import CryptoES from "crypto-es";
+
 const Page = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [messages, setMessages] = useState<any>(null);
@@ -40,21 +42,39 @@ const Page = () => {
     }
   };
 
+  const [salt, setSalt] = useState<string>("");
+  const decryptMessage = async (params: any) => {
+    console.log(params)
+    try {
+      const decryptedCipher = await CryptoES.AES.decrypt(
+        params,
+        salt
+      );
+      console.log(
+        "DECRYPTED TEXT",
+        await decryptedCipher.toString(CryptoES.enc.Utf8)
+      );
+      const decryptedMessage = decryptedCipher.toString(CryptoES.enc.Utf8)
+      await alert(decryptedMessage)
+    } catch (err) {
+      console.log(JSON.stringify(err));
+    }
+  };
+
   useEffect(() => {
-    fetchMessages()
-  },[])
+    fetchMessages();
+  }, []);
+
   return (
-    <div className="w-full min-h-screen">
-      Page Heading
+    <div className="w-full min-h-fit">
+      <h1 className=" font-nunito text-3xl text-center my-2 p-2  border-b-2 border-slate-600">
+        Tip Messages
+      </h1>
       {loading ? (
         <div className="w-full min-h-96 flex justify-center items-center">
           <div
             role="status"
-            className="flex
-                    min-h-96
-                    max-h-full
-                    justify-center
-                    items-center"
+            className="flex min-h-96 max-h-full justify-center items-center"
           >
             <svg
               aria-hidden="true"
@@ -85,16 +105,37 @@ const Page = () => {
                     key={messageId}
                     className="bg-sky-300 p-2 m-2 max-w-full"
                   >
-                    <p>Content : {messages[messageId].message}</p>
+                    <p className=" overflow-hidden">
+                      Content : {JSON.stringify(messages[messageId].message)}
+                    </p>
                     <p>
                       Created : {dateReader(messages[messageId].created_at)}
                     </p>
-                    <button
+                    {/* <button
                       className="bg-red-500 mx-auto block p-2 rounded-lg text-slate-50"
                       onClick={() => deleteMessage(messageId)}
                     >
                       Delete
-                    </button>
+                    </button> */}
+                    <div className="flex justify-center items-center">
+                      <label htmlFor="salt">Salt For Decryption</label>
+                      <input
+                        type="text"
+                        id="salt"
+                        name="salt"
+                        value={salt}
+                        onChange={(e) => setSalt(e.target.value)}
+                        className=" focus:outline-none p-2 rounded-lg m-2"
+                      />
+                      <button
+                        className="bg-green-500 mx-auto block p-2 rounded-lg text-slate-50"
+                        onClick={() =>
+                          decryptMessage(messages[messageId].message)
+                        }
+                      >
+                        Decrypt
+                      </button>
+                    </div>
                   </div>
                 );
               })}
