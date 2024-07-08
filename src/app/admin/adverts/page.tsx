@@ -95,6 +95,8 @@ const Page = () => {
         <AdvertChanger group="home" />
         <AdvertChanger group="emergency" />
         <AdvertChanger group="whoWeAre" />
+        <AdvertChanger group="police" />
+        <AdvertChanger group="supportAndSafety" />
       </div>
     </div>
   );

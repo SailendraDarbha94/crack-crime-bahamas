@@ -22,9 +22,9 @@ const Page = () => {
   return (
     <main className="w-full min-h-screen font-nunito">
       <h2 className="text-3xl mt-10 p-2 underline font-bold">
-        Membership Requests
+        Membership Requests Management Coming Soon
       </h2>
-      <div>
+      {/* <div>
         {memberIndex &&
           memberIndex.map((index) => {
             return (
@@ -53,7 +53,7 @@ const Page = () => {
               </div>
             );
           })}
-      </div>
+      </div> */}
     </main>
   );
 };

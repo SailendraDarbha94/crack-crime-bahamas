@@ -19,11 +19,13 @@ export async function GET() {
 }
 
 export async function POST(req:Request) {
-    console.log("MESSAGE POST REQUEST RECEIVED : ==================================================", req)
+    
     const db = await getDatabase(app);
     const body = await req.json();
     body['created_at'] = Date.now();
+    //console.log("MESSAGE POST REQUEST RECEIVED : ==================================================", body)
     const newKey = await push(child(ref(db), 'messages')).key;
+    
     try {
       const updates:any = {};
       updates['/messages/' + newKey] = body;

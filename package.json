@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.13.0",
+    "crypto-es": "^2.1.0",
     "firebase": "^10.12.2",
     "mongodb": "^6.6.2",
     "mongoose": "^8.4.1",

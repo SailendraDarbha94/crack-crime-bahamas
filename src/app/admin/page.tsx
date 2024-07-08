@@ -9,41 +9,6 @@ const Page = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
-  const [messages, setMessages] = useState<any>(null);
-  const [messageIndices, setMessageIndices] = useState<any>(null);
-
-  const fetchMessages = async () => {
-    setLoading(true)
-    try {
-      const db = getDatabase(app);
-      const dbRef = ref(db);
-      const data = await get(child(dbRef, "messages"));
-      if (data.exists()) {
-        const messages = await data.val();
-        const indices = Object.keys(messages);
-        console.log(messages);
-        setMessages(messages);
-        setMessageIndices(indices);
-        setLoading(false)
-      }
-    } catch (err) {
-      JSON.stringify(err);
-      setLoading(false)
-    }
-  };
-
-  const deleteMessage = async (id:string) => {
-    try {
-      const db = getDatabase(app);
-      const postRef = ref(db, `messages/${id}`)
-      await remove(postRef);
-      console.log("post deleted successfullyy")
-      fetchMessages();
-    } catch (err) {
-      console.log("could not delete_______",JSON.stringify(err))
-    }
-  }
-
   return (
     <div className="min-h-fit font-nunito flex flex-wrap p-4 md:p-14">
       {loading ? (
@@ -74,12 +39,6 @@ const Page = () => {
           <h1 className="underline text-xl mb-10">Site Under Construction</h1>
           <button
             className="w-40 block my-4 text-center rounded-lg bg-blue-700 text-white"
-            onClick={messages ? (() => setMessages(null)) : fetchMessages}
-          >
-            {messages ? "Hide Messages" : "Fetch Messages"}
-          </button>
-          <button
-            className="w-40 block my-4 text-center rounded-lg bg-blue-700 text-white"
             onClick={() => router.push("/admin/missing")}
           >
             Fetch Missing Persons
@@ -92,19 +51,6 @@ const Page = () => {
           </button>
         </div>
       )}
-      {messages ? (
-        <div className="bg-green-500 w-full md:w-3/5">
-          {messageIndices.map((messageId:any) => {
-            return (
-              <div key={messageId} className="bg-sky-300 p-2 m-2 max-w-full">
-                <p>Content : {messages[messageId].message}</p>
-                <p>Created : {dateReader(messages[messageId].created_at)}</p>
-                <button className="bg-red-500 mx-auto block p-2 rounded-lg text-slate-50" onClick={() => deleteMessage(messageId)}>Delete</button>
-              </div>
-            )
-          })}
-        </div>
-      ) : null}
     </div>
   );
 };

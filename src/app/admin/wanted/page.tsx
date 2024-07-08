@@ -51,8 +51,8 @@ const Page = () => {
   }, []);
 
   return (
-    <main className="font-nunito py-3">
-      <h1 className="text-3xl border-b-2 border-black">Missing Persons</h1>
+    <main className="font-nunito py-3 h-full">
+      <h1 className="text-3xl border-b-2 border-black">Wanted Persons</h1>
       <div className="flex p-2 mb-4 justify-around">
         <button
           className="bg-purple-200 dark:bg-slate-500 p-2 rounded-lg"
@@ -67,9 +67,10 @@ const Page = () => {
           {addWanted ? "Hide Wanted Form" : "Add Wanted Suspect"}
         </button>
       </div>
-      <div className=" min-h-fit">{addWanted ? <AddWanted /> : null}</div>
+      <div className="">{addWanted ? <AddWanted /> : null}</div>
+      <div className="">
       {showWanted ? (
-        <div className="w-full">
+        <div className="">
           {wantedIndices &&
             wantedIndices.map((wanted) => {
               return (
@@ -93,6 +94,7 @@ const Page = () => {
             })}
         </div>
       ) : null}
+      </div>
     </main>
   );
 };
