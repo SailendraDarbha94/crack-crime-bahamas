@@ -14,7 +14,7 @@ const Navbar = () => {
   const toggleNavbar = () => {
     console.log(paths);
     if (height === "h-14") {
-      setHeight("h-72");
+      setHeight("h-96");
     } else {
       setHeight("h-14");
     }
@@ -28,7 +28,7 @@ const Navbar = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const logoutUser = async () => {
     setLoading(true);
-    setHeight("h-14")
+    setHeight("h-14");
     const auth = await getAuth(app);
     try {
       await signOut(auth);
@@ -42,7 +42,7 @@ const Navbar = () => {
 
   return (
     <main
-      className={`fixed md:hidden flex flex-wrap bottom-0 left-0 w-full ${height} transition-[height] border-t-2 border-black`}
+      className={`fixed md:hidden flex flex-wrap bottom-0 left-0 w-full bg-black ${height} transition-[height] border-t-2 border-black`}
     >
       {height === "h-14" ? (
         <div
@@ -156,7 +156,6 @@ const Navbar = () => {
           Crack Crime Bahamas
         </div>
       )}
-
       <div
         className="h-14 bg-amber-400 dark:bg-gray-800 w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
         onClick={() =>
@@ -176,6 +175,16 @@ const Navbar = () => {
         }
       >
         {paths.includes("admin") ? "Add Wanted Person" : "More About Us"}
+      </div>
+      <div
+        className="h-14 bg-amber-300 dark:bg-gray-700 w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
+        onClick={() =>
+          paths.includes("admin")
+            ? routeNavigator("/admin/adverts")
+            : routeNavigator("/more-about-us")
+        }
+      >
+        {paths.includes("admin") ? "Advertisements" : "More About Us"}
       </div>
       <div
         className="h-14 bg-yellow-300 dark:bg-gray-600 w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
