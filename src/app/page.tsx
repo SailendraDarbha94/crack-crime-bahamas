@@ -44,12 +44,13 @@ export default function Home() {
             </a>
           </div>
           <div className="hidden lg:mt-0 lg:col-span-5 lg:flex relative">
-            <Image
+            {/* <Image
               src="/landingPageTop.jpg"
               fill
               alt="mockup"
               className="dark:rounded-lg"
-            />
+            /> */}
+            <img src="/newfavicon.png" alt="logo image" className="max-h-80 mx-auto" />
           </div>
         </div>
       </section>
