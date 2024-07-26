@@ -15,13 +15,104 @@ const Page = () => {
         </p>
       </div>
       <div className="my-8">
-        <h1 className="text-3xl font-semibold">Our Mission</h1>
+        <h1 className="text-3xl font-semibold">Disclaimer</h1>
         <p className="tracking-wide mt-2 text-lg font-thin">
-          Our mission is to make the Bahamas safer by enabling active citizen
-          participation in crime prevention through secure tip-sharing with
-          local police.
+          This disclaimer governs your use of this mobile application
+          (hereinafter called App); by using this App, you accept in full all
+          the terms in this disclaimer. If you disagree with any part of this
+          disclaimer, you must not use this App. Unless otherwise stated, eBiz
+          Ltd (hereinafter referred to as eBiz) owns the intellectual property
+          rights in the App and subject to the licence below, all these
+          intellectual property rights are reserved.
         </p>
       </div>
+      <div className="my-8">
+        <h1 className="text-3xl font-semibold">License to use app</h1>
+        <p className="tracking-wide mt-2 text-lg font-thin">
+          You may download this App for your own personal use only, subject to
+          the restrictions below. You must not:{" "}
+          <span className="block p-1 font-semibold">
+            (a) reproduce or duplicate the App.
+          </span>
+          <span className="block p-1 font-semibold">
+            (b) edit or otherwise modify any material on the App.
+          </span>
+        </p>
+      </div>
+      <div className="my-8">
+        <h1 className="text-3xl font-semibold">
+          Limitation and Exclusion of Warranties and Liability
+        </h1>
+        <p className="tracking-wide mt-2 text-lg font-thin">
+          This material contained within or released by this App is intended for
+          informational purposes only. eBiz, staff of eBiz, Marisa Ahwai, Crime
+          Stoppers Bahamas (formerly CrimeStoppers Foundation), Directors and
+          staff of Crime Stoppers Bahamas, any affiliated companies of eBiz and
+          their staff (all hereinafter called Developers) have endeavoured to
+          ensure that ALL the information provided within the APP or released by
+          the APP is accurate, complete and timely. However, the Developers are
+          not liable for any errors and/or omissions or incompleteness of
+          information within or released by this App. Your use of any
+          information within this App is at your own risk, for which the
+          Developers shall not be liable. In the event of an emergency please
+          contact the relevant local authorities. The persons displayed in this
+          APP along with their personal details have been obtained from public
+          sources or law enforcement agencies and the Developers will not be
+          responsible or liable if any person displayed is incorrectly labelled
+          or any of their personal details are incorrect or inaccurate. The App
+          also provides links to websites, these links are for your convenience
+          only and the Developers do not endorse these websites or are
+          responsible for their content. It is your responsibility to ensure
+          that the information within these websites meets your requirements.
+          Whilst we the Developers endeavour to ensure that the information
+          within or released through this App is correct, we the Developers make
+          no presentations or warranties of any kind, express or implied, about
+          its completeness, accuracy, reliability or suitability nor do we
+          commit to ensuring that the App remains available or that the material
+          on the App is kept up to date. In no event shall the Developers be
+          liable for any loss, suffering, damage, injury including without
+          limitation, direct, indirect or consequential loss or damage or
+          injury, or any loss damage or injury whatsoever arising in connection
+          with your use and/or a third party use or inability to use this App.
+        </p>
+      </div>
+      <div className="my-8">
+        <h1 className="text-3xl font-semibold">Revisions</h1>
+        <p className="tracking-wide mt-2 text-lg font-thin">
+          The Developers may revise this disclaimer from time to time. The
+          revised disclaimer will apply to the use of the App from the date of
+          publication of the revised disclaimer.
+        </p>
+      </div>
+      <div className="my-8">
+        <h1 className="text-3xl font-semibold">Entire agreement</h1>
+        <p className="tracking-wide mt-2 text-lg font-thin">
+          This disclaimer constitutes the entire agreement between you and the
+          Developers in relation to your use of this App and supersedes all
+          previous agreements written or oral in respect of your use of this
+          App.
+        </p>
+      </div>
+      <div className="my-8">
+        <h1 className="text-3xl font-semibold">Law and jurisdiction</h1>
+        <p className="tracking-wide mt-2 text-lg font-thin">
+          This disclaimer will be governed by and construed in accordance with
+          English law, and any disputes relating to this disclaimer will be
+          subject to the exclusive jurisdiction of the courts of The
+          Commonwealth of The Bahamas.
+        </p>
+      </div>
+      <div className="my-8">
+        <h1 className="text-3xl font-semibold">Pictures within APP</h1>
+        <p className="tracking-wide mt-2 text-lg font-thin">
+          The pictures contained within or released by the APP have been
+          obtained from public sources or law enforcement agencies and the
+          Developers are not responsible or liable for any resemblance to
+          another person either living or dead or the incorrect labelling of any
+          person.
+        </p>
+      </div>
+
       <div className="my-8">
         <h1 className="text-3xl font-semibold">User Accounts</h1>
         <div className="tracking-wide mt-2 text-lg">
@@ -117,13 +208,13 @@ const Page = () => {
         </p>
       </div>
       <div className="my-8">
-        <h1 className="text-3xl font-semibold">Contact Us</h1>
+        <h1 className="text-3xl font-semibold">
+          Development Company&apos;s Contact Information
+        </h1>
         <p className="tracking-wide mt-2 text-lg font-thin">
-          For any questions about this Privacy Policy, please{" "}
-          <a href="#" className="text-blue-500 underline">
-            Contact us
-          </a>
-          .
+          The full name of the development company is eBiz Ltd, We are
+          incorporated under the laws of The Commonwealth of The Bahamas. You
+          can contact us via our website at www.ebiz-ltd.com
         </p>
       </div>
     </div>
