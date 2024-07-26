@@ -4,12 +4,11 @@ import { dateReader } from "@/lib/utils";
 import { child, get, getDatabase, ref, remove } from "firebase/database";
 import { useEffect, useState } from "react";
 import CryptoES from "crypto-es";
+import MessageItem from "./MessageItem";
 
 const Page = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [messages, setMessages] = useState<any>(null);
-  const [messageIndices, setMessageIndices] = useState<any>(null);
-
+  const [decryptedMessages, setDecryptedMessages] = useState<any[]>([]);
   const fetchMessages = async () => {
     setLoading(true);
     try {
@@ -19,9 +18,17 @@ const Page = () => {
       if (data.exists()) {
         const messages = await data.val();
         const indices = Object.keys(messages);
-        console.log(messages);
-        setMessages(messages);
-        setMessageIndices(indices);
+        await indices.forEach((index:any) => {
+          if(typeof messages[index].message === "string"){
+            setDecryptedMessages((prev:any[]) => {
+              return (
+                [...prev, { id: index, message : messages[index].message, created_at: messages[index].created_at}]
+              )
+            })
+          } else {
+            decryptMessage(messages[index], index)
+          }
+        })
         setLoading(false);
       }
     } catch (err) {
@@ -30,32 +37,25 @@ const Page = () => {
     }
   };
 
-  const deleteMessage = async (id: string) => {
-    try {
-      const db = getDatabase(app);
-      const postRef = ref(db, `messages/${id}`);
-      await remove(postRef);
-      console.log("post deleted successfullyy");
-      fetchMessages();
-    } catch (err) {
-      console.log("could not delete_______", JSON.stringify(err));
-    }
-  };
 
-  const [salt, setSalt] = useState<string>("");
-  const decryptMessage = async (params: any) => {
-    console.log(params)
+  const decryptMessage = async (obj: any, id: any) => {
+
+    console.log(obj)
     try {
       const decryptedCipher = await CryptoES.AES.decrypt(
-        params,
-        salt
+        obj.message,
+        "ebiz242"
       );
       console.log(
         "DECRYPTED TEXT",
         await decryptedCipher.toString(CryptoES.enc.Utf8)
       );
       const decryptedMessage = decryptedCipher.toString(CryptoES.enc.Utf8)
-      await alert(decryptedMessage)
+      await setDecryptedMessages((prev:any[]) => {
+        return (
+          [...prev, { id: id, message : decryptedMessage, created_at: obj.created_at}]
+        )
+      })
     } catch (err) {
       console.log(JSON.stringify(err));
     }
@@ -97,7 +97,12 @@ const Page = () => {
         </div>
       ) : (
         <div>
-          {messages ? (
+          {decryptedMessages.map((item:any) => {
+            return (
+              <MessageItem key={item.id} item={item} refreshFunc={fetchMessages} />
+            )
+          })}
+          {/* {messages ? (
             <div className="bg-green-500 w-full md:w-3/5">
               {messageIndices.map((messageId: any) => {
                 return (
@@ -116,7 +121,7 @@ const Page = () => {
                       onClick={() => deleteMessage(messageId)}
                     >
                       Delete
-                    </button> */}
+                    </button>
                     <div className="flex justify-center items-center">
                       <label htmlFor="salt">Salt For Decryption</label>
                       <input
@@ -140,7 +145,7 @@ const Page = () => {
                 );
               })}
             </div>
-          ) : null}
+          ) : null} */}
         </div>
       )}
     </div>
