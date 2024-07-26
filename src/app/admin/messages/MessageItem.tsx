@@ -11,7 +11,7 @@ const MessageItem = ({ item, refreshFunc }: any) => {
 
   const [editing, setEditing] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>("");
+  const [message, setMessage] = useState<string>(item.message);
 
   const deleteMessage = async (id: string) => {
     setLoading(true);
@@ -29,7 +29,13 @@ const MessageItem = ({ item, refreshFunc }: any) => {
   };
 
   const editMessage = async () => {
+    
     setLoading(true);
+    if(message.length < 2){
+      setEditing(false);
+      alert("unaccepted edits")
+      return
+    }
     const currentDateTimeStamp = new Date().toISOString();
     try {
       const db = getDatabase(app);
@@ -84,6 +90,7 @@ const MessageItem = ({ item, refreshFunc }: any) => {
             //rows={10}
             cols={10}
             id="editing"
+            placeholder={item.message}
             value={message}
             onChange={(e: any) => setMessage(e.target.value)}
             className="border-2 border-blue-500 rounded-md p-1 block w-full"
@@ -102,19 +109,19 @@ const MessageItem = ({ item, refreshFunc }: any) => {
       <p className="font-nunito font-semibold text-sm">
         Sent : {dateReader(item.created_at)}
       </p>
-      <div className="flex justify-between pt-8">
+      <div className="flex justify-center pt-8">
         <button
           onClick={() => setEditing(!editing)}
-          className="bg-slate-700 hover:text-black hover:bg-amber-200 p-2 min-w-40 text-white rounded-md font-mono tracking-wider font-extrabold"
+          className="bg-slate-700 w-full hover:text-black hover:bg-amber-200 p-2 min-w-40 text-white rounded-md font-mono tracking-wider font-extrabold"
         >
-          {editing ? "STOP EDITING" : "EDIT"}
+          {editing ? "CANCEL" : "EDIT"}
         </button>
-        <button
+        {/* <button
           onClick={() => deleteMessage(item.id)}
           className="bg-red-700 text-white p-2 min-w-40 rounded-md font-mono tracking-wider font-extrabold"
         >
           DELETE
-        </button>
+        </button> */}
       </div>
     </div>
   );
