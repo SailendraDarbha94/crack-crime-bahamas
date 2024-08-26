@@ -145,7 +145,7 @@ export default function Footer() {
                   />
                 </svg>
               </a>
-              <a
+              {/* <a
                 href="https://github.com/SailendraDarbha94/crack-crime-bahamas"
                 target="_blank"
                 rel="noopener"
@@ -163,7 +163,7 @@ export default function Footer() {
                     clipRule="evenodd"
                   />
                 </svg>
-              </a>
+              </a> */}
               {/* <a
                 href="#"
                 className="text-gray-500 hover:text-gray-900 dark:hover:text-white"
