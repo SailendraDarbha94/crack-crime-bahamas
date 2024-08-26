@@ -1,12 +1,12 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "Next.js + NextUI",
+  name: "Crack Crime Bahamas",
   description: "Make beautiful websites regardless of your design experience.",
   navItems: [
     {
       label: "Home",
-      href: "/",
+      href: "/home",
     },
     {
       label: "Docs",
