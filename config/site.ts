@@ -8,14 +8,14 @@ export const siteConfig = {
       label: "Home",
       href: "/home",
     },
-    {
-      label: "Docs",
-      href: "/docs",
-    },
-    {
-      label: "Pricing",
-      href: "/pricing",
-    },
+    // {
+    //   label: "Docs",
+    //   href: "/docs",
+    // },
+    // {
+    //   label: "Pricing",
+    //   href: "/pricing",
+    // },
     {
       label: "Blog",
       href: "/blog",
@@ -26,16 +26,16 @@ export const siteConfig = {
     },
   ],
   navMenuItems: [
-    {
-      label: "Profile",
-      href: "/profile",
-    },
+    // {
+    //   label: "Profile",
+    //   href: "/profile",
+    // },
     {
       label: "Dashboard",
       href: "/dashboard",
     },
     {
-      label: "Projects",
+      label: "Adverts",
       href: "/projects",
     },
     {
@@ -60,6 +60,7 @@ export const siteConfig = {
     },
   ],
   links: {
+    play_store: "https://play.google.com/store/apps/details?id=com.anonymous.CrackCrimeBahamas",
     github: "https://github.com/nextui-org/nextui",
     twitter: "https://twitter.com/getnextui",
     docs: "https://nextui.org",
