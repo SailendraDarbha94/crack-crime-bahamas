@@ -69,10 +69,10 @@ const Sidebar = () => {
         Advertisements
       </a>
       <a
-        href="#"
+        href="/admin/notifications"
         className="bg-yellow-300 dark:bg-yellow-600 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
       >
-        Donors
+        Notifications
       </a>
       <a
         href="#"

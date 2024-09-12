@@ -1,7 +1,9 @@
+//"use client";
 import type { Metadata } from "next";
 import "./globals.css";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import { NextUIProvider } from "@nextui-org/react";
 
 export const metadata: Metadata = {
   title: "Crack Crime Bahamas",
@@ -16,9 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {children}
-        <Footer />
-        <Navbar />
+        <NextUIProvider>
+          <Navbar />
+          {children}
+          <Footer />
+        </NextUIProvider>
       </body>
     </html>
   );

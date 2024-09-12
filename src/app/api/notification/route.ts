@@ -26,7 +26,7 @@ export async function POST(req: Request) {
       to: pushToken,
       sound: "default",
       body: data,
-      data: { route: "o stree kal notification lana" },
+      data: { body: "o stree kal notification lana" },
     });
   }
 
