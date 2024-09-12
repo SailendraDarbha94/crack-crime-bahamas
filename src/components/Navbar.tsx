@@ -62,15 +62,15 @@ const Navbar = () => {
             <g
               fill="none"
               stroke="black"
-              stroke-dasharray="24"
-              stroke-dashoffset="24"
-              stroke-linecap="round"
-              stroke-width="2"
+              strokeDasharray="24"
+              strokeDashoffset="24"
+              strokeLinecap="round"
+              strokeWidth="2"
             >
               <path d="M5 5H19">
                 <animate
                   fill="freeze"
-                  attributeName="stroke-dashoffset"
+                  attributeName="strokeDashoffset"
                   dur="0.3s"
                   values="24;0"
                 />
@@ -78,7 +78,7 @@ const Navbar = () => {
               <path d="M5 12H19">
                 <animate
                   fill="freeze"
-                  attributeName="stroke-dashoffset"
+                  attributeName="strokeDashoffset"
                   begin="0.2s"
                   dur="0.3s"
                   values="24;0"
@@ -87,7 +87,7 @@ const Navbar = () => {
               <path d="M5 19H19">
                 <animate
                   fill="freeze"
-                  attributeName="stroke-dashoffset"
+                  attributeName="strokeDashoffset"
                   begin="0.4s"
                   dur="0.3s"
                   values="24;0"
@@ -105,15 +105,15 @@ const Navbar = () => {
             <g
               fill="none"
               stroke="white"
-              stroke-dasharray="24"
-              stroke-dashoffset="24"
-              stroke-linecap="round"
-              stroke-width="2"
+              strokeDasharray="24"
+              strokeDashoffset="24"
+              strokeLinecap="round"
+              strokeWidth="2"
             >
               <path d="M5 5H19">
                 <animate
                   fill="freeze"
-                  attributeName="stroke-dashoffset"
+                  attributeName="strokeDashoffset"
                   dur="0.3s"
                   values="24;0"
                 />
@@ -121,7 +121,7 @@ const Navbar = () => {
               <path d="M5 12H19">
                 <animate
                   fill="freeze"
-                  attributeName="stroke-dashoffset"
+                  attributeName="strokeDashoffset"
                   begin="0.2s"
                   dur="0.3s"
                   values="24;0"
@@ -130,7 +130,7 @@ const Navbar = () => {
               <path d="M5 19H19">
                 <animate
                   fill="freeze"
-                  attributeName="stroke-dashoffset"
+                  attributeName="strokeDashoffset"
                   begin="0.4s"
                   dur="0.3s"
                   values="24;0"
@@ -213,13 +213,13 @@ const Navbar = () => {
           <g
             fill="none"
             stroke="black"
-            stroke-dasharray="16"
-            stroke-dashoffset="16"
-            stroke-linecap="round"
-            stroke-width="2"
+            strokeDasharray="16"
+            strokeDashoffset="16"
+            strokeLinecap="round"
+            strokeWidth="2"
           >
-            <path d="M7 7L17 17" stroke-dashoffset="0" />
-            <path d="M17 7L7 17" stroke-dashoffset="0" />
+            <path d="M7 7L17 17" strokeDashoffset="0" />
+            <path d="M17 7L7 17" strokeDashoffset="0" />
           </g>
         </svg>
       </div>

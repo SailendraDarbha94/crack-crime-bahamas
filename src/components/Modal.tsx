@@ -24,7 +24,7 @@ const ModalText = ({ isVisible, onClose, children }: any) => {
           >
             <defs>
               <mask id="ipSCloseOne0">
-                <g fill="none" stroke-linejoin="round" stroke-width="4">
+                <g fill="none" stroke-linejoin="round" strokeWidth="4">
                   <path
                     fill="#fff"
                     stroke="#fff"
@@ -32,7 +32,7 @@ const ModalText = ({ isVisible, onClose, children }: any) => {
                   />
                   <path
                     stroke="#000"
-                    stroke-linecap="round"
+                    strokeLinecap="round"
                     d="M29.657 18.343L18.343 29.657m0-11.314l11.314 11.314"
                   />
                 </g>

@@ -91,6 +91,9 @@ const Page = () => {
   return (
     <div className="w-full font-nunito">
       <h1 className="text-2xl font-semibold">Manage Advertisement Images</h1>
+      <p className="text-lg">
+        Currently the system supports images with <span className="px-1 font-extrabold underline">png</span>extension only
+      </p>
       <div className="flex flex-wrap w-full justify-evenly">
         <AdvertChanger group="home" />
         <AdvertChanger group="emergency" />
@@ -98,6 +101,7 @@ const Page = () => {
         <AdvertChanger group="police" />
         <AdvertChanger group="supportAndSafety" />
         <AdvertChanger group="fullpageHome" />
+        <AdvertChanger group="fullpageSecond" />
       </div>
     </div>
   );
