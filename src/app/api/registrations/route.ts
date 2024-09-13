@@ -1,17 +1,17 @@
 import app from "@/lib/firebase";
-import { Expo } from "expo-server-sdk";
-import { child, getDatabase, push, ref, update } from "firebase/database";
+import { child, getDatabase, push, ref, set, update } from "firebase/database";
 
 export async function POST(req: Request) {
   const data = await req.json();
-  console.log(data);
+  console.log("this is the token", data.Token);
   const db = await getDatabase(app);
-  const newKey = push(child(ref(db), "notifications_register")).key;
+  const dataRef = ref(db, `/notifications_register/${data.Token}`);
   try {
-    const updates: any = {};
-    updates["/notifications_register/" + newKey] = { ...data };
-    await update(ref(db), updates);
-    return Response.json({ data: newKey });
+    // const updates: any = {};
+    // updates["/notifications_register/" + newKey] = { ...data };
+    // await update(ref(db), updates);
+    await set(dataRef, data);
+    return Response.json({ data: "success" });
   } catch (err) {
     console.log(err);
     return Response.json({ data: "request failure" });
