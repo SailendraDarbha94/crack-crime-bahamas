@@ -1,7 +1,6 @@
 "use client";
 
 import { Button, Input, Spinner } from "@nextui-org/react";
-import { div } from "framer-motion/client";
 import { useState } from "react";
 const Page = () => {
   const [loading, setLoading] = useState<boolean>(false);

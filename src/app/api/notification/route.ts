@@ -1,10 +1,27 @@
+import app from "@/lib/firebase";
 import { Expo } from "expo-server-sdk";
+import { child, get, getDatabase, ref } from "firebase/database";
 
 export async function POST(req: Request) {
   const { data } = await req.json();
-  const somePushTokens = [
+  let somePushTokens = [
     `ExponentPushToken[${process.env.NEXT_PUBLIC_TEST_EXPONENT_TOKEN}]`,
   ];
+  const db = await getDatabase(app);
+  const dbRef = await ref(db);
+  try {
+    const data = await get(child(dbRef, '/notifications_register'))
+    if(data.exists()){
+      const tokens = await data.val()
+      somePushTokens = Object.keys(tokens).map(token => 'ExponentPushToken[{token}]'.replace("{token}", token))
+    } else {
+      console.log("errrorrrrrrr")
+    }
+  } catch (err) {
+    console.log(err)
+    return Response.json({data: "request failure"})
+  }
+
   let expo = new Expo({
     accessToken: process.env.NEXT_PUBLIC_EXPO_ACCESS_TOKEN,
     useFcmV1: true, // this can be set to true in order to use the FCM v1 API
