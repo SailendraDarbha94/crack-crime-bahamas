@@ -1,7 +1,24 @@
+"use client";
 import Donation from "@/components/Donation";
+import { ToastContext } from "@/lib/toastContext";
+import { Button, Link } from "@nextui-org/react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useContext } from "react";
 
 export default function Home() {
+  const router = useRouter();
+  const appDownloader = () => {
+    setTimeout(() => {
+      window.open(
+        "https://play.google.com/store/apps/details?id=com.anonymous.CrackCrimeBahamas",
+        "_blank"
+      );
+    }, 300);
+  };
+
+  const { toast } = useContext(ToastContext);
+
   return (
     <main className="flex min-h-screen flex-col items-center p-4 md:p-12 lg:p-24">
       <h1 className="md:text-6xl lg:text-8xl text-4xl font-nunito font-extrabold mb-10 w-screen text-center">
@@ -17,15 +34,14 @@ export default function Home() {
               The worst amongst us have no chance of perpetrating any criminal
               acts if the the rest of us come together.
             </p>
-            <a
-              href="https://play.google.com/store/apps/details?id=com.anonymous.CrackCrimeBahamas"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-black-200 rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900"
+            <Button
+              onPress={appDownloader}
+              radius="sm"
+              className="mr-1 bg-gradient-to-t from-amber-200 shadow-sm to-yellow-500 text-gray-900 hover:text-black shadow-black font-nunito font-bold text-lg"
             >
               Download App
               <svg
-                className="w-5 h-5 ml-1 -mr-1"
+                className="w-6 h-6"
                 fill="currentColor"
                 viewBox="0 0 16 16"
                 xmlns="http://www.w3.org/2000/svg"
@@ -35,13 +51,52 @@ export default function Home() {
                   <path d="M8 14a1 1 0 1 0 0-2a1 1 0 0 0 0 2" />
                 </g>
               </svg>
-            </a>
-            <a
-              href="/more-about-us"
+            </Button>
+            {/* <Button
+              color="secondary"
+              radius="sm"
+              variant="solid"
+              className="mr-2 p-0"
+            >
+              <Link
+                isExternal={true}
+                className="text-white hover:text-green-500 px-4 py-2"
+                //color="foreground"
+                href=""
+                //target="_blank"
+              >
+                Download App
+                <svg
+                  className="w-5 h-5 ml-1 -mr-1"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g fill="currentColor">
+                    <path d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                    <path d="M8 14a1 1 0 1 0 0-2a1 1 0 0 0 0 2" />
+                  </g>
+                </svg>
+              </Link>
+            </Button> */}
+            <Button
+              onPress={() => {
+                toast({ type: "success", message: "something to see" });
+                // setTimeout(() => {
+                //   router.push("/more-about-us");
+                // }, 300);
+              }}
+              radius="sm"
+              className="ml-1 bg-gradient-to-tr hover:bg-gradient-to-b hover:from-yellow-500 hover:to-amber-200 shadow-sm from-violet-500 to-blue-500 text-white hover:text-black shadow-black font-nunito font-bold text-lg"
+            >
+              More About Us
+            </Button>
+            {/* <a
+              href=""
               className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
             >
               More About Us
-            </a>
+            </a> */}
           </div>
           <div className="hidden lg:mt-0 lg:col-span-5 lg:flex relative">
             {/* <Image
@@ -50,7 +105,11 @@ export default function Home() {
               alt="mockup"
               className="dark:rounded-lg"
             /> */}
-            <img src="/newfavicon.png" alt="logo image" className="max-h-80 mx-auto" />
+            <img
+              src="/icon.png"
+              alt="logo image"
+              className="max-h-80 mx-auto"
+            />
           </div>
         </div>
       </section>
@@ -188,7 +247,8 @@ export default function Home() {
               </h3>
               <p className="text-gray-500 dark:text-gray-400">
                 Heroic deeds should be incentivized and motivated hence we have
-                a rewards programme for helpful information that leads to an arrest
+                a rewards programme for helpful information that leads to an
+                arrest
               </p>
             </div>
           </div>

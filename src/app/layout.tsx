@@ -4,6 +4,7 @@ import "./globals.css";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { NextUIProvider } from "@nextui-org/react";
+import ToastContextProvider from "@/lib/toastContext";
 
 export const metadata: Metadata = {
   title: "Crack Crime Bahamas",
@@ -19,9 +20,11 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <NextUIProvider>
-          <Navbar />
-          {children}
-          <Footer />
+          <ToastContextProvider>
+            <Navbar />
+            {children}
+            <Footer />
+          </ToastContextProvider>
         </NextUIProvider>
       </body>
     </html>

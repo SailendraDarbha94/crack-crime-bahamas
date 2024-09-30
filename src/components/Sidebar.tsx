@@ -1,21 +1,26 @@
 "use client";
 
 import app from "@/lib/firebase";
+import { ToastContext } from "@/lib/toastContext";
 import { getAuth, signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 const Sidebar = () => {
   const [loading, setLoading] = useState<boolean>(false);
-
+  const { toast } = useContext(ToastContext);
   const router = useRouter();
 
   const logoutUser = async () => {
     setLoading(true);
-    const auth = await getAuth(app);
+    const auth = getAuth(app);
     try {
       await signOut(auth);
       setLoading(false);
+      toast({
+        type: "default",
+        message: "User Logged Out!",
+      });
       router.push("/");
     } catch (err) {
       setLoading(false);

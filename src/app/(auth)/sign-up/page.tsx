@@ -1,16 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { getDatabase, ref, child, get, set, push } from "firebase/database";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import app from "@/lib/firebase";
+import { ToastContext } from "@/lib/toastContext";
 const Page = () => {
   const auth = getAuth(app);
   const db = getDatabase(app);
+  const { toast } = useContext(ToastContext);
+
   const createNewUser = async () => {
-    let userCreated: boolean = false;
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      toast({
+        type: "error",
+        message: "Passwords do not match",
+      });
       return;
     } else if (
       !email ||
@@ -19,11 +24,13 @@ const Page = () => {
       !firstName ||
       !lastName
     ) {
-      alert("Please fill the details");
+      toast({
+        type: "error",
+        message: "Please fill the details",
+      });
     } else {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          userCreated = true;
           const user = userCredential.user;
           console.log(user);
           saveUserData(user.uid, firstName, lastName, user.email);
@@ -32,21 +39,25 @@ const Page = () => {
           setPassword("");
           setConfirmPassword("");
           setEmail("");
+          toast({
+            type: "success",
+            message: "User Sign-Up Successfull!",
+          });
         })
         .catch((err) => {
           console.log("OPERATION FAILED...", JSON.stringify(err));
+          toast({
+            type: "error",
+            message: `Error Occurred! ${
+              err.code ? err.code : "Please Try Again Later!"
+            }`,
+          });
           //this happens with 400 Bad Request, build error handling
           //OPERATION FAILED... {"code":"auth/invalid-email","customData":{},"name":"FirebaseError"}
-        })
-        .finally(() => {
-          if (userCreated) {
-            alert("Request Received");
-          } else {
-            alert("Error Occurred!");
-          }
         });
     }
   };
+
   const saveUserData = async (
     userId: string,
     firstName: string,
@@ -61,11 +72,20 @@ const Page = () => {
         email: email,
         created_at: currentTime,
       })
-        .then((callback) => console.log("CALLBACK TRIGGERED", callback))
-        .finally(() => {
-          // TODO: add TOAST
-          console.log("USER SAVED");
-          // alert('User data saved')
+        .then((cb) => {
+          console.log(cb);
+          toast({
+            type: "success",
+            message: "User Saved In Database",
+          });
+        })
+        .catch((err) => {
+          toast({
+            type: "error",
+            message: `Error Occurred! ${
+              err.code ? err.code : "Please Try Again Later!"
+            }`,
+          });
         });
     } catch (err) {
       console.log(err);

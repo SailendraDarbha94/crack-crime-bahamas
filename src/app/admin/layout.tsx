@@ -3,9 +3,10 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import app from "@/lib/firebase";
+import { ToastContext } from "@/lib/toastContext";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 export default function AdminLayout({
   children,
@@ -14,12 +15,13 @@ export default function AdminLayout({
 }>) {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
+
   useEffect(() => {
     const auth = getAuth(app);
     onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log("USER DETAILS", user);
-        setUser(user)
+        setUser(user);
       } else {
         router.push("/login");
       }
@@ -32,11 +34,14 @@ export default function AdminLayout({
         <Sidebar />
       </div>
       <div className="w-full md:w-9/12 lg:w-10/12">
-      <div className="w-full">
-        <h2 className="text-3xl p-2 font-nunito">Admin Dashboard</h2>
-        <h2 className="text-xl p-2 underline font-nunito">{user ? user.email : null}</h2>
+        <div className="w-full">
+          <h2 className="text-3xl p-2 font-nunito">Admin Dashboard</h2>
+          <h2 className="text-xl p-2 underline font-nunito">
+            {user ? user.email : null}
+          </h2>
+        </div>
+        {children}
       </div>
-      {children}</div>
     </main>
   );
 }

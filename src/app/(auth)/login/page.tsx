@@ -1,5 +1,6 @@
 "use client";
 import app from "@/lib/firebase";
+import { ToastContext } from "@/lib/toastContext";
 import {
   browserLocalPersistence,
   getAuth,
@@ -7,33 +8,43 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 const Page = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  
+
   const router = useRouter();
+  const { toast } = useContext(ToastContext);
 
   const loginUser = async () => {
     setLoading(true);
-    try {
-      const auth = await getAuth(app);
-      setPersistence(auth, browserLocalPersistence).then(() => {
-        signInWithEmailAndPassword(auth, email, password).then((cb) => {
+    const auth = getAuth(app);
+    setPersistence(auth, browserLocalPersistence).then(() => {
+      signInWithEmailAndPassword(auth, email, password)
+        .then((cb) => {
           console.log(cb);
+          setLoading(false);
           if (cb.user) {
+            toast({
+              type: "success",
+              message: "User Logged In! Redirecting",
+            });
             setTimeout(() => {
               router.push("/admin");
-            }, 1500);
+            }, 500);
           }
+        })
+        .catch((err) => {
+          setLoading(false);
+          toast({
+            type: "error",
+            message: `Error Occurred! ${err.code ? err.code : "Please Try Again Later!"}`,
+          });
         });
-      });
-    } catch (err) {
-      console.log("Error Occured", err);
-    }
+    });
   };
 
   return (
