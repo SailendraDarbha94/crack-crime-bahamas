@@ -81,10 +81,10 @@ export default function Home() {
             </Button> */}
             <Button
               onPress={() => {
-                toast({ type: "success", message: "something to see" });
-                // setTimeout(() => {
-                //   router.push("/more-about-us");
-                // }, 300);
+                //toast({ type: "success", message: "something to see" });
+                setTimeout(() => {
+                  router.push("/more-about-us");
+                }, 300);
               }}
               radius="sm"
               className="ml-1 bg-gradient-to-tr hover:bg-gradient-to-b hover:from-yellow-500 hover:to-amber-200 shadow-sm from-violet-500 to-blue-500 text-white hover:text-black shadow-black font-nunito font-bold text-lg"
