@@ -106,7 +106,7 @@ export default function Home() {
               className="dark:rounded-lg"
             /> */}
             <img
-              src="/icon.png"
+              src="/newfavicon.png"
               alt="logo image"
               className="max-h-80 mx-auto"
             />
@@ -285,7 +285,7 @@ export default function Home() {
             </div>
             <img
               className="mt-4 w-full lg:mt-10 rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/content/office-long-1.png"
+              src="/newfavicon.png"
               alt="office content 2"
             />
           </div>

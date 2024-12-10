@@ -1,11 +1,12 @@
 "use client";
 
+import { ToastContext } from "@/lib/toastContext";
 import { Button, Input, Spinner } from "@nextui-org/react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 const Page = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [notif, setNotif] = useState<string | null>(null);
-
+  const { toast } = useContext(ToastContext);
   const sendNotification = async () => {
     setLoading(true);
     try {
@@ -19,6 +20,10 @@ const Page = () => {
       const data = await res.json();
       console.log(data);
       setNotif(null);
+      toast({
+        type: "error",
+        message: "Notification sent to registered devices",
+      });
       setLoading(false);
     } catch (err) {
       setLoading(false);
