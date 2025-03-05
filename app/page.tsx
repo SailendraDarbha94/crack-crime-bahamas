@@ -1,113 +1,95 @@
+"use client";
 import Image from "next/image";
-
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useRouter } from "next/navigation";
 export default function Home() {
+  const router = useRouter();
+
+  const appDownloader = () => {
+    setTimeout(() => {
+      window.open(
+        "https://play.google.com/store/apps/details?id=com.anonymous.CrackCrimeBahamas",
+        "_blank",
+      );
+    }, 300);
+  };
+
   return (
     <main className="flex min-h-screen flex-col items-center p-4 md:p-12 lg:p-24">
       <h1 className="md:text-6xl lg:text-8xl text-4xl font-extrabold mb-10 w-screen text-center">
         Crack Crime Bahamas
       </h1>
-      <section className="bg-white dark:bg-gray-900 rounded-lg font-nunito mb-10 w-full">
-        <div className="grid w-full px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
-          <div className="mr-auto place-self-center lg:col-span-7">
-            <h1 className="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-3xl xl:text-5xl dark:text-white">
-              Crime Stoppers Bahamas
-            </h1>
-            <p className="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
-              The worst amongst us have no chance of perpetrating any criminal
-              acts if the the rest of us come together.
-            </p>
-            <Button
-              onPress={appDownloader}
-              radius="sm"
-              className="mr-1 bg-gradient-to-t from-amber-200 shadow-sm to-yellow-500 text-gray-900 hover:text-black shadow-black font-nunito font-bold text-lg"
-            >
-              Download App
-              <svg
-                className="w-6 h-6"
-                fill="currentColor"
-                viewBox="0 0 16 16"
-                xmlns="http://www.w3.org/2000/svg"
+      <Card className="w-full mt-4 mb-8">
+        <section className="w-full">
+          <div className="grid w-full px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
+            <div className="mr-auto place-self-center lg:col-span-7">
+              <h1 className="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-3xl xl:text-5xl dark:text-white">
+                Crime Stoppers Bahamas
+              </h1>
+              <p className="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
+                The worst amongst us have no chance of perpetrating any criminal
+                acts if the the rest of us come together.
+              </p>
+              <Button
+                variant={"outline"}
+                className="rounded-full cursor-pointer hover:bg-yellow-300"
+                onClick={appDownloader}
               >
-                <g fill="currentColor">
-                  <path d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
-                  <path d="M8 14a1 1 0 1 0 0-2a1 1 0 0 0 0 2" />
-                </g>
-              </svg>
-            </Button>
-            {/* <Button
-                    color="secondary"
-                    radius="sm"
-                    variant="solid"
-                    className="mr-2 p-0"
-                  >
-                    <Link
-                      isExternal={true}
-                      className="text-white hover:text-green-500 px-4 py-2"
-                      //color="foreground"
-                      href=""
-                      //target="_blank"
-                    >
-                      Download App
-                      <svg
-                        className="w-5 h-5 ml-1 -mr-1"
-                        fill="currentColor"
-                        viewBox="0 0 16 16"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <g fill="currentColor">
-                          <path d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
-                          <path d="M8 14a1 1 0 1 0 0-2a1 1 0 0 0 0 2" />
-                        </g>
-                      </svg>
-                    </Link>
-                  </Button> */}
-            <Button
-              onPress={() => {
-                //toast({ type: "success", message: "something to see" });
-                setTimeout(() => {
-                  router.push("/more-about-us");
-                }, 300);
-              }}
-              radius="sm"
-              className="ml-1 bg-gradient-to-tr hover:bg-gradient-to-b hover:from-yellow-500 hover:to-amber-200 shadow-sm from-violet-500 to-blue-500 text-white hover:text-black shadow-black font-nunito font-bold text-lg"
-            >
-              More About Us
-            </Button>
-            {/* <a
-                    href=""
-                    className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
-                  >
-                    More About Us
-                  </a> */}
+                Download App
+                <svg
+                  className="w-6 h-6"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g fill="currentColor">
+                    <path d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                    <path d="M8 14a1 1 0 1 0 0-2a1 1 0 0 0 0 2" />
+                  </g>
+                </svg>
+              </Button>
+              <Button
+                onClick={() => {
+                  setTimeout(() => {
+                    router.push("/more-about-us");
+                  }, 300);
+                }}
+                variant={"ghost"}
+                className="rounded-full ml-4 cursor-pointer hover:bg-yellow-300"
+              >
+                More About Us
+              </Button>
+            </div>
+            <div className="hidden lg:mt-0 lg:col-span-5 lg:flex relative">
+              <img
+                src="/newfavicon.png"
+                alt="logo image"
+                className="max-h-80 mx-auto"
+              />
+            </div>
           </div>
-          <div className="hidden lg:mt-0 lg:col-span-5 lg:flex relative">
-            {/* <Image
-                    src="/landingPageTop.jpg"
-                    fill
-                    alt="mockup"
-                    className="dark:rounded-lg"
-                  /> */}
-            <img
-              src="/newfavicon.png"
-              alt="logo image"
-              className="max-h-80 mx-auto"
-            />
-          </div>
-        </div>
-      </section>
-      <section className="bg-white dark:bg-gray-900 rounded-lg font-nunito mb-10">
-        <div className="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
-          <div className="max-w-screen-md mb-8 lg:mb-16">
-            <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
-              Features of our App
-            </h2>
-            <p className="text-gray-500 sm:text-xl dark:text-gray-400">
-              We here at Crack Crime Bahamas believe that safety is one of the
-              fundamental human rights and are steadfast in our commitment to
-              keeping our communities safe.
-            </p>
-          </div>
-          <div className="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0">
+        </section>
+      </Card>
+      <Card className="w-full rounded-2xl mb-8 px-4 py-4">
+        <CardHeader>
+          <CardTitle className="font-extrabold text-4xl p-4">
+            Features of our App
+          </CardTitle>
+          <CardDescription className="font-light text-lg p-4">
+            We here at Crack Crime Bahamas believe that safety is one of the
+            fundamental human rights and are steadfast in our commitment to
+            keeping our communities safe.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="">
+          <div className="p-4 space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0">
             <div>
               <div className="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
                 <svg
@@ -234,45 +216,53 @@ export default function Home() {
               </p>
             </div>
           </div>
-        </div>
-      </section>
-      <section className="bg-white dark:bg-gray-900 rounded-lg font-nunito mb-10">
-        <div className="gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 lg:py-16 lg:px-6">
-          <div className="font-light text-gray-500 sm:text-lg dark:text-gray-400">
-            <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
-              Meet the Team
-            </h2>
-            <p className="mb-4">
-              Marisa Ahwai is the current chairman and stands on the shoulders
-              of the principals who had the vision to see the need for public
-              police partnership in solving crime in 2001, started the program
-              under the umbrella of Crime Stoppers International.
-            </p>
-            <p>
-              We are a Non Governmental Organisation and we depend on donations,
-              membership and corporate sponsors to help keep the program
-              running. Please consider making a
-              <Donation />
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-4 mt-8">
-            <div className="relative">
-              {" "}
-              <Image
-                className="w-full rounded-lg"
-                src="/marisa.jpeg"
-                fill={true}
-                alt="founder of crime stoppers bahamas"
-              />
+        </CardContent>
+        {/* <CardFooter className="flex justify-between">
+          <Button variant="outline">Cancel</Button>
+          <Button>Deploy</Button>
+        </CardFooter> */}
+      </Card>
+      <Card className="w-full rounded-2xl mb-8">
+        <CardHeader>
+          <CardDescription className="font-medium text-lg">
+            <div className="gap-16 items-center py-4 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 lg:py-4 lg:px-4">
+              <div className="font-light text-gray-500 sm:text-lg dark:text-gray-400">
+                <h2 className="mb-4 text-4xl font-extrabold text-gray-900 dark:text-white">
+                  Meet the Team
+                </h2>
+                <p className="mb-4">
+                  Marisa Ahwai is the current chairman and stands on the
+                  shoulders of the principals who had the vision to see the need
+                  for public police partnership in solving crime in 2001,
+                  started the program under the umbrella of Crime Stoppers
+                  International.
+                </p>
+                <p>
+                  We are a Non Governmental Organisation and we depend on
+                  donations and corporate sponsors to help keep the program
+                  running. Please consider making a Donation
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mt-8">
+                <div className="relative">
+                  <Image
+                    className="w-full rounded-lg"
+                    src="/marisa.jpeg"
+                    fill={true}
+                    alt="founder of crime stoppers bahamas"
+                  />
+                </div>
+                <img
+                  className="w-full lg:mt-10 rounded-lg"
+                  src="/newfavicon.png"
+                  alt="logo of crime stoppers bahamas"
+                />
+              </div>
             </div>
-            <img
-              className="mt-4 w-full lg:mt-10 rounded-lg"
-              src="/newfavicon.png"
-              alt="office content 2"
-            />
-          </div>
-        </div>
-      </section>
+          </CardDescription>
+        </CardHeader>
+        <CardContent></CardContent>
+      </Card>
     </main>
   );
 }
