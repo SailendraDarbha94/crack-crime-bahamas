@@ -1,13 +1,6 @@
 @import "tailwindcss";
 
 
-
-@font-face {
-  font-family: "Nunito";
-  src: url("../../public/fonts/Nunito-VariableFont_wght.ttf");
-}
-
-
 :root {
   --background: #ffffff;
   --foreground: #171717;
