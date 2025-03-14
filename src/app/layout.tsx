@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import localFont from 'next/font/local'
+import { Provider } from "@/components/ui/provider";
 
 
 const nunito = localFont({
@@ -21,12 +22,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${nunito.className} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <html lang="en" className="light">
+  <body
+    className={`${nunito.className} antialiased`}
+  >
+    <Provider>
+      {children}
+    </Provider>
+  </body>
+    </html >
   );
 }
