@@ -3,6 +3,7 @@ export interface AboutUsParagraphs {
   heading: string;
   initialContent: string;
   moreContent: string;
+  totalContent?: string;
 }
 
 export interface FAQs {
@@ -23,6 +24,13 @@ export const aboutUsParagraphs: AboutUsParagraphs[] = [
     The programme is governed by a volunteer civilian Board of Directors with an officer from The Royal Bahamas Police Force serving as a coordinator to the Board.
     Crime Stoppers Bahamas is a non-government organization and we depend on donations, membership and corporate sponsors to keep the programme running.
     We are affiliated with Crime Stoppers International that has over 1200 similar programmes around the world.`,
+    totalContent: `Crime Stoppers is a community action programme that gives us as residents the opportunity to become involved in the fight against crime.
+    The programme works because residents care and do not want crime in their neighborhoods. Many of our communities are small with people knowing each other from birth.
+    Our challenge is to make residents the eyes of the community and partners of the law without endangering them by exposing their identity to even their next door neighbour.
+    Crime Stoppers Bahamas was officially launched on November 27, 2001. Safe Bahamas provided the initial start up money.
+    The programme is governed by a volunteer civilian Board of Directors with an officer from The Royal Bahamas Police Force serving as a coordinator to the Board.
+    Crime Stoppers Bahamas is a non-government organization and we depend on donations, membership and corporate sponsors to keep the programme running.
+    We are affiliated with Crime Stoppers International that has over 1200 similar programmes around the world.`
   },
   {
     id: 2,
@@ -31,6 +39,8 @@ export const aboutUsParagraphs: AboutUsParagraphs[] = [
       "Our Mission is the ongoing development and implementation of an effective crime solving programme which serves the entire Bahamian community.",
     moreContent: `Our primary objective is the building of a dynamic relationship between the Community, Media and Law Enforcement all working together for a safer, more secure living and working environment for all Bahamian residents and visitors.
     Our Vision is to rid the Bahamas of the scourge of crime and violence so that residents and visitors alike can feel free to walk about day and night and enjoy our beautiful Bahama land.`,
+    totalContent: `Our Mission is the ongoing development and implementation of an effective crime solving programme which serves the entire Bahamian community. Our primary objective is the building of a dynamic relationship between the Community, Media and Law Enforcement all working together for a safer, more secure living and working environment for all Bahamian residents and visitors.
+    Our Vision is to rid the Bahamas of the scourge of crime and violence so that residents and visitors alike can feel free to walk about day and night and enjoy our beautiful Bahama land.`
   },
   {
     id: 3,

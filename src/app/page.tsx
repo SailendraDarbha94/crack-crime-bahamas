@@ -36,10 +36,12 @@ export default function Home() {
             </p>
             <Button
               onPress={appDownloader}
-              radius="sm"
-              className="mr-1 bg-gradient-to-t from-amber-200 shadow-sm to-yellow-500 text-gray-900 hover:text-black shadow-black font-nunito font-bold text-lg"
+              radius="md"
+              className="hover:shadow-gray-500 shadow-md bg-yellow-300"
+              variant="solid"
+              // color="warning"
             >
-              Download App
+              <span className="font-medium text-lg">Download App</span>
               <svg
                 className="w-6 h-6"
                 fill="currentColor"
@@ -52,33 +54,6 @@ export default function Home() {
                 </g>
               </svg>
             </Button>
-            {/* <Button
-              color="secondary"
-              radius="sm"
-              variant="solid"
-              className="mr-2 p-0"
-            >
-              <Link
-                isExternal={true}
-                className="text-white hover:text-green-500 px-4 py-2"
-                //color="foreground"
-                href=""
-                //target="_blank"
-              >
-                Download App
-                <svg
-                  className="w-5 h-5 ml-1 -mr-1"
-                  fill="currentColor"
-                  viewBox="0 0 16 16"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <g fill="currentColor">
-                    <path d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
-                    <path d="M8 14a1 1 0 1 0 0-2a1 1 0 0 0 0 2" />
-                  </g>
-                </svg>
-              </Link>
-            </Button> */}
             <Button
               onPress={() => {
                 //toast({ type: "success", message: "something to see" });
@@ -86,10 +61,11 @@ export default function Home() {
                   router.push("/more-about-us");
                 }, 300);
               }}
-              radius="sm"
-              className="ml-1 bg-gradient-to-tr hover:bg-gradient-to-b hover:from-yellow-500 hover:to-amber-200 shadow-sm from-violet-500 to-blue-500 text-white hover:text-black shadow-black font-nunito font-bold text-lg"
+              radius="md"
+              variant="bordered"
+              className="ml-4"
             >
-              More About Us
+              <span className="text-medium font-bold">More About Us</span>
             </Button>
             {/* <a
               href=""

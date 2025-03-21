@@ -1,3 +1,4 @@
+"use client"
 import Expandable from "@/components/Expandable";
 import Image from "next/image";
 import {
@@ -6,8 +7,12 @@ import {
   frequentlyAskedQuestionsFirstBlock,
   frequentlyAskedQuestionsSecondBlock
 } from "@/constants/moreAboutUsTexts";
+import { Accordion, AccordionItem } from "@heroui/accordion";
 import { aboutUsParagraphs } from "@/constants/moreAboutUsTexts";
+import { useState } from "react";
+
 const Page = () => {
+  const [selectedKeys, setSelectedKeys] = useState<any>(new Set(["1"]));
   return (
     <div className="flex min-h-screen flex-col items-center p-4 md:p-12 lg:p-24">
       <section className=" dark:bg-gray-900 rounded-lg font-nunito mb-10">
@@ -31,17 +36,29 @@ const Page = () => {
             <p className="mb-6 font-light text-gray-500 md:text-lg dark:text-gray-400">
               Our initiative helps you protect your friends and loved ones and
               makes your community that much more safer. We have a mission
-              bigger than ourselves and would love to see you join us.
+              bigger than ourselves and aspire towards a world without crime, an ordeal which
+              can not be realised without individual action and participation at a grassroots level.
             </p>
-            <a
+            {/* <a
               href="/member"
               className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 border border-gray-900 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
             >
               Become a Member
-            </a>
+            </a> */}
           </div>
         </div>
       </section>
+      {/* <Accordion variant="splitted" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+        <AccordionItem key="1" aria-label="Accordion 1" title={aboutUsParagraphs[0].heading}>
+          {aboutUsParagraphs[0].totalContent}
+        </AccordionItem>
+        <AccordionItem key="1" aria-label="Accordion 1" title={aboutUsParagraphs[1].heading}>
+          {aboutUsParagraphs[1].totalContent}
+        </AccordionItem>
+        <AccordionItem key="1" aria-label="Accordion 1" title="Accordion 1">
+          somethinfg
+        </AccordionItem>
+      </Accordion> */}
       {aboutUsParagraphs.map((paragraph: AboutUsParagraphs) => {
         return (
           <Expandable
