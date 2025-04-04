@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     // const updates: any = {};
     // updates["/notifications_register/" + newKey] = { ...data };
     // await update(ref(db), updates);
-    //await set(dataRef, data);
+    await set(dataRef, data);
     return Response.json({ data: "success" });
   } catch (err) {
     console.log(err);
