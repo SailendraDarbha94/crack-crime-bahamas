@@ -17,3 +17,21 @@ export async function POST(req: Request) {
     return Response.json({ data: "request failure" });
   }
 }
+
+export async function PUT(req: Request) {
+  const data = await req.json();
+  console.log("this is the update data", data);
+  const db = await getDatabase(app);
+  const dataRef = ref(db, `/notifications_register/${data.Token}`);
+
+  try {
+    // const updates: any = {};
+    // updates["/notifications_register/" + newKey] = { ...data };
+    // await update(ref(db), updates);
+    await update(dataRef, data);
+    return Response.json({ data: "success" });
+  } catch (err) {
+    console.log(err);
+    return Response.json({ data: "request failure" });
+  }  
+}
