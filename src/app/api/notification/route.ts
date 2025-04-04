@@ -2,8 +2,31 @@ import app from "@/lib/firebase";
 import { Expo } from "expo-server-sdk";
 import { child, get, getDatabase, ref } from "firebase/database";
 
+export async function GET() {
+  // const mongoDb = (await mongoClient).db("members");
+  // const members = await mongoDb.collection("dev").find({}).toArray();
+  // console.log("server hitted")
+  
+  // return Response.json({data : members})
+  const db = await getDatabase(app);
+  const dbRef = await ref(db);
+  try {
+    const data = await get(child(dbRef, 'notifications_register'))
+    if(data.exists()){
+      const list = await data.val()
+      return Response.json({data : list})
+    }
+  } catch (err) {
+    console.log(err)
+    return Response.json({data: "request failure"})
+  }
+}
+
+
 export async function POST(req: Request) {
+  
   const { data } = await req.json();
+
   let somePushTokens = [
     `ExponentPushToken[${process.env.NEXT_PUBLIC_TEST_EXPONENT_TOKEN}]`,
   ];
@@ -68,6 +91,30 @@ export async function POST(req: Request) {
     }
   }
 
+
+  const isWithin50Meters = (targetLat: any, targetLon: any, receivedLat: any, receivedLon: any) => {
+    const earthRadius = 6371000; // Radius of the Earth in meters
+
+    // Approximate degree conversions
+    const latDiff = 50 / earthRadius * (180 / Math.PI); // Convert 50m to latitude degrees
+    const lonDiff = 50 / (earthRadius * Math.cos(targetLat * Math.PI / 180)) * (180 / Math.PI); // Convert 50m to longitude degrees
+
+    // Define bounding box
+    const minLat = targetLat - latDiff;
+    const maxLat = targetLat + latDiff;
+    const minLon = targetLon - lonDiff;
+    const maxLon = targetLon + lonDiff;
+
+    // Check if received coordinates fall within the bounding box
+    if (receivedLat >= minLat && receivedLat <= maxLat) {
+      if (receivedLon >= minLon && receivedLon <= maxLon) {
+        console.log("Within Radius")
+      }
+    } else {
+      console.log("Should Not Fire Notification")
+    }
+  };
+
   // Later, after the Expo push notification service has delivered the
   // notifications to Apple or Google (usually quickly, but allow the service
   // up to 30 minutes when under load), a "receipt" for each notification is
@@ -128,6 +175,6 @@ export async function POST(req: Request) {
     "PUSH NOTIFICATION REQUEST RECEIVED : ==================================================",
     data
   );
-  pushNotifs();
+  //pushNotifs();
   return Response.json({ data: "success" });
 }

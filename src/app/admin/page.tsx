@@ -37,18 +37,7 @@ const Page = () => {
       ) : (
         <div className="w-full md:w-2/5 font-nunito text-lg">
           <h1 className="underline text-xl mb-10">Site Under Construction</h1>
-          <button
-            className="w-40 block my-4 text-center rounded-lg bg-blue-700 text-white"
-            onClick={() => router.push("/admin/missing")}
-          >
-            Fetch Missing Persons
-          </button>
-          <button
-            className="w-40 block my-4 text-center rounded-lg bg-blue-700 text-white"
-            onClick={() => router.push("/admin/wanted")}
-          >
-            Fetch Wanted Persons
-          </button>
+            
         </div>
       )}
     </div>
