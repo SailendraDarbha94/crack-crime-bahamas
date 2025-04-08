@@ -5,11 +5,14 @@ import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Input, Spinner
 import { useContext, useEffect, useState } from "react";
 const Page = () => {
 
+
   const [devicesList, setDevicesList] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [notif, setNotif] = useState<string | null>(null);
   const [latitude, setLatitude] = useState<string | null>(null);
   const [longitude, setLongtitude] = useState<string | null>(null);
+
+  const [message, setMessage] = useState<string | null>(null);
 
   const { toast } = useContext(ToastContext);
 
@@ -37,6 +40,34 @@ const Page = () => {
       console.log(JSON.stringify(err));
     }
   };
+
+  const sendNotificationGeneral = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/notification/general", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ data: { "notification": message,} }),
+      });
+      const data = await res.json();
+      console.log(data);
+      setMessage(null);
+      toast({
+        type: "error",
+        message: "Notification sent to registered devices",
+      });
+      setLoading(false);
+    } catch (err) {
+      console.log(err)
+      toast({
+        type: "error",
+        message: "Error Occurred! Try Debugging"
+      });
+      setLoading(false);
+    }
+  }
 
   const fetchDeviceRegister = async () => {
     setLoading(true);
@@ -78,13 +109,14 @@ const Page = () => {
       const { data } = await res.json();
       console.log(data)
       setLoading(false);
+      window.location.reload();
     } catch (err) {
       toast({
         type: "error",
         message: "Server Error Occurred! Try again Later",
       });
-      console.log(err)
-      setLoading(false)
+      console.log(err);
+      setLoading(false);
     }
   }
 
@@ -99,8 +131,59 @@ const Page = () => {
 
   return (
     <div className="w-full min-h-screen">
-      Notifications Center
-      {loading ? (
+      <h1 className="text-center font-bold text-5xl bg-white py-4 my-6 rounded-tl-lg rounded-bl-lg">Notifications Center</h1>
+      <div className="flex flex-wrap justify-evenly">
+        <Card className="w-full md:w-1/3">
+          <CardHeader>
+            <span className="mx-auto mt-2 font-bold text-2xl">General Notification</span>
+          </CardHeader>
+          <CardBody>
+            <Input
+              label="Notification Message"
+              className=""
+              value={message ? message : ""}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+          </CardBody>
+          <CardFooter>
+            <Button className="hover:bg-primary-500 hover:text-white mx-auto" variant="bordered" radius="md" color="primary" onPress={sendNotificationGeneral}>Send Notification</Button>
+          </CardFooter>
+        </Card>
+        <Card className="w-full md:w-1/3">
+          <CardHeader>
+            <span className="mx-auto mt-2 font-bold text-2xl">Location Based Notification</span>
+          </CardHeader>
+          <CardBody>
+            <Input
+              label="Notification Message"
+              className="mb-2"
+              value={notif ? notif : ""}
+              onChange={(e) => setNotif(e.target.value)}
+            />
+            <Input
+              label="Latitude"
+              className="mb-2"
+              value={latitude ? latitude as string : ""}
+              onChange={(e) => setLatitude(e.target.value)}
+            />
+            <Input
+              label="Longitude"
+              className=""
+              value={longitude ? longitude as string : ""}
+              onChange={(e) => setLongtitude(e.target.value)}
+            />
+
+          </CardBody>
+          <CardFooter>
+            <Button className="hover:bg-primary-500 hover:text-white mx-auto" variant="bordered" radius="md" color="primary" onPress={sendNotification}>Push Notification</Button>
+          </CardFooter>
+        </Card>
+        <div>
+
+
+        </div>
+      </div>
+      {/* {loading ? (
         <div className="flex justify-center p-4">
           <Spinner size="lg" />
         </div>
@@ -130,7 +213,7 @@ const Page = () => {
             <Button className="" radius="md" color="primary" onPress={sendNotification}>Send</Button>
           </div>
         </div>
-      )}
+      )} */}
       {/* {loading ? (
         <div className="flex justify-center p-4">
           <Spinner size="lg" />
@@ -140,9 +223,10 @@ const Page = () => {
           <h1>ExponentPushToken[imCwVMKCbO3liQllzT_HfU]</h1>
         </div>
       )} */}
+      <Divider className="mt-4" />
       {devicesList ? (
         <div>
-          <p className="text-center text-2xl my-4 font-semibold">List of Devices Registered For Notifications</p>
+          <p className="text-center font-bold text-5xl bg-white py-4 my-6 rounded-tl-lg rounded-bl-lg">Registered Devices List</p>
           {devicesList.map((device: any) => {
             return (
               <Card className="my-4 mx-auto p-3 max-w-lg" key={device[0]}>
