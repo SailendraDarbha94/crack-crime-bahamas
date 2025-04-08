@@ -1,7 +1,7 @@
 "use client";
 
 import { ToastContext } from "@/lib/toastContext";
-import { Button, Card, CardBody, CardFooter, CardHeader, Input, Spinner } from "@nextui-org/react";
+import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Input, Spinner } from "@nextui-org/react";
 import { useContext, useEffect, useState } from "react";
 const Page = () => {
 
@@ -14,6 +14,7 @@ const Page = () => {
   const { toast } = useContext(ToastContext);
 
   const sendNotification = async () => {
+    console.log(JSON.stringify({ data: { "message": notif, "lat": latitude, "lon": longitude } }));
     setLoading(true);
     try {
       const res = await fetch("/api/notification", {
@@ -21,7 +22,7 @@ const Page = () => {
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify({ data: { "message": notif, "lat": latitude, "lon": longitude } }),
+        body: JSON.stringify({ data: { "message": notif, "lat": latitude, "lon": longitude, devices: devicesList } }),
       });
       const data = await res.json();
       console.log(data);
@@ -40,7 +41,7 @@ const Page = () => {
   const fetchDeviceRegister = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/notification", {
+      const res = await fetch("/api/registrations", {
         method: "GET",
         headers: {
           "content-type": "application/json",
@@ -50,15 +51,46 @@ const Page = () => {
       console.log(Object.entries(data));
       setDevicesList(Object.entries(data));
       setLoading(false);
+      toast({
+        type: "",
+        message: "List of Devices Fetched!",
+      });
     } catch (err) {
       toast({
         type: "error",
-        message: "List Fetched",
+        message: "List Not Fetched! Try again Later",
       });
       console.log(err)
       setLoading(false)
     }
   }
+
+  const deleteDeviceFromRegister = async (params: string) => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/registrations", {
+        method: "DELETE",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(params)
+      });
+      const { data } = await res.json();
+      console.log(data)
+      setLoading(false);
+    } catch (err) {
+      toast({
+        type: "error",
+        message: "Server Error Occurred! Try again Later",
+      });
+      console.log(err)
+      setLoading(false)
+    }
+  }
+
+  const formatBytesToGB = (bytes: number) => {
+    return (bytes / (1024 ** 3)).toFixed(2) + " GB";
+  };
 
   useEffect(() => {
     fetchDeviceRegister();
@@ -84,13 +116,13 @@ const Page = () => {
             <Input
               label="Latitude"
               className="max-w-md"
-              value={latitude ? latitude : ""}
+              value={latitude ? latitude as string : ""}
               onChange={(e) => setLatitude(e.target.value)}
             />
             <Input
               label="Longitude"
               className="max-w-md"
-              value={longitude ? longitude : ""}
+              value={longitude ? longitude as string : ""}
               onChange={(e) => setLongtitude(e.target.value)}
             />
           </div>
@@ -131,10 +163,17 @@ const Page = () => {
                 </CardHeader>
                 <CardBody>
                   <p>Product Name : {device[1]?.Device?.productName}</p>
-                  <p>Product Name : {device[1]?.Device?.totalMemory}</p>
+                  <p>RAM : {formatBytesToGB(Number(device[1]?.Device?.totalMemory))}</p>
+                  <div>
+                    {device[1]?.Location ? (<><Divider />
+                      <p><span className="block text-center mt-2 font-bold">Last Known Location</span> <br /> Latitude : {device[1]?.Location?.coords?.latitude} <br /> Longitude : {device[1]?.Location?.coords?.longitude}</p></>) : null}
+                  </div>
                 </CardBody>
+                <Divider />
                 <CardFooter>
-                  {/* <p>{JSON.stringify(device)}</p> */}
+                  <Button variant="flat" color="danger" className="mx-auto mt-2" onPress={() => deleteDeviceFromRegister(device[0])}>
+                    Delete
+                  </Button>
                 </CardFooter>
               </Card>
             )

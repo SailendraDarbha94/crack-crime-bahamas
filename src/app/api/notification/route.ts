@@ -2,41 +2,58 @@ import app from "@/lib/firebase";
 import { Expo } from "expo-server-sdk";
 import { child, get, getDatabase, ref } from "firebase/database";
 
-export async function GET() {
-  // const mongoDb = (await mongoClient).db("members");
-  // const members = await mongoDb.collection("dev").find({}).toArray();
-  // console.log("server hitted")
-  
-  // return Response.json({data : members})
-  const db = await getDatabase(app);
-  const dbRef = await ref(db);
-  try {
-    const data = await get(child(dbRef, 'notifications_register'))
-    if(data.exists()){
-      const list = await data.val()
-      return Response.json({data : list})
-    }
-  } catch (err) {
-    console.log(err)
-    return Response.json({data: "request failure"})
-  }
-}
-
 
 export async function POST(req: Request) {
-  
+
+  let somePushTokens:any[] = [];
+
+  const isWithin500Meters = (targetLat: any, targetLon: any, receivedLat: any, receivedLon: any) => {
+    const earthRadius = 6371000; // Radius of the Earth in meters
+
+    // Approximate degree conversions
+    const latDiff = 500 / earthRadius * (180 / Math.PI); // Convert 50m to latitude degrees
+    const lonDiff = 500 / (earthRadius * Math.cos(targetLat * Math.PI / 180)) * (180 / Math.PI); // Convert 50m to longitude degrees
+
+    // Define bounding box
+    const minLat = targetLat - latDiff;
+    const maxLat = targetLat + latDiff;
+    const minLon = targetLon - lonDiff;
+    const maxLon = targetLon + lonDiff;
+
+    // Check if received coordinates fall within the bounding box
+    if (receivedLat >= minLat && receivedLat <= maxLat) {
+      if (receivedLon >= minLon && receivedLon <= maxLon) {
+        console.log("Within Radius")
+        return true;
+      }
+    } else {
+      console.log("Should Not Fire Notification")
+      return false;
+    }
+  };
+
   const { data } = await req.json();
 
-  let somePushTokens = [
-    `ExponentPushToken[${process.env.NEXT_PUBLIC_TEST_EXPONENT_TOKEN}]`,
-  ];
+  data.devices.forEach((element:any) => {
+    console.log("checking", element[0]);
+    if(isWithin500Meters(element[1]?.Location?.coords?.latitude,element[1]?.Location?.coords?.longitude,data.lat, data.lon)){
+      somePushTokens.push(`ExponentPushToken[{token}]`.replace("{token}", element[0]))
+    }
+    return (
+      somePushTokens
+    )
+  });
+
+  
+
   const db = await getDatabase(app);
   const dbRef = await ref(db);
   try {
     const data = await get(child(dbRef, '/notifications_register'))
     if(data.exists()){
       const tokens = await data.val()
-      somePushTokens = Object.keys(tokens).map(token => 'ExponentPushToken[{token}]'.replace("{token}", token))
+      console.log("should change this part")
+      //somePushTokens = Object.keys(tokens).map(token => 'ExponentPushToken[{token}]'.replace("{token}", token))
     } else {
       console.log("errrorrrrrrr")
     }
@@ -57,7 +74,7 @@ export async function POST(req: Request) {
 
     // Check that all your push tokens appear to be valid Expo push tokens
     if (!Expo.isExpoPushToken(pushToken)) {
-      console.error(`Push token ${pushToken} is not a valid Expo push token`);
+      console.log(`Push token ${pushToken} is not a valid Expo push token`);
       continue;
     }
 
@@ -65,7 +82,7 @@ export async function POST(req: Request) {
     messages.push({
       to: pushToken,
       sound: "default",
-      body: data,
+      body: data.message,
       data: { body: "o stree kal notification lana" },
     });
   }
@@ -92,28 +109,7 @@ export async function POST(req: Request) {
   }
 
 
-  const isWithin50Meters = (targetLat: any, targetLon: any, receivedLat: any, receivedLon: any) => {
-    const earthRadius = 6371000; // Radius of the Earth in meters
 
-    // Approximate degree conversions
-    const latDiff = 50 / earthRadius * (180 / Math.PI); // Convert 50m to latitude degrees
-    const lonDiff = 50 / (earthRadius * Math.cos(targetLat * Math.PI / 180)) * (180 / Math.PI); // Convert 50m to longitude degrees
-
-    // Define bounding box
-    const minLat = targetLat - latDiff;
-    const maxLat = targetLat + latDiff;
-    const minLon = targetLon - lonDiff;
-    const maxLon = targetLon + lonDiff;
-
-    // Check if received coordinates fall within the bounding box
-    if (receivedLat >= minLat && receivedLat <= maxLat) {
-      if (receivedLon >= minLon && receivedLon <= maxLon) {
-        console.log("Within Radius")
-      }
-    } else {
-      console.log("Should Not Fire Notification")
-    }
-  };
 
   // Later, after the Expo push notification service has delivered the
   // notifications to Apple or Google (usually quickly, but allow the service
@@ -172,9 +168,9 @@ export async function POST(req: Request) {
   // })();
 
   console.log(
-    "PUSH NOTIFICATION REQUEST RECEIVED : ==================================================",
-    data
-  );
-  //pushNotifs();
+    "Push Token List Within Radius RECEIVED : ==================================================",);
+    console.log(somePushTokens)
+  
+  pushNotifs();
   return Response.json({ data: "success" });
 }
