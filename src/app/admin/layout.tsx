@@ -2,6 +2,7 @@
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
+import WebNavbar from "@/components/WebNavbar";
 import app from "@/lib/firebase";
 import { ToastContext } from "@/lib/toastContext";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -13,20 +14,6 @@ export default function AdminLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const router = useRouter();
-  const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    const auth = getAuth(app);
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        console.log("USER DETAILS", user);
-        setUser(user);
-      } else {
-        router.push("/login");
-      }
-    });
-  }, []);
 
   return (
     <main className="flex w-full flex-wrap">
@@ -35,12 +22,11 @@ export default function AdminLayout({
       </div>
       <div className="w-full md:w-9/12 lg:w-10/12">
         <div className="w-full">
-          <h2 className="text-3xl p-2 font-nunito">Admin Dashboard</h2>
-          <h2 className="text-xl p-2 underline font-nunito">
-            {user ? user.email : null}
-          </h2>
+          <WebNavbar />
         </div>
-        {children}
+        <div>
+          {children}
+        </div>
       </div>
     </main>
   );

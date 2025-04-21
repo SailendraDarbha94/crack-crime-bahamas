@@ -226,7 +226,7 @@ const Page = () => {
       <Divider className="mt-4" />
       {devicesList ? (
         <div>
-          <p className="text-center font-bold text-5xl bg-white py-4 my-6 rounded-tl-lg rounded-bl-lg">Registered Devices List</p>
+          <p className="text-center font-bold text-3xl bg-white py-4 my-6 rounded-tl-lg rounded-bl-lg">Registered Devices List</p>
           {devicesList.map((device: any) => {
             return (
               <Card className="my-4 mx-auto p-3 max-w-lg" key={device[0]}>

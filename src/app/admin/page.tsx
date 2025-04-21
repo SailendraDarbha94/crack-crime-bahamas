@@ -36,7 +36,11 @@ const Page = () => {
         </div>
       ) : (
         <div className="w-full md:w-2/5 font-nunito text-lg">
-          <h1 className="underline text-xl mb-10">Site Under Construction</h1>
+          <h1 className="underline text-xl mb-2">Recent Updates</h1>
+          <ol>
+            <li>Push Notifications</li>
+            <li>Push Notifications for specific device</li>
+          </ol>
             
         </div>
       )}
