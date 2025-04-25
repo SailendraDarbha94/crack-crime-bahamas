@@ -49,7 +49,51 @@ const Page = () => {
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify({ data: { "notification": message,} }),
+        body: JSON.stringify({ data: { "notification": message, } }),
+      });
+      const data = await res.json();
+      console.log(data);
+      setMessage(null);
+      toast({
+        type: "error",
+        message: "Notification sent to registered devices",
+      });
+      setLoading(false);
+    } catch (err) {
+      console.log(err)
+      toast({
+        type: "error",
+        message: "Error Occurred! Try Debugging"
+      });
+      setLoading(false);
+    }
+  }
+
+  const getProbableAddress = async (lat:string='25.0806704', long:string='-77.4311452') => {
+    console.log(lat, long);
+    try {
+      const res = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`,{
+        method: "GET",
+        headers: {
+          "content-type": "application/json",
+        },
+      })
+      console.log(res);
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+
+  const sendNotificationSpecific = async (parmas:string) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/notification/specific/${parmas}`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ data: { "notification": message, } }),
       });
       const data = await res.json();
       console.log(data);
@@ -229,7 +273,7 @@ const Page = () => {
           <p className="text-center font-bold text-3xl bg-white py-4 my-6 rounded-tl-lg rounded-bl-lg">Registered Devices List</p>
           {devicesList.map((device: any) => {
             return (
-              <Card className="my-4 mx-auto p-3 max-w-lg" key={device[0]}>
+              <Card className="m-4 p-3 max-w-full" key={device[0]}>
                 <CardHeader className="flex gap-3">
                   {/* <Image
                     alt="heroui logo"
@@ -252,11 +296,20 @@ const Page = () => {
                     {device[1]?.Location ? (<><Divider />
                       <p><span className="block text-center mt-2 font-bold">Last Known Location</span> <br /> Latitude : {device[1]?.Location?.coords?.latitude} <br /> Longitude : {device[1]?.Location?.coords?.longitude}</p></>) : null}
                   </div>
+                  <div>
+                    Probable Address : 
+                  </div>
                 </CardBody>
                 <Divider />
                 <CardFooter>
                   <Button variant="flat" color="danger" className="mx-auto mt-2" onPress={() => deleteDeviceFromRegister(device[0])}>
                     Delete
+                  </Button>
+                  <Button variant="flat" color="secondary" className="mx-auto mt-2" onPress={() => sendNotificationSpecific(device[0])}>
+                    Send Notif
+                  </Button>
+                  <Button variant="light" color="warning" className="mx-auto mt-2" onPress={() => getProbableAddress()}>
+                    Log Address
                   </Button>
                 </CardFooter>
               </Card>
