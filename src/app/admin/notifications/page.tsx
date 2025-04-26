@@ -72,11 +72,12 @@ const Page = () => {
   const getProbableAddress = async (lat:string='25.0806704', long:string='-77.4311452') => {
     console.log(lat, long);
     try {
-      const res = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`,{
-        method: "GET",
+      const res = await fetch('/api/notification/geocode/something',{
+        method: "POST",
         headers: {
           "content-type": "application/json",
         },
+        body: JSON.stringify({ data: { "latitude": lat, "longitude": long } }),
       })
       console.log(res);
     } catch (err) {
@@ -89,11 +90,10 @@ const Page = () => {
     setLoading(true);
     try {
       const res = await fetch(`/api/notification/specific/${parmas}`, {
-        method: "POST",
+        method: "GET",
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify({ data: { "notification": message, } }),
       });
       const data = await res.json();
       console.log(data);
