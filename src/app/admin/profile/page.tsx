@@ -22,6 +22,8 @@ const ProfilePage: React.FC = () => {
     }, []);
 
 
+
+    
     return (
         <div>
             <h1>Admin Profile</h1>
