@@ -1,5 +1,12 @@
 "use client";
-
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+} from "@nextui-org/react";
 import app from "@/lib/firebase";
 import { ToastContext } from "@/lib/toastContext";
 import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Input, Spinner } from "@nextui-org/react";
@@ -7,13 +14,13 @@ import { getDatabase, ref, update } from "firebase/database";
 import { useContext, useEffect, useState } from "react";
 const Page = () => {
 
-
+  const {isOpen, onOpen, onOpenChange} = useDisclosure();
   const [devicesList, setDevicesList] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [notif, setNotif] = useState<string | null>(null);
   const [latitude, setLatitude] = useState<string | null>(null);
   const [longitude, setLongtitude] = useState<string | null>(null);
-  const [coords, setCoords] = useState<any>(null);
+  const [address, setAddress] = useState<any>(null);
   const [message, setMessage] = useState<string | null>(null);
 
   const { toast } = useContext(ToastContext);
@@ -82,8 +89,8 @@ const Page = () => {
         body: JSON.stringify({ data: { "latitude": lat, "longitude": long } }),
       })
       const { data } = await res.json();
-      console.log(data)
-      return data;
+      setAddress(data);
+      return 
     } catch (err) {
       console.log(err)
       return 'Error Occurred! Please Try Again Later';
@@ -183,6 +190,27 @@ const Page = () => {
   return (
     <div className="w-full min-h-screen">
       <h1 className="text-center font-bold text-5xl bg-white py-4 my-6 rounded-tl-lg rounded-bl-lg">Notifications Center</h1>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1 underline">Probable Address</ModalHeader>
+              <ModalBody>
+                <p className={`${address ? 'animate-none' : 'animate-pulse'} font-bold text-xl`}>
+                  {address ? address : "Loading..."}
+                </p>
+                <Divider />
+                <p className="text-red-400">Note : The address is provided by Google Maps Geocoding service based on the latitude and longitude and may not be accurate all the time</p>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
       <div className="flex flex-wrap justify-evenly">
         <Card className="w-full md:w-1/3">
           <CardHeader>
@@ -320,8 +348,11 @@ const Page = () => {
                   <Button variant="flat" color="secondary" className="mx-auto mt-2" onPress={() => sendNotificationSpecific(device[0])}>
                     Send Notif
                   </Button>
-                  <Button variant="light" color="warning" className="mx-auto mt-2" onPress={() => getProbableAddress(device[1]?.Location?.coords?.latitude, device[1]?.Location?.coords?.longitude)}>
-                    Log Address
+                  <Button variant="ghost" color="warning" className="mx-auto mt-2" onPress={() => {
+                    getProbableAddress(device[1]?.Location?.coords?.latitude, device[1]?.Location?.coords?.longitude),
+                    onOpen();
+                  }}>
+                    Decode Address
                   </Button>
                 </CardFooter>
               </Card>
