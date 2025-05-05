@@ -1,7 +1,9 @@
 "use client";
 
+import app from "@/lib/firebase";
 import { ToastContext } from "@/lib/toastContext";
 import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Input, Spinner } from "@nextui-org/react";
+import { getDatabase, ref, update } from "firebase/database";
 import { useContext, useEffect, useState } from "react";
 const Page = () => {
 
@@ -11,7 +13,7 @@ const Page = () => {
   const [notif, setNotif] = useState<string | null>(null);
   const [latitude, setLatitude] = useState<string | null>(null);
   const [longitude, setLongtitude] = useState<string | null>(null);
-
+  const [coords, setCoords] = useState<any>(null);
   const [message, setMessage] = useState<string | null>(null);
 
   const { toast } = useContext(ToastContext);
@@ -72,16 +74,19 @@ const Page = () => {
   const getProbableAddress = async (lat:string='25.0806704', long:string='-77.4311452') => {
     console.log(lat, long);
     try {
-      const res = await fetch('/api/notification/geocode/something',{
+      const res = await fetch('/api/notification/geocode',{
         method: "POST",
         headers: {
           "content-type": "application/json",
         },
         body: JSON.stringify({ data: { "latitude": lat, "longitude": long } }),
       })
-      console.log(res);
+      const { data } = await res.json();
+      console.log(data)
+      return data;
     } catch (err) {
       console.log(err)
+      return 'Error Occurred! Please Try Again Later';
     }
   }
 
@@ -112,6 +117,7 @@ const Page = () => {
       setLoading(false);
     }
   }
+
 
   const fetchDeviceRegister = async () => {
     setLoading(true);
@@ -167,6 +173,7 @@ const Page = () => {
   const formatBytesToGB = (bytes: number) => {
     return (bytes / (1024 ** 3)).toFixed(2) + " GB";
   };
+
 
   useEffect(() => {
     fetchDeviceRegister();
@@ -272,6 +279,11 @@ const Page = () => {
         <div>
           <p className="text-center font-bold text-3xl bg-white py-4 my-6 rounded-tl-lg rounded-bl-lg">Registered Devices List</p>
           {devicesList.map((device: any) => {
+            // let address:any = 'Address Not Found';
+            // if(device[1]?.Location) {
+            //   address = getProbableAddress(device[1]?.Location?.coords?.latitude, device[1]?.Location?.coords?.longitude);
+            // }
+
             return (
               <Card className="m-4 p-3 max-w-full" key={device[0]}>
                 <CardHeader className="flex gap-3">
@@ -296,9 +308,9 @@ const Page = () => {
                     {device[1]?.Location ? (<><Divider />
                       <p><span className="block text-center mt-2 font-bold">Last Known Location</span> <br /> Latitude : {device[1]?.Location?.coords?.latitude} <br /> Longitude : {device[1]?.Location?.coords?.longitude}</p></>) : null}
                   </div>
-                  <div>
-                    Probable Address : 
-                  </div>
+                  {/* <div>
+                    Probable Address : {testRun(device[1]?.Location?.coords?.latitude,device[1]?.Location?.coords?.longitude)}
+                  </div> */}
                 </CardBody>
                 <Divider />
                 <CardFooter>
@@ -308,7 +320,7 @@ const Page = () => {
                   <Button variant="flat" color="secondary" className="mx-auto mt-2" onPress={() => sendNotificationSpecific(device[0])}>
                     Send Notif
                   </Button>
-                  <Button variant="light" color="warning" className="mx-auto mt-2" onPress={() => getProbableAddress()}>
+                  <Button variant="light" color="warning" className="mx-auto mt-2" onPress={() => getProbableAddress(device[1]?.Location?.coords?.latitude, device[1]?.Location?.coords?.longitude)}>
                     Log Address
                   </Button>
                 </CardFooter>
