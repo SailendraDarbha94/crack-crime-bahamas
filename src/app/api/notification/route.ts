@@ -6,13 +6,13 @@ import { child, get, getDatabase, ref } from "firebase/database";
 export async function POST(req: Request) {
 
   let somePushTokens:any[] = [];
-
-  const isWithin500Meters = (targetLat: any, targetLon: any, receivedLat: any, receivedLon: any) => {
+  const { data } = await req.json();
+  const isWithin500Meters = (targetLat: any, targetLon: any, receivedLat: any, receivedLon: any,) => {
     const earthRadius = 6371000; // Radius of the Earth in meters
 
     // Approximate degree conversions
-    const latDiff = 500 / earthRadius * (180 / Math.PI); // Convert 50m to latitude degrees
-    const lonDiff = 500 / (earthRadius * Math.cos(targetLat * Math.PI / 180)) * (180 / Math.PI); // Convert 50m to longitude degrees
+    const latDiff = data?.rad / earthRadius * (180 / Math.PI); // Convert 50m to latitude degrees
+    const lonDiff = data?.rad / (earthRadius * Math.cos(targetLat * Math.PI / 180)) * (180 / Math.PI); // Convert 50m to longitude degrees
 
     // Define bounding box
     const minLat = targetLat - latDiff;
@@ -32,7 +32,8 @@ export async function POST(req: Request) {
     }
   };
 
-  const { data } = await req.json();
+  
+  console.log(data);
 
   data.devices.forEach((element:any) => {
     console.log("checking", element[0]);

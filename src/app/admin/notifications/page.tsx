@@ -18,6 +18,7 @@ const Page = () => {
   const [devicesList, setDevicesList] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [notif, setNotif] = useState<string | null>(null);
+  const [radius, setRadius] = useState<string | null>('500');
   const [latitude, setLatitude] = useState<string | null>(null);
   const [longitude, setLongtitude] = useState<string | null>(null);
   const [address, setAddress] = useState<any>(null);
@@ -34,7 +35,7 @@ const Page = () => {
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify({ data: { "message": notif, "lat": latitude, "lon": longitude, devices: devicesList } }),
+        body: JSON.stringify({ data: { "message": notif, "lat": latitude, "lon": longitude, devices: devicesList, rad : radius } }),
       });
       const data = await res.json();
       console.log(data);
@@ -247,11 +248,16 @@ const Page = () => {
             />
             <Input
               label="Longitude"
-              className=""
+              className="mb-2"
               value={longitude ? longitude as string : ""}
               onChange={(e) => setLongtitude(e.target.value)}
             />
-
+            <Input
+              label="Radius in Metres"
+              className=""
+              value={radius ? radius as string : ""}
+              onChange={(e) => setRadius(e.target.value)}
+            />
           </CardBody>
           <CardFooter>
             <Button className="hover:bg-primary-500 hover:text-white mx-auto" variant="bordered" radius="md" color="primary" onPress={sendNotification}>Push Notification</Button>
