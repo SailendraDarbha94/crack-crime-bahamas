@@ -1,10 +1,15 @@
 "use client";
 
-import app from "@/lib/firebase";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { WantedPersonService } from "@/lib/firebaseService";
+import { FirebaseErrorHandler } from "@/lib/firebaseErrorHandler";
+import { useToast } from "@/lib/toastContext";
 import { useState } from "react";
 
-const AddWanted = () => {
+interface AddWantedProps {
+  onSuccess?: () => void;
+}
+
+const AddWanted = ({ onSuccess }: AddWantedProps) => {
   const [wantedFor, setWantedFor] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [age, setAge] = useState<string>("");
@@ -13,100 +18,109 @@ const AddWanted = () => {
   const [alias, setAlias] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [selectedFile, setSelectedFile] = useState<any>(null);
-  const fileNameChecker = async (fileName: string | null) => {
-    if (!fileName) {
-      return false;
-    }
-    const fileRef = await ref(storage, `/wanteds/${fileName}`);
-    const result = await getDownloadURL(fileRef).catch((err) => {
-      console.log(JSON.stringify(err));
-    });
-    if (result) {
-      return true;
-    } else {
-      return false;
-    }
-  };
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  
+  const { toast } = useToast();
 
-  const fileSaver = async () => {
-    if (selectedFile) {
-      const storageRef = ref(storage, `/wanteds/${selectedFile.name}`);
-      const { metadata } = await uploadBytes(storageRef, selectedFile);
-      return metadata;
-    } else {
-      return false;
-    }
-  };
-
-  const storage = getStorage(app);
-
-
-  const registerWantedPerson = async (e:any) => {
+  const registerWantedPerson = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!name.trim()) {
+      toast({ message: "Name is required", type: "error" });
+      return;
+    }
+
+    if (!wantedFor.trim()) {
+      toast({ message: "'Wanted For' field is required", type: "error" });
+      return;
+    }
+
     setLoading(true);
-    let noImageMessage = "Image Not Available";
     try {
-      const currentTime = Date.now();
-      const fileExists = await fileNameChecker(
-        selectedFile ? selectedFile.name : null
-      );
-      if (fileExists) {
-        throw new Error("Picture is duplicate");
-      }
-      const metaData = await fileSaver()
+      const personData = {
+        name: name.trim(),
+        wanted_for: wantedFor.trim(),
+        age: age.trim(),
+        gender: gender.trim(),
+        alias: alias.trim(),
+        last_known_address: last_known_address.trim(),
+        description: description.trim(),
+      };
+
+      // Use the new WantedPersonService
+      const id = await WantedPersonService.createWantedPerson(personData, selectedFile || undefined);
+      
+      // Also call your API endpoint to sync with your database
       const res = await fetch("/api/wanted", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: name,
-          wanted_for: wantedFor,
-          age: age,
-          gender: gender,
-          alias: alias,
-          created_at: currentTime,
+          ...personData,
+          created_at: Date.now(),
           country_code: "BAH",
           current_status: "",
-          description: description,
-          last_known_address: last_known_address,
-          image: metaData ? metaData.fullPath : noImageMessage,
+          image: selectedFile ? `wanteds/${selectedFile.name}` : "Image Not Available",
         }),
       });
 
       const data = await res.json();
-
-      if (data !== "request failure") {
-        console.log(data);
-        setName("");
-        setAge("");
-        setAlias("");
-        setGender("");
-        setWantedFor("");
-        setLastKnownAddress("");
-        setDescription("");
-        setSelectedFile(null);
-        setLoading(false);
+      if (data === "request failure") {
+        throw new Error("API request failed");
       }
-      setLoading(false);
-    } catch (err) {
+
+      console.log("Wanted person registered successfully:", { id, apiResponse: data });
+      
+      // Reset form
       setName("");
       setWantedFor("");
       setAge("");
       setAlias("");
       setGender("");
-      setDescription("");
       setLastKnownAddress("");
+      setDescription("");
       setSelectedFile(null);
-      console.error(err);
+      
+      toast({ message: "Wanted person registered successfully!", type: "success" });
+      
+      // Call the onSuccess callback to refresh the list
+      if (onSuccess) {
+        onSuccess();
+      }
+      
+    } catch (err) {
+      const userFriendlyMessage = FirebaseErrorHandler.handleError(err);
+      toast({ message: userFriendlyMessage, type: "error" });
+      console.error("Registration failed:", err);
+    } finally {
       setLoading(false);
     }
   };
 
-  const handleFileChange = (event: any) => {
-    const file = event.target.files[0];
-    setSelectedFile(file);
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+      if (!validTypes.includes(file.type)) {
+        toast({ message: 'Please select a valid image file (JPEG, PNG, or GIF)', type: "error" });
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        toast({ message: 'File size must be less than 5MB', type: "error" });
+        return;
+      }
+      
+      setSelectedFile(file);
+    }
+  };
+
+  const clearFileSelection = () => {
+    setSelectedFile(null);
   };
   return (
     <div className="p-4 pt-14">
@@ -252,15 +266,26 @@ const AddWanted = () => {
                   </label>
 
                   {selectedFile ? (
-                    <p>Selected file: {selectedFile.name}</p>
+                    <div className="space-y-2">
+                      <p className="text-sm text-green-600">Selected file: {selectedFile.name}</p>
+                      <div className="flex space-x-2">
+                        <button
+                          type="button"
+                          onClick={clearFileSelection}
+                          className="text-sm text-red-600 underline"
+                        >
+                          Clear selection
+                        </button>
+                      </div>
+                    </div>
                   ) : (
                     <input
                       type="file"
                       id="imager"
+                      accept="image/*"
                       onChange={handleFileChange}
-                      placeholder="Upload IMage"
+                      placeholder="Upload Image"
                       className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      required={true}
                     />
                   )}
                 </div>

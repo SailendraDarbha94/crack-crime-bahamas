@@ -1,91 +1,78 @@
 "use client";
-import app from "@/lib/firebase";
-import {
-  getDatabase,
-  ref as dbRef,
-  child,
-  update,
-  get,
-} from "firebase/database";
-import { getBytes, getStorage, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
+import { AdvertisementService } from "@/lib/firebaseService";
+
 const AdvertChanger = ({ group }: { group: string }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [selectedFile, setSelectedFile] = useState<any>(null);
-  const db = getDatabase(app);
-  const storage = getStorage(app);
-  const handleFileChange = (event: any) => {
-    const file = event.target.files[0];
-    setSelectedFile(file);
-  };
-
-  const fileSaver = async () => {
-    if (selectedFile) {
-      console.log(selectedFile.name);
-      const extensionArr = selectedFile.name.split(".");
-
-      const extension = extensionArr[extensionArr.length - 1];
-
-      const storageRef = ref(
-        storage,
-        `/adverts/${group}/advertisement.${extension}`
-      );
-      const { metadata } = await uploadBytes(storageRef, selectedFile);
-
-      return metadata;
-    } else {
-      return false;
-    }
-  };
-
-  const advertChanger = async () => {
-    setLoading(true);
-    try {
-      const metadata = await fileSaver();
-      if (!metadata) {
-        throw new Error("Upload Failed");
-      }
-      const updates: any = {};
-      updates[`/adverts/${group}/`] = {
-        path: metadata.fullPath,
-      };
-      await update(dbRef(db), updates);
-      setSelectedFile(null);
-      setLoading(false);
-      fetchAdvertisement();
-    } catch (err) {
-      setLoading(false);
-      console.log(JSON.stringify(err));
-    }
-  };
-
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [advertisement, setAdvertisement] = useState<string>("");
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+      if (!validTypes.includes(file.type)) {
+        alert('Please select a valid image file (JPEG, PNG, or GIF)');
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        alert('File size must be less than 5MB');
+        return;
+      }
+      
+      setSelectedFile(file);
+    }
+  };
+
+  const uploadAdvertisement = async () => {
+    if (!selectedFile) {
+      alert('Please select a file first');
+      return;
+    }
+
+    setUploading(true);
+    setUploadProgress(0);
+
+    try {
+      await AdvertisementService.uploadAdvertisement(group, selectedFile);
+      setSelectedFile(null);
+      await fetchAdvertisement();
+      alert('Advertisement uploaded successfully!');
+    } catch (error) {
+      console.error('Upload failed:', error);
+      alert('Upload failed. Please try again.');
+    } finally {
+      setUploading(false);
+      setUploadProgress(0);
+    }
+  };
 
   const fetchAdvertisement = async () => {
     setLoading(true);
     try {
-      const databaseRef = dbRef(db);
-      const data = await get(child(databaseRef, `adverts/${group}`));
-      if (data.exists()) {
-        const { path } = data.val();
-        const storageRef = ref(storage, path);
-        const arrayBuffer = await getBytes(storageRef);
-        const blob = new Blob([arrayBuffer], { type: "image/jpeg" });
-        const url = URL.createObjectURL(blob);
-        setAdvertisement(url);
-        setLoading(false);
-      } else {
-        setLoading(false);
-      }
-    } catch (err) {
+      const url = await AdvertisementService.getAdvertisement(group);
+      setAdvertisement(url || "");
+    } catch (error) {
+      console.error('Error fetching advertisement:', error);
+      setAdvertisement("");
+    } finally {
       setLoading(false);
-      console.log("ERROR _________", JSON.stringify(err));
     }
+  };
+
+  const clearSelection = () => {
+    setSelectedFile(null);
   };
 
   useEffect(() => {
     fetchAdvertisement();
-  }, []);
+  }, [group]);
   return (
     <main className="">
       <div className="dark:bg-white dark:text-black w-full font-nunito border-2 border-black p-4 rounded-xl max-w-md my-2 mx-auto">
@@ -134,7 +121,15 @@ const AdvertChanger = ({ group }: { group: string }) => {
                 To Change Advertisement
               </label>
               {selectedFile ? (
-                <p>{selectedFile.name} selected</p>
+                <div className="space-y-2">
+                  <p className="text-sm text-green-600">{selectedFile.name} selected</p>
+                  <button
+                    onClick={clearSelection}
+                    className="text-sm text-red-600 underline"
+                  >
+                    Clear selection
+                  </button>
+                </div>
               ) : (
                 <input
                   onChange={handleFileChange}
@@ -142,16 +137,29 @@ const AdvertChanger = ({ group }: { group: string }) => {
                   id="advertFileUpload"
                   name="advertFileUpload"
                   type="file"
+                  accept="image/*"
                   className="block"
                 />
               )}
             </div>
             <br />
+            {uploading && (
+              <div className="mb-4">
+                <div className="bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                </div>
+                <p className="text-sm text-center mt-1">Uploading... {Math.round(uploadProgress)}%</p>
+              </div>
+            )}
             <button
-              onClick={advertChanger}
-              className="rounded-lg block mx-auto p-2 font-extrabold bg-blue-600 text-white"
+              onClick={uploadAdvertisement}
+              disabled={uploading || !selectedFile}
+              className="rounded-lg block mx-auto p-2 font-extrabold bg-blue-600 text-white disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-              UPLOAD
+              {uploading ? 'UPLOADING...' : 'UPLOAD'}
             </button>
           </div>
         )}

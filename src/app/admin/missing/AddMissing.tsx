@@ -1,6 +1,7 @@
 "use client";
-import app from "@/lib/firebase";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { MissingPersonService } from "@/lib/firebaseService";
+import { FirebaseErrorHandler } from "@/lib/firebaseErrorHandler";
+import { useToast } from "@/lib/toastContext";
 import { useState } from "react";
 
 const AddMissing = () => {
@@ -10,94 +11,96 @@ const AddMissing = () => {
   const [gender, setGender] = useState<string>("");
   const [alias, setAlias] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [selectedFile, setSelectedFile] = useState<any>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const storage = getStorage(app);
 
-
-  const fileNameChecker = async (fileName: string | null) => {
-    if(!fileName){
-      return false
-    }
-    const fileRef = await ref(storage, `/missings/${fileName}`);
-    const result = await getDownloadURL(fileRef).catch((err) => {
-      console.log(JSON.stringify(err));
-    });
-    if (result) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  const fileSaver = async () => {
-    if(selectedFile){
-      const storageRef = ref(storage, `/missings/${selectedFile.name}`);
-      const { metadata } = await uploadBytes(storageRef, selectedFile);
-      return metadata
-    } else {
-      return false
-    }
-  }
+  const { toast } = useToast();
 
   const registerMissingPerson = async () => {
+    if (!name.trim()) {
+      toast({ message: "Name is required", type: "error" });
+      return;
+    }
+
     setLoading(true);
-    let noImageMessage = "Image Not Available"
     try {
-      const currentTime = Date.now();
-      const fileExists = await fileNameChecker(selectedFile ? selectedFile.name : null);
-      if (fileExists) {
-        throw new Error("Picture already exists");
-      }
-      const metaData = await fileSaver()
+      const personData = {
+        name: name.trim(),
+        age: age.trim(),
+        gender: gender.trim(),
+        alias: alias.trim(),
+        last_known_address: last_known_address.trim(),
+        description: description.trim(),
+      };
+
+      // Use the new MissingPersonService
+      const id = await MissingPersonService.createMissingPerson(personData, selectedFile || undefined);
+      
+      // Also call your API endpoint to sync with your database
       const res = await fetch("/api/missing", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: name,
-          age: age,
-          gender: gender,
-          alias: alias,
-          created_at: currentTime,
-          last_known_address: last_known_address,
+          ...personData,
+          created_at: Date.now(),
           country_code: "BAH",
           current_status: "",
-          description: description,
-          image: metaData ? metaData.fullPath : noImageMessage,
+          image: selectedFile ? `missings/${selectedFile.name}` : "Image Not Available",
         }),
       });
+
       const data = await res.json();
-      if (data !== "request failure") {
-        console.log(data);
-        setName("");
-        setAge("");
-        setAlias("");
-        setGender("");
-        setLastKnownAddress("");
-        setDescription("");
-        setSelectedFile(null);
-        setLoading(false);
+      if (data === "request failure") {
+        throw new Error("API request failed");
       }
-      setLoading(false);
-    } catch (err) {
-      alert(err);
+
+      console.log("Missing person registered successfully:", { id, apiResponse: data });
+      
+      // Reset form
       setName("");
       setAge("");
       setAlias("");
       setGender("");
-      setDescription("");
       setLastKnownAddress("");
+      setDescription("");
       setSelectedFile(null);
-      console.error(JSON.stringify(err));
+      
+      toast({ message: "Missing person registered successfully!", type: "success" });
+      
+    } catch (err) {
+      const userFriendlyMessage = FirebaseErrorHandler.handleError(err);
+      toast({ message: userFriendlyMessage, type: "error" });
+      console.error("Registration failed:", err);
+    } finally {
       setLoading(false);
     }
   };
 
-  const handleFileChange = (event: any) => {
-    const file = event.target.files[0];
-    setSelectedFile(file);
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+      if (!validTypes.includes(file.type)) {
+        toast({ message: 'Please select a valid image file (JPEG, PNG, or GIF)', type: "error" });
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        toast({ message: 'File size must be less than 5MB', type: "error" });
+        return;
+      }
+      
+      setSelectedFile(file);
+    }
+  };
+
+  const clearFileSelection = () => {
+    setSelectedFile(null);
   };
 
   return (
@@ -234,15 +237,26 @@ const AddMissing = () => {
                   </label>
 
                   {selectedFile ? (
-                    <p>Selected file: {selectedFile.name}</p>
+                    <div className="space-y-2">
+                      <p className="text-sm text-green-600">Selected file: {selectedFile.name}</p>
+                      <div className="flex space-x-2">
+                        <button
+                          type="button"
+                          onClick={clearFileSelection}
+                          className="text-sm text-red-600 underline"
+                        >
+                          Clear selection
+                        </button>
+                      </div>
+                    </div>
                   ) : (
                     <input
                       type="file"
                       id="imager"
+                      accept="image/*"
                       onChange={handleFileChange}
-                      placeholder="Upload IMage"
+                      placeholder="Upload Image"
                       className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      required={true}
                     />
                   )}
                 </div>

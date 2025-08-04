@@ -1,0 +1,36 @@
+{
+    "rules": {
+        "adverts": {
+            ".read": true,
+            ".write": true
+        },
+        "missings": {
+            ".read": true,
+            ".write": true
+        },
+        "wanteds": {
+            ".read": true,
+            ".write": true
+        },
+        "messages": {
+            ".read": true,
+            ".write": true
+        },
+        "notifications": {
+            ".read": true,
+            ".write": true
+        },
+        "notifications_register": {
+            ".read": true,
+            ".write": true
+        },
+        "registrations": {
+            ".read": true,
+            ".write": true
+        },
+        "members": {
+            ".read": true,
+            ".write": true
+        }
+    }
+}
