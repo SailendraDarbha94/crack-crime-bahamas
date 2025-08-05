@@ -141,7 +141,7 @@ const Page = () => {
       setDevicesList(Object.entries(data));
       setLoading(false);
       toast({
-        type: "",
+        type: "info",
         message: "List of Devices Fetched!",
       });
     } catch (err) {
@@ -351,9 +351,9 @@ const Page = () => {
                   <Button variant="flat" color="danger" className="mx-auto mt-2" onPress={() => deleteDeviceFromRegister(device[0])}>
                     Delete
                   </Button>
-                  <Button variant="flat" color="secondary" className="mx-auto mt-2" onPress={() => sendNotificationSpecific(device[0])}>
+                  {/* <Button variant="flat" color="secondary" className="mx-auto mt-2" onPress={() => sendNotificationSpecific(device[0])}>
                     Send Notif
-                  </Button>
+                  </Button> */}
                   <Button variant="ghost" color="warning" className="mx-auto mt-2" onPress={() => {
                     getProbableAddress(device[1]?.Location?.coords?.latitude, device[1]?.Location?.coords?.longitude),
                     onOpen();

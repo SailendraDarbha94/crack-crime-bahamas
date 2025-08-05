@@ -6,6 +6,15 @@ import { useToast } from "@/lib/toastContext";
 import { useEffect, useState } from "react";
 import AddWanted from "./AddWanted";
 import MissingListItem from "../missing/MissingListItem";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+} from "@nextui-org/react";
+import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Input, Spinner } from "@nextui-org/react";
 
 interface WantedPerson {
   id: string;
@@ -27,7 +36,7 @@ const Page = () => {
   const [wanteds, setWanteds] = useState<WantedPerson[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { toast } = useToast();
 
   const fetchWantedPersons = async () => {
@@ -35,14 +44,14 @@ const Page = () => {
     setError(null);
     try {
       console.log('🔍 Starting to fetch wanted persons...');
-      
+
       // THE COMMENTED PIECE OF CODE BELOW DOES NOT WORK
       // Test database connection first
       // const isConnected = await DatabaseService.testConnection();
       // if (!isConnected) {
       //   throw new Error('Database connection failed');
       // }
-      
+
       const wantedPersons = await WantedPersonService.getAllWantedPersons();
       console.log('✅ Successfully fetched wanted persons:', wantedPersons);
       toast({ message: "Wanted Persons List Fetched", type: "info" });
@@ -51,7 +60,7 @@ const Page = () => {
       const errorMessage = FirebaseErrorHandler.handleError(err);
       setError(errorMessage);
       console.error("❌ Error fetching wanted persons:", err);
-      
+
       // Additional debugging info
       if (err instanceof Error && err.message.includes('Permission denied')) {
         console.error('🔒 Permission denied error - check Firebase rules and authentication');
@@ -71,10 +80,10 @@ const Page = () => {
     try {
       await WantedPersonService.deleteWantedPerson(id, imagePath);
       console.log("Post deleted successfully");
-      
+
       // Refresh the list
       await fetchWantedPersons();
-      
+
       toast({ message: "Wanted person report deleted successfully", type: "success" });
     } catch (err) {
       const errorMessage = FirebaseErrorHandler.handleError(err);
@@ -95,8 +104,8 @@ const Page = () => {
   }, [addWanted, showWanted]);
 
   return (
-    <main className="font-nunito py-3">
-      <h1 className="text-3xl border-b-2 border-black">Wanted Persons</h1>
+    <main className="font-nunito py-3 m-2 rounded-3xl">
+      <h1 className="text-2xl font-bold rounded-3xl border-2 border-black py-2 text-center">Wanted Persons</h1>
       <div className="flex p-2 mb-4 justify-around">
         <button
           className="bg-purple-200 dark:bg-slate-500 p-2 rounded-lg"
@@ -110,9 +119,32 @@ const Page = () => {
         >
           {addWanted ? "Hide Wanted Form" : "Add Wanted Person"}
         </button>
+        <Button variant="ghost" color="warning" className="mx-auto mt-2" onPress={() => {
+          () => setAddWanted(!addWanted)
+          onOpen();
+        }}>
+          Add Suspect
+        </Button>
       </div>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1 underline">Add Wanted Person</ModalHeader>
+              <ModalBody>
+                <AddWanted onSuccess={() => fetchWantedPersons()} />
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
       {addWanted && <AddWanted onSuccess={() => fetchWantedPersons()} />}
-      
+
       {showWanted && (
         <div className="w-full">
           {loading ? (
@@ -122,7 +154,7 @@ const Page = () => {
           ) : error ? (
             <div className="text-red-600 text-center py-4">
               Error: {error}
-              <button 
+              <button
                 onClick={fetchWantedPersons}
                 className="block mx-auto mt-2 bg-blue-500 text-white px-4 py-2 rounded"
               >
@@ -139,7 +171,7 @@ const Page = () => {
                 key={wanted.id}
                 className="border-2 border-black rounded-lg py-2 px-4 my-2"
               >
-                <MissingListItem 
+                <MissingListItem
                   name={wanted.name}
                   age={typeof wanted.age === 'string' ? parseInt(wanted.age) || 0 : wanted.age}
                   gender={wanted.gender}
@@ -165,10 +197,10 @@ const Page = () => {
                 </div>
                 <div className="flex justify-center">
                   <button
-                    className="bg-red-300 hover:bg-red-400 p-2 rounded-md transition-colors"
+                    className="bg-red-600/90 font-bold backdrop-blur-sm hover:bg-red-500/90 text-white   hover:border-red-300/50 relative px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ease-out transform active:scale-95"
                     onClick={() => deleteWantedPost(wanted.id, wanted.image)}
                   >
-                    Delete
+                    DELETE
                   </button>
                 </div>
               </div>

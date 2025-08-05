@@ -148,10 +148,10 @@ const Page = () => {
                 />
                 <div className="flex justify-center">
                   <button
-                    className="bg-red-300 hover:bg-red-400 p-2 rounded-md transition-colors"
+                    className="bg-red-600/90 font-bold backdrop-blur-sm hover:bg-red-500/90 text-white   hover:border-red-300/50 relative px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ease-out transform active:scale-95"
                     onClick={() => deleteMissingPost(missing.id, missing.image)}
                   >
-                    Delete
+                    DELETE
                   </button>
                 </div>
               </div>
