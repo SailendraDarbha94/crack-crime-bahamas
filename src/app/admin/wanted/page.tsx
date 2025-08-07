@@ -14,7 +14,8 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/react";
-import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Input, Spinner } from "@nextui-org/react";
+
+import { Button } from "@nextui-org/react";
 
 interface WantedPerson {
   id: string;
@@ -126,16 +127,16 @@ const Page = () => {
           Add Suspect
         </Button>
       </div>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal className="max-h-full" isOpen={isOpen} onOpenChange={onOpenChange} size="lg">
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1 underline">Add Wanted Person</ModalHeader>
+              {/* <ModalHeader className="flex flex-col gap-1 underline">Add Wanted Person</ModalHeader> */}
               <ModalBody>
                 <AddWanted onSuccess={() => fetchWantedPersons()} />
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
+                <Button color="secondary" variant="solid" onPress={onClose}>
                   Close
                 </Button>
               </ModalFooter>

@@ -4,6 +4,7 @@ import { WantedPersonService } from "@/lib/firebaseService";
 import { FirebaseErrorHandler } from "@/lib/firebaseErrorHandler";
 import { useToast } from "@/lib/toastContext";
 import { useState } from "react";
+import { Input, Textarea } from "@nextui-org/react";
 
 interface AddWantedProps {
   onSuccess?: () => void;
@@ -123,17 +124,18 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
     setSelectedFile(null);
   };
   return (
-    <div className="p-4 pt-14">
-      <section className="font-nunito mb-10 mx-auto max-w-lg rounded-lg">
-        <div className="flex flex-col items-center justify-center px-3 md:px-8 mx-auto md:h-screen lg:py-0">
-          <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+    <div className="w-full">
+      <section className="font-nunito mx-auto max-w-lg rounded-lg">
+        <div className="flex flex-col items-center justify-center mx-auto lg:py-0">
+          <div className="w-full bg-white rounded-lg dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-4 md:p-6 space-y-4 md:space-y-6 sm:p-8 w-fu">
-              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+              <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Wanted Person Report
               </h1>
               <form className="space-y-2" onSubmit={registerWantedPerson}>
                 <div>
-                  <label
+                  <Input label="Name" type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} isRequired />
+                  {/* <label
                     htmlFor="name"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
@@ -148,10 +150,11 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
                     placeholder=""
                     required={true}
                     onChange={(e) => setName(e.target.value)}
-                  />
+                  /> */}
                 </div>
                 <div>
-                  <label
+                  <Textarea className="max-w-full" value={wantedFor} id="wantedFor" isRequired onChange={(e) => setWantedFor(e.target.value)} label="Wanted For" placeholder="" />
+                  {/* <label
                     htmlFor="wantedFor"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
@@ -165,10 +168,11 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
                     placeholder=""
                     required={true}
                     onChange={(e) => setWantedFor(e.target.value)}
-                  />
+                  /> */}
                 </div>
                 <div>
-                  <label
+                  <Input label="Age" type="text" id="age" value={age} onChange={(e) => setAge(e.target.value)} />
+                  {/* <label
                     htmlFor="age"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
@@ -183,10 +187,11 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
                     placeholder=""
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required={false}
-                  />
+                  /> */}
                 </div>
                 <div>
-                  <label
+                  <Input label="Visual Description" type="text" id="description" value={description} onChange={(e) => setDescription(e.target.value)} />
+                  {/* <label
                     htmlFor="description"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
@@ -201,10 +206,11 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
                     placeholder=""
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required={false}
-                  />
+                  /> */}
                 </div>
                 <div>
-                  <label
+                  <Input label="Gender" type="text" id="gender" value={gender} onChange={(e) => setGender(e.target.value)} />
+                  {/* <label
                     htmlFor="gender"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
@@ -219,10 +225,11 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
                     placeholder=""
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required={false}
-                  />
+                  /> */}
                 </div>
                 <div>
-                  <label
+                  <Input label="Known Aliases" type="text" id="alias" value={alias} onChange={(e) => setAlias(e.target.value)} />
+                  {/* <label
                     htmlFor="alias"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
@@ -237,10 +244,11 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
                     placeholder=""
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required={false}
-                  />
+                  /> */}
                 </div>
                 <div>
-                  <label
+                  <Input label="Last Known Address" type="text" id="address" value={last_known_address} onChange={(e) => setLastKnownAddress(e.target.value)} />
+                  {/* <label
                     htmlFor="last_known_address"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
@@ -255,12 +263,12 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
                     placeholder=""
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required={false}
-                  />
+                  /> */}
                 </div>
                 <div>
                   <label
                     htmlFor="imager"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm text-center pt-4 font-medium text-gray-900 dark:text-white"
                   >
                     Image
                   </label>
@@ -279,14 +287,15 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
                       </div>
                     </div>
                   ) : (
-                    <input
-                      type="file"
-                      id="imager"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      placeholder="Upload Image"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    />
+                    <Input label="" type="file" id="imager" value={selectedFile ? selectedFile : undefined} onChange={handleFileChange} />
+                    // <input
+                    //   type="file"
+                    //   id="imager"
+                    //   accept="image/*"
+                    //   onChange={handleFileChange}
+                    //   placeholder="Upload Image"
+                    //   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    // />
                   )}
                 </div>
                 {loading ? (
