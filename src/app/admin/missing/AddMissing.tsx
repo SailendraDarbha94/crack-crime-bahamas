@@ -3,8 +3,13 @@ import { MissingPersonService } from "@/lib/firebaseService";
 import { FirebaseErrorHandler } from "@/lib/firebaseErrorHandler";
 import { useToast } from "@/lib/toastContext";
 import { useState } from "react";
+import { Input, Textarea } from "@nextui-org/react";
 
-const AddMissing = () => {
+interface AddMissingProps {
+  onSuccess?: () => void;
+}
+
+const AddMissing = ({ onSuccess }: AddMissingProps) => {
   const [name, setName] = useState<string>("");
   const [age, setAge] = useState<string>("");
   const [last_known_address, setLastKnownAddress] = useState<string>("");
@@ -16,7 +21,9 @@ const AddMissing = () => {
 
   const { toast } = useToast();
 
-  const registerMissingPerson = async () => {
+  const registerMissingPerson = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
     if (!name.trim()) {
       toast({ message: "Name is required", type: "error" });
       return;
@@ -69,6 +76,11 @@ const AddMissing = () => {
       
       toast({ message: "Missing person registered successfully!", type: "success" });
       
+      // Call the onSuccess callback to refresh the list
+      if (onSuccess) {
+        onSuccess();
+      }
+      
     } catch (err) {
       const userFriendlyMessage = FirebaseErrorHandler.handleError(err);
       toast({ message: userFriendlyMessage, type: "error" });
@@ -104,142 +116,83 @@ const AddMissing = () => {
   };
 
   return (
-    <div className="min-h-screen p-4 pt-14">
-      <section className="font-nunito mb-10 mx-auto max-w-lg rounded-lg">
-        <div className="flex flex-col items-center justify-center px-3 md:px-8 mx-auto md:h-screen lg:py-0">
-          {/* <a
-            href="#"
-            className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
-          >
-            <img className="w-8 h-8 mr-2" src="/newfavicon.png" alt="logo" />
-            Crack Crime Bahamas
-          </a> */}
-          <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+    <div className="w-full">
+      <section className="font-nunito mx-auto max-w-lg rounded-lg">
+        <div className="flex flex-col items-center justify-center mx-auto lg:py-0">
+          <div className="w-full bg-white rounded-lg dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-4 md:p-6 space-y-4 md:space-y-6 sm:p-8 w-fu">
-              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+              <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Missing Person Report
               </h1>
-              <div className="space-y-4 md:space-y-6">
+              <form className="space-y-2" onSubmit={registerMissingPerson}>
                 <div>
-                  <label
-                    htmlFor="name"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    id="name"
-                    value={name}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder=""
-                    required={true}
-                    onChange={(e) => setName(e.target.value)}
+                  <Input 
+                    label="Name" 
+                    type="text" 
+                    id="name" 
+                    value={name} 
+                    onChange={(e) => setName(e.target.value)} 
+                    isRequired 
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="age"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Age of the Missing Person
-                  </label>
-                  <input
-                    type="age"
-                    name="age"
-                    id="age"
-                    value={age}
-                    onChange={(e) => setAge(e.target.value)}
-                    placeholder=""
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required={false}
+                  <Input 
+                    label="Age of the Missing Person" 
+                    type="text" 
+                    id="age" 
+                    value={age} 
+                    onChange={(e) => setAge(e.target.value)} 
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="gender"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Gender of the Missing Person
-                  </label>
-                  <input
-                    type="text"
-                    name="gender"
-                    id="gender"
-                    value={gender}
-                    onChange={(e) => setGender(e.target.value)}
-                    placeholder=""
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required={false}
+                  <Input 
+                    label="Gender of the Missing Person" 
+                    type="text" 
+                    id="gender" 
+                    value={gender} 
+                    onChange={(e) => setGender(e.target.value)} 
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="alias"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Known Aliases
-                  </label>
-                  <input
-                    type="text"
-                    name="alias"
-                    id="alias"
-                    value={alias}
-                    onChange={(e) => setAlias(e.target.value)}
-                    placeholder=""
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required={false}
+                  <Input 
+                    label="Known Aliases" 
+                    type="text" 
+                    id="alias" 
+                    value={alias} 
+                    onChange={(e) => setAlias(e.target.value)} 
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="alias"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Description
-                  </label>
-                  <input
-                    type="text"
-                    name="alias"
-                    id="alias"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder=""
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required={false}
+                  <Textarea 
+                    className="max-w-full" 
+                    value={description} 
+                    id="description" 
+                    onChange={(e) => setDescription(e.target.value)} 
+                    label="Description" 
+                    placeholder="" 
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="last_known_address"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Last Known Address
-                  </label>
-                  <input
-                    type="text"
-                    name="last_known_address"
-                    id="last_known_address"
-                    value={last_known_address}
-                    onChange={(e) => setLastKnownAddress(e.target.value)}
-                    placeholder=""
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required={false}
+                  <Input 
+                    label="Last Known Address" 
+                    type="text" 
+                    id="last_known_address" 
+                    value={last_known_address} 
+                    onChange={(e) => setLastKnownAddress(e.target.value)} 
                   />
                 </div>
                 <div>
                   <label
                     htmlFor="imager"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm text-center pt-4 font-medium text-gray-900 dark:text-white"
                   >
                     Image
                   </label>
 
                   {selectedFile ? (
                     <div className="space-y-2">
-                      <p className="text-sm text-green-600">Selected file: {selectedFile.name}</p>
-                      <div className="flex space-x-2">
+                      <p className="text-sm text-green-600 text-center">Selected file: {selectedFile.name}</p>
+                      <div className="flex justify-center">
                         <button
                           type="button"
                           onClick={clearFileSelection}
@@ -250,13 +203,12 @@ const AddMissing = () => {
                       </div>
                     </div>
                   ) : (
-                    <input
-                      type="file"
-                      id="imager"
+                    <Input 
+                      label="" 
+                      type="file" 
+                      id="imager" 
                       accept="image/*"
-                      onChange={handleFileChange}
-                      placeholder="Upload Image"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      onChange={handleFileChange} 
                     />
                   )}
                 </div>
@@ -283,23 +235,12 @@ const AddMissing = () => {
                 ) : (
                   <button
                     type="submit"
-                    onClick={registerMissingPerson}
                     className="w-full rounded-lg bg-slate-200 hover:bg-slate-300 dark:hover:bg-blue-700 dark:text-white focus:ring-4 dark:bg-blue-600 focus:outline-none font-medium text-lg px-5 py-2.5 text-center"
                   >
                     Submit
                   </button>
                 )}
-
-                {/* <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                    Don&apos;t have an account yet?{" "}
-                    <a
-                      href="#"
-                      className="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                    >
-                      Sign up
-                    </a>
-                  </p> */}
-              </div>
+              </form>
             </div>
           </div>
         </div>

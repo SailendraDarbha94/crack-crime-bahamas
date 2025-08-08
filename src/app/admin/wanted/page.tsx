@@ -114,12 +114,12 @@ const Page = () => {
         >
           {showWanted ? "Hide Wanted Persons" : "Show Wanted Persons"}
         </button>
-        <button
+        {/* <button
           className="bg-purple-200 dark:bg-slate-500 p-2 rounded-lg"
           onClick={() => setAddWanted(!addWanted)}
         >
           {addWanted ? "Hide Wanted Form" : "Add Wanted Person"}
-        </button>
+        </button> */}
         <Button variant="ghost" color="warning" className="mx-auto mt-2" onPress={() => {
           () => setAddWanted(!addWanted)
           onOpen();

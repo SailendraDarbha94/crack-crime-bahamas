@@ -6,6 +6,15 @@ import { useToast } from "@/lib/toastContext";
 import { useEffect, useState } from "react";
 import AddMissing from "./AddMissing";
 import MissingListItem from "./MissingListItem";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+} from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 
 interface MissingPerson {
   id: string;
@@ -26,6 +35,7 @@ const Page = () => {
   const [missings, setMissings] = useState<MissingPerson[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   
   const { toast } = useToast();
 
@@ -94,8 +104,8 @@ const Page = () => {
   }, [addMissing, showMissing]);
 
   return (
-    <main className="font-nunito py-3">
-      <h1 className="text-3xl border-b-2 border-black">Missing Persons</h1>
+    <main className="font-nunito py-3 m-2 rounded-3xl">
+      <h1 className="text-2xl font-bold rounded-3xl border-2 border-black py-2 text-center">Missing Persons</h1>
       <div className="flex p-2 mb-4 justify-around">
         <button
           className="bg-purple-200 dark:bg-slate-500 p-2 rounded-lg"
@@ -103,14 +113,32 @@ const Page = () => {
         >
           {showMissing ? "Hide Missing Persons" : "Show Missing Persons"}
         </button>
-        <button
-          className="bg-purple-200 dark:bg-slate-500 p-2 rounded-lg"
-          onClick={() => setAddMissing(!addMissing)}
-        >
-          {addMissing ? "Hide Missing Form" : "Add Missing Persons"}
-        </button>
+        <Button variant="ghost" color="warning" className="mx-auto mt-2" onPress={() => {
+          () => setAddMissing(!addMissing)
+          onOpen();
+        }}>
+          Add Missing Person
+        </Button>
       </div>
-      {addMissing && <AddMissing />}
+      
+      <Modal className="max-h-full" isOpen={isOpen} onOpenChange={onOpenChange} size="lg">
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalBody>
+                <AddMissing onSuccess={() => fetchMissingPersons()} />
+              </ModalBody>
+              <ModalFooter>
+                <Button color="secondary" variant="solid" onPress={onClose}>
+                  Close
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      
+      {addMissing && <AddMissing onSuccess={() => fetchMissingPersons()} />}
       
       {showMissing && (
         <div className="w-full">
@@ -146,9 +174,21 @@ const Page = () => {
                   alias={missing.alias}
                   image={missing.image}
                 />
+                {missing.description && (
+                  <div className="mt-2 p-2 bg-gray-50 rounded">
+                    <h4 className="font-semibold text-blue-600">Description:</h4>
+                    <p className="text-sm">{missing.description}</p>
+                    {missing.last_known_address && (
+                      <>
+                        <h4 className="font-semibold mt-2">Last Known Address:</h4>
+                        <p className="text-sm">{missing.last_known_address}</p>
+                      </>
+                    )}
+                  </div>
+                )}
                 <div className="flex justify-center">
                   <button
-                    className="bg-red-600/90 font-bold backdrop-blur-sm hover:bg-red-500/90 text-white   hover:border-red-300/50 relative px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ease-out transform active:scale-95"
+                    className="bg-red-600/90 font-bold backdrop-blur-sm hover:bg-red-500/90 text-white hover:border-red-300/50 relative px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ease-out transform active:scale-95"
                     onClick={() => deleteMissingPost(missing.id, missing.image)}
                   >
                     DELETE
