@@ -9,7 +9,7 @@ export default function Footer() {
             <div className="mb-6 md:mb-0">
               <a href="/" className="flex items-center">
                 <img src="/newfavicon.png" className="mr-3 h-8" alt="Logo" />
-                <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+                <span className="self-center text-2xl font-semibold whitespace-nowrap text-black">
                   CrackCrimeBahamas
                 </span>
               </a>

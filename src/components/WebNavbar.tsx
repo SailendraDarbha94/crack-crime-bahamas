@@ -1,15 +1,16 @@
+"use client"
 import app from '@/lib/firebase';
 import { ToastContext } from '@/lib/toastContext';
 import { getAuth, signOut } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
-import React, { useContext, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import React, { useContext, useEffect, useState } from 'react';
 
 const WebNavbar: React.FC = () => {
     const { toast } = useContext(ToastContext);
     const router = useRouter();
     const [loading, setLoading] = useState<boolean>(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
-
+    const pathname = usePathname();
     const logoutUser = async () => {
         setLoading(true);
         const auth = await getAuth(app);
@@ -30,6 +31,7 @@ const WebNavbar: React.FC = () => {
             });
         }
     };
+
 
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -76,10 +78,16 @@ const WebNavbar: React.FC = () => {
         );
     };
 
+    useEffect(() => {
+        if (pathname.includes("admin")) {
+            console.log("admin route")
+        }
+    }, [])
+
     return (
         <nav className="relative">
             {/* Main Navbar */}
-            <div className="mx-2 mt-2 rounded-3xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-300">
+            <div className="mx-2 rounded-3xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-300">
                 <div className="px-6 py-4">
                     <div className="flex items-center justify-between">
                         {/* Logo */}
@@ -88,20 +96,63 @@ const WebNavbar: React.FC = () => {
                                 Crack Crime Bahamas
                             </div>
                         </div>
-
                         {/* Desktop Navigation */}
-                        <div className="hidden md:flex items-center space-x-3">
-                            <NavLink href="/admin">Home</NavLink>
-                            <NavLink href="/admin/profile">Profile</NavLink>
-                            <NavLink onClick={logoutUser} variant="danger">
-                                <div className="flex items-center gap-2">
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                    </svg>
-                                    Logout
-                                </div>
-                            </NavLink>
-                        </div>
+                        {pathname.includes("admin") ? (
+                            <div className="hidden md:flex items-center space-x-3">
+                                <NavLink href="/admin">
+                                    <div className="flex items-center gap-3">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                        </svg>
+                                        Home
+                                    </div>
+                                </NavLink>
+                                <NavLink href="/admin/profile">
+                                    <div className="flex items-center gap-3">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                        Profile
+                                    </div>
+                                </NavLink>
+                                <NavLink onClick={logoutUser} variant="danger">
+                                    <div className="flex items-center gap-2">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                        </svg>
+                                        Logout
+                                    </div>
+                                </NavLink>
+                            </div>
+                        ) : (
+                            <div className="hidden md:flex items-center space-x-3">
+                                <NavLink href="/">
+                                    <div className="flex items-center gap-3">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                        </svg>
+                                        Home
+                                    </div>
+                                </NavLink>
+                                <NavLink href="/more-about-us">
+                                    <div className="flex items-center gap-3">
+                                        {/* <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg> */}
+                                        About Us
+                                    </div>
+                                </NavLink>
+                                {/* <NavLink href="/contact">
+                                    <div className="flex items-center gap-2">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                        </svg>
+                                        Contact
+                                    </div>
+                                </NavLink> */}
+                            </div>
+                        )}
+
 
                         {/* Mobile Menu Button */}
                         <button
@@ -119,34 +170,88 @@ const WebNavbar: React.FC = () => {
                 </div>
 
                 {/* Mobile Navigation Menu */}
-                <div className={`md:hidden overflow-hidden transition-all duration-300 ease-out ${isMobileMenuOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'}`}>
+                <div className={`md:hidden overflow-hidden transition-all duration-300 ease-out ${isMobileMenuOpen ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'}`}>
                     <div className="px-6 pb-4 border-t border-white/10">
-                        <div className="flex flex-col space-y-3 pt-4">
-                            <NavLink href="/admin">
-                                <div className="flex items-center gap-3">
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                                    </svg>
-                                    Home
-                                </div>
-                            </NavLink>
-                            <NavLink href="/admin/profile">
-                                <div className="flex items-center gap-3">
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                    </svg>
-                                    Profile
-                                </div>
-                            </NavLink>
-                            <NavLink onClick={logoutUser} variant="danger">
-                                <div className="flex items-center gap-3">
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                    </svg>
-                                    Logout
-                                </div>
-                            </NavLink>
-                        </div>
+                        {pathname.includes("admin") ? (
+                            <div className="flex flex-col space-y-3 pt-4">
+                                <NavLink href="/admin">
+                                    <div className="flex items-center gap-3">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                        </svg>
+                                        Home
+                                    </div>
+                                </NavLink>
+                                <NavLink href="/admin/profile">
+                                    <div className="flex items-center gap-3">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                        Profile
+                                    </div>
+                                </NavLink>
+                                <NavLink href="/admin/missing">
+                                    <div className="flex items-center gap-3">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                        Missing Persons
+                                    </div>
+                                </NavLink>
+                                <NavLink href="/admin/wanted">
+                                    <div className="flex items-center gap-3">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                        </svg>
+                                        Wanted Persons
+                                    </div>
+                                </NavLink>
+                                <NavLink onClick={logoutUser} variant="danger">
+                                    <div className="flex items-center gap-3">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                        </svg>
+                                        Logout
+                                    </div>
+                                </NavLink>
+                                {/* <NavLink onClick={logoutUser} variant="danger">
+                                    <div className="flex items-center gap-3">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                        </svg>
+                                        Logout
+                                    </div>
+                                </NavLink> */}
+                            </div>
+                        ) : (
+                            <div className="flex flex-col space-y-3 pt-4">
+                                <NavLink href="/">
+                                    <div className="flex items-center gap-3">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                        </svg>
+                                        Home
+                                    </div>
+                                </NavLink>
+                                <NavLink href="/more-about-us">
+                                    <div className="flex items-center gap-3">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                        About Us
+                                    </div>
+                                </NavLink>
+                                {/* <NavLink onClick={logoutUser} variant="danger">
+                                    <div className="flex items-center gap-3">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                        </svg>
+                                        Logout
+                                    </div>
+                                </NavLink> */}
+                            </div>
+                        )}
+
                     </div>
                 </div>
             </div>

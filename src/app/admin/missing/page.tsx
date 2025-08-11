@@ -107,13 +107,15 @@ const Page = () => {
     <main className="font-nunito py-3 m-2 rounded-3xl">
       <h1 className="text-2xl font-bold rounded-3xl border-2 border-black py-2 text-center">Missing Persons</h1>
       <div className="flex p-2 mb-4 justify-around">
-        <button
-          className="bg-purple-200 dark:bg-slate-500 p-2 rounded-lg"
+        <Button
+          className="font-bold text-lg"
+          variant="flat"
+          color="primary"
           onClick={() => setShowMissing(!showMissing)}
         >
           {showMissing ? "Hide Missing Persons" : "Show Missing Persons"}
-        </button>
-        <Button variant="ghost" color="warning" className="mx-auto mt-2" onPress={() => {
+        </Button>
+        <Button className="font-bold text-lg" variant="ghost" color="warning" onPress={() => {
           () => setAddMissing(!addMissing)
           onOpen();
         }}>
@@ -164,7 +166,7 @@ const Page = () => {
             missings.map((missing) => (
               <div
                 key={missing.id}
-                className="border-2 border-black rounded-lg py-2 px-4 my-2"
+                className="bg-white text-black rounded-3xl py-2 px-4 my-2"
               >
                 <MissingListItem 
                   name={missing.name}
@@ -188,7 +190,7 @@ const Page = () => {
                 )}
                 <div className="flex justify-center">
                   <button
-                    className="bg-red-600/90 font-bold backdrop-blur-sm hover:bg-red-500/90 text-white hover:border-red-300/50 relative px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ease-out transform active:scale-95"
+                    className="bg-red-600/90 my-4 font-bold backdrop-blur-sm hover:bg-red-500/90 text-white hover:border-red-300/50 relative px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ease-out transform active:scale-95"
                     onClick={() => deleteMissingPost(missing.id, missing.image)}
                   >
                     DELETE

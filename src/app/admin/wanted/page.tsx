@@ -108,19 +108,21 @@ const Page = () => {
     <main className="font-nunito py-3 m-2 rounded-3xl">
       <h1 className="text-2xl font-bold rounded-3xl border-2 border-black py-2 text-center">Wanted Persons</h1>
       <div className="flex p-2 mb-4 justify-around">
-        <button
-          className="bg-purple-200 dark:bg-slate-500 p-2 rounded-lg"
+        <Button
+          className="font-bold text-lg"
+          variant="flat"
+          color="primary"
           onClick={() => setShowWanted(!showWanted)}
         >
           {showWanted ? "Hide Wanted Persons" : "Show Wanted Persons"}
-        </button>
+        </Button>
         {/* <button
           className="bg-purple-200 dark:bg-slate-500 p-2 rounded-lg"
           onClick={() => setAddWanted(!addWanted)}
         >
           {addWanted ? "Hide Wanted Form" : "Add Wanted Person"}
         </button> */}
-        <Button variant="ghost" color="warning" className="mx-auto mt-2" onPress={() => {
+        <Button variant="ghost" color="warning" className="font-bold text-lg" onPress={() => {
           () => setAddWanted(!addWanted)
           onOpen();
         }}>
@@ -170,7 +172,7 @@ const Page = () => {
             wanteds.map((wanted) => (
               <div
                 key={wanted.id}
-                className="border-2 border-black rounded-lg py-2 px-4 my-2"
+                className="bg-white text-black rounded-3xl py-2 px-4 my-2"
               >
                 <MissingListItem
                   name={wanted.name}
@@ -198,7 +200,7 @@ const Page = () => {
                 </div>
                 <div className="flex justify-center">
                   <button
-                    className="bg-red-600/90 font-bold backdrop-blur-sm hover:bg-red-500/90 text-white   hover:border-red-300/50 relative px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ease-out transform active:scale-95"
+                    className="bg-red-600/90 my-4 font-bold backdrop-blur-sm hover:bg-red-500/90 text-white   hover:border-red-300/50 relative px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ease-out transform active:scale-95"
                     onClick={() => deleteWantedPost(wanted.id, wanted.image)}
                   >
                     DELETE

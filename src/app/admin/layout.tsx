@@ -21,9 +21,6 @@ export default function AdminLayout({
         <Sidebar />
       </div>
       <div className="w-full md:w-9/12 lg:w-9/12 xl:w-10/12">
-        <div className="w-full">
-          <WebNavbar />
-        </div>
         <div>
           {children}
         </div>

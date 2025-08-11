@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { AdvertisementService } from "@/lib/firebaseService";
+import { Button } from "@nextui-org/react";
 
 const AdvertChanger = ({ group }: { group: string }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -74,8 +75,8 @@ const AdvertChanger = ({ group }: { group: string }) => {
     fetchAdvertisement();
   }, [group]);
   return (
-    <main className="">
-      <div className="dark:bg-white dark:text-black w-full font-nunito border-2 border-black p-4 rounded-xl max-w-md my-2 mx-auto">
+    <main className="my-4 text-black">
+      <div className="bg-white w-full h-full font-nunito p-4 rounded-xl max-w-md mx-auto">
         <p className=" uppercase  text-xl font-bold text-center">{group} screens</p>
         {loading ? (
           <div
@@ -154,13 +155,15 @@ const AdvertChanger = ({ group }: { group: string }) => {
                 <p className="text-sm text-center mt-1">Uploading... {Math.round(uploadProgress)}%</p>
               </div>
             )}
-            <button
+            <Button
               onClick={uploadAdvertisement}
               disabled={uploading || !selectedFile}
-              className="rounded-lg block mx-auto p-2 font-extrabold bg-blue-600 text-white disabled:bg-gray-400 disabled:cursor-not-allowed"
+              variant="flat"
+              color="primary"
+              className="rounded-3xl block mx-auto p-2 font-bold bg-blue-600 text-white disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
               {uploading ? 'UPLOADING...' : 'UPLOAD'}
-            </button>
+            </Button>
           </div>
         )}
       </div>
