@@ -244,10 +244,11 @@ export default function Home() {
               under the umbrella of Crime Stoppers International.
             </p>
             <p>
-              We are a Non Governmental Organisation and we depend on donations,
+              We are a Non Governmental Organisation
+              {/* We are a Non Governmental Organisation and we depend on donations,
               membership and corporate sponsors to help keep the program
               running. Please consider making a
-              <Donation />
+              <Donation /> */}
             </p>
           </div>
           <div className="grid grid-cols-2 gap-4 mt-8">
