@@ -39,7 +39,7 @@ export default function Home() {
               radius="md"
               //className="hover:shadow-gray-500 shadow-md bg-yellow-300"
               variant="solid"
-              color="warning"
+              color="primary"
             >
               <span className="font-bold text-lg">Download App</span>
               <svg
@@ -54,7 +54,7 @@ export default function Home() {
                 </g>
               </svg>
             </Button>
-            <Button
+            {/* <Button
               onPress={() => {
                 //toast({ type: "success", message: "something to see" });
                 setTimeout(() => {
@@ -67,7 +67,7 @@ export default function Home() {
               className="ml-4"
             >
               <span className="text-medium font-bold">More About Us</span>
-            </Button>
+            </Button> */}
             {/* <a
               href=""
               className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
