@@ -27,7 +27,7 @@ export default function Home() {
       <section className="bg-white dark:bg-gray-900 rounded-lg font-nunito mb-10 w-full">
         <div className="grid w-full px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
           <div className="mr-auto place-self-center lg:col-span-7">
-            <h1 className="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-3xl xl:text-5xl dark:text-white">
+            <h1 className="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-3xl xl:text-5xl text-black">
               Crime Stoppers Bahamas
             </h1>
             <p className="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
@@ -37,11 +37,11 @@ export default function Home() {
             <Button
               onPress={appDownloader}
               radius="md"
-              className="hover:shadow-gray-500 shadow-md bg-yellow-300"
+              //className="hover:shadow-gray-500 shadow-md bg-yellow-300"
               variant="solid"
-              // color="warning"
+              color="warning"
             >
-              <span className="font-medium text-lg">Download App</span>
+              <span className="font-bold text-lg">Download App</span>
               <svg
                 className="w-6 h-6"
                 fill="currentColor"
@@ -62,7 +62,8 @@ export default function Home() {
                 }, 300);
               }}
               radius="md"
-              variant="bordered"
+              variant="solid"
+              color="secondary"
               className="ml-4"
             >
               <span className="text-medium font-bold">More About Us</span>
@@ -106,7 +107,7 @@ export default function Home() {
               <div className="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8"
+                  className="h-8 w-8 text-black"
                   viewBox="0 0 20 24"
                 >
                   <path
@@ -115,7 +116,7 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="mb-2 text-xl font-bold dark:text-white">
+              <h3 className="mb-2 text-xl font-bold text-black">
                 Anonymity
               </h3>
               <p className="text-gray-500 dark:text-gray-400">
@@ -126,7 +127,7 @@ export default function Home() {
               <div className="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8"
+                  className="h-8 w-8 text-black"
                   viewBox="0 0 24 24"
                 >
                   <path
@@ -135,7 +136,7 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="mb-2 text-xl font-bold dark:text-white">
+              <h3 className="mb-2 text-xl font-bold text-black">
                 Privacy
               </h3>
               <p className="text-gray-500 dark:text-gray-400">
@@ -147,7 +148,7 @@ export default function Home() {
               <div className="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8"
+                  className="h-8 w-8 text-black"
                   viewBox="0 0 24 24"
                 >
                   <path
@@ -156,7 +157,7 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="mb-2 text-xl font-bold dark:text-white">
+              <h3 className="mb-2 text-xl font-bold text-black">
                 Encryption
               </h3>
               <p className="text-gray-500 dark:text-gray-400">
@@ -168,7 +169,7 @@ export default function Home() {
               <div className="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8"
+                  className="h-8 w-8 text-black"
                   viewBox="0 0 32 32"
                 >
                   <path
@@ -177,7 +178,7 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="mb-2 text-xl font-bold dark:text-white">Events</h3>
+              <h3 className="mb-2 text-xl font-bold text-black">Events</h3>
               <p className="text-gray-500 dark:text-gray-400">
                 We also conduct events as part of our ongoing efforts in
                 community building, thus you shall not feel alone in fighting
@@ -188,7 +189,7 @@ export default function Home() {
               <div className="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8"
+                  className="h-8 w-8 text-black"
                   viewBox="0 0 24 24"
                 >
                   <path
@@ -197,7 +198,7 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="mb-2 text-xl font-bold dark:text-white">
+              <h3 className="mb-2 text-xl font-bold text-black">
                 Support
               </h3>
               <p className="text-gray-500 dark:text-gray-400">
@@ -209,7 +210,7 @@ export default function Home() {
               <div className="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="w-8 h-8"
+                  className="w-8 h-8 text-black"
                   viewBox="0 0 24 24"
                 >
                   <path
@@ -218,7 +219,7 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="mb-2 text-xl font-bold dark:text-white">
+              <h3 className="mb-2 text-xl font-bold text-black">
                 Rewards
               </h3>
               <p className="text-gray-500 dark:text-gray-400">
@@ -243,10 +244,11 @@ export default function Home() {
               under the umbrella of Crime Stoppers International.
             </p>
             <p>
-              We are a Non Governmental Organisation and we depend on donations,
+              We are a Non Governmental Organisation
+              {/* We are a Non Governmental Organisation and we depend on donations,
               membership and corporate sponsors to help keep the program
               running. Please consider making a
-              <Donation />
+              <Donation /> */}
             </p>
           </div>
           <div className="grid grid-cols-2 gap-4 mt-8">

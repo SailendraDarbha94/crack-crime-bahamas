@@ -1,10 +1,16 @@
 "use client";
 
-import app from "@/lib/firebase";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { WantedPersonService } from "@/lib/firebaseService";
+import { FirebaseErrorHandler } from "@/lib/firebaseErrorHandler";
+import { useToast } from "@/lib/toastContext";
 import { useState } from "react";
+import { Input, Textarea } from "@nextui-org/react";
 
-const AddWanted = () => {
+interface AddWantedProps {
+  onSuccess?: () => void;
+}
+
+const AddWanted = ({ onSuccess }: AddWantedProps) => {
   const [wantedFor, setWantedFor] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [age, setAge] = useState<string>("");
@@ -13,113 +19,123 @@ const AddWanted = () => {
   const [alias, setAlias] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [selectedFile, setSelectedFile] = useState<any>(null);
-  const fileNameChecker = async (fileName: string | null) => {
-    if (!fileName) {
-      return false;
-    }
-    const fileRef = await ref(storage, `/wanteds/${fileName}`);
-    const result = await getDownloadURL(fileRef).catch((err) => {
-      console.log(JSON.stringify(err));
-    });
-    if (result) {
-      return true;
-    } else {
-      return false;
-    }
-  };
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  
+  const { toast } = useToast();
 
-  const fileSaver = async () => {
-    if (selectedFile) {
-      const storageRef = ref(storage, `/wanteds/${selectedFile.name}`);
-      const { metadata } = await uploadBytes(storageRef, selectedFile);
-      return metadata;
-    } else {
-      return false;
-    }
-  };
-
-  const storage = getStorage(app);
-
-
-  const registerWantedPerson = async (e:any) => {
+  const registerWantedPerson = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!name.trim()) {
+      toast({ message: "Name is required", type: "error" });
+      return;
+    }
+
+    if (!wantedFor.trim()) {
+      toast({ message: "'Wanted For' field is required", type: "error" });
+      return;
+    }
+
     setLoading(true);
-    let noImageMessage = "Image Not Available";
     try {
-      const currentTime = Date.now();
-      const fileExists = await fileNameChecker(
-        selectedFile ? selectedFile.name : null
-      );
-      if (fileExists) {
-        throw new Error("Picture is duplicate");
-      }
-      const metaData = await fileSaver()
+      const personData = {
+        name: name.trim(),
+        wanted_for: wantedFor.trim(),
+        age: age.trim(),
+        gender: gender.trim(),
+        alias: alias.trim(),
+        last_known_address: last_known_address.trim(),
+        description: description.trim(),
+      };
+
+      // Use the new WantedPersonService
+      const id = await WantedPersonService.createWantedPerson(personData, selectedFile || undefined);
+      
+      // Also call your API endpoint to sync with your database
       const res = await fetch("/api/wanted", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: name,
-          wanted_for: wantedFor,
-          age: age,
-          gender: gender,
-          alias: alias,
-          created_at: currentTime,
+          ...personData,
+          created_at: Date.now(),
           country_code: "BAH",
           current_status: "",
-          description: description,
-          last_known_address: last_known_address,
-          image: metaData ? metaData.fullPath : noImageMessage,
+          image: selectedFile ? `wanteds/${selectedFile.name}` : "Image Not Available",
         }),
       });
 
       const data = await res.json();
-
-      if (data !== "request failure") {
-        console.log(data);
-        setName("");
-        setAge("");
-        setAlias("");
-        setGender("");
-        setWantedFor("");
-        setLastKnownAddress("");
-        setDescription("");
-        setSelectedFile(null);
-        setLoading(false);
+      if (data === "request failure") {
+        throw new Error("API request failed");
       }
-      setLoading(false);
-    } catch (err) {
+
+      console.log("Wanted person registered successfully:", { id, apiResponse: data });
+      
+      // Reset form
       setName("");
       setWantedFor("");
       setAge("");
       setAlias("");
       setGender("");
-      setDescription("");
       setLastKnownAddress("");
+      setDescription("");
       setSelectedFile(null);
-      console.error(err);
+      
+      toast({ message: "Wanted person registered successfully!", type: "success" });
+      
+      // Call the onSuccess callback to refresh the list
+      if (onSuccess) {
+        onSuccess();
+      }
+      
+    } catch (err) {
+      const userFriendlyMessage = FirebaseErrorHandler.handleError(err);
+      toast({ message: userFriendlyMessage, type: "error" });
+      console.error("Registration failed:", err);
+    } finally {
       setLoading(false);
     }
   };
 
-  const handleFileChange = (event: any) => {
-    const file = event.target.files[0];
-    setSelectedFile(file);
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+      if (!validTypes.includes(file.type)) {
+        toast({ message: 'Please select a valid image file (JPEG, PNG, or GIF)', type: "error" });
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        toast({ message: 'File size must be less than 5MB', type: "error" });
+        return;
+      }
+      
+      setSelectedFile(file);
+    }
+  };
+
+  const clearFileSelection = () => {
+    setSelectedFile(null);
   };
   return (
-    <div className="p-4 pt-14">
-      <section className="font-nunito mb-10 mx-auto max-w-lg rounded-lg">
-        <div className="flex flex-col items-center justify-center px-3 md:px-8 mx-auto md:h-screen lg:py-0">
-          <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+    <div className="w-full">
+      <section className="font-nunito mx-auto max-w-lg rounded-lg">
+        <div className="flex flex-col items-center justify-center mx-auto lg:py-0">
+          <div className="w-full bg-white rounded-lg dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-4 md:p-6 space-y-4 md:space-y-6 sm:p-8 w-fu">
-              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+              <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Wanted Person Report
               </h1>
               <form className="space-y-2" onSubmit={registerWantedPerson}>
                 <div>
-                  <label
+                  <Input label="Name" type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} isRequired />
+                  {/* <label
                     htmlFor="name"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
@@ -134,10 +150,11 @@ const AddWanted = () => {
                     placeholder=""
                     required={true}
                     onChange={(e) => setName(e.target.value)}
-                  />
+                  /> */}
                 </div>
                 <div>
-                  <label
+                  <Textarea className="max-w-full" value={wantedFor} id="wantedFor" isRequired onChange={(e) => setWantedFor(e.target.value)} label="Wanted For" placeholder="" />
+                  {/* <label
                     htmlFor="wantedFor"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
@@ -151,10 +168,11 @@ const AddWanted = () => {
                     placeholder=""
                     required={true}
                     onChange={(e) => setWantedFor(e.target.value)}
-                  />
+                  /> */}
                 </div>
                 <div>
-                  <label
+                  <Input label="Age" type="text" id="age" value={age} onChange={(e) => setAge(e.target.value)} />
+                  {/* <label
                     htmlFor="age"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
@@ -169,10 +187,11 @@ const AddWanted = () => {
                     placeholder=""
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required={false}
-                  />
+                  /> */}
                 </div>
                 <div>
-                  <label
+                  <Input label="Visual Description" type="text" id="description" value={description} onChange={(e) => setDescription(e.target.value)} />
+                  {/* <label
                     htmlFor="description"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
@@ -187,10 +206,11 @@ const AddWanted = () => {
                     placeholder=""
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required={false}
-                  />
+                  /> */}
                 </div>
                 <div>
-                  <label
+                  <Input label="Gender" type="text" id="gender" value={gender} onChange={(e) => setGender(e.target.value)} />
+                  {/* <label
                     htmlFor="gender"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
@@ -205,10 +225,11 @@ const AddWanted = () => {
                     placeholder=""
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required={false}
-                  />
+                  /> */}
                 </div>
                 <div>
-                  <label
+                  <Input label="Known Aliases" type="text" id="alias" value={alias} onChange={(e) => setAlias(e.target.value)} />
+                  {/* <label
                     htmlFor="alias"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
@@ -223,10 +244,11 @@ const AddWanted = () => {
                     placeholder=""
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required={false}
-                  />
+                  /> */}
                 </div>
                 <div>
-                  <label
+                  <Input label="Last Known Address" type="text" id="address" value={last_known_address} onChange={(e) => setLastKnownAddress(e.target.value)} />
+                  {/* <label
                     htmlFor="last_known_address"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
@@ -241,27 +263,39 @@ const AddWanted = () => {
                     placeholder=""
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required={false}
-                  />
+                  /> */}
                 </div>
                 <div>
                   <label
                     htmlFor="imager"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm text-center pt-4 font-medium text-gray-900 dark:text-white"
                   >
                     Image
                   </label>
 
                   {selectedFile ? (
-                    <p>Selected file: {selectedFile.name}</p>
+                    <div className="space-y-2">
+                      <p className="text-sm text-green-600">Selected file: {selectedFile.name}</p>
+                      <div className="flex space-x-2">
+                        <button
+                          type="button"
+                          onClick={clearFileSelection}
+                          className="text-sm text-red-600 underline"
+                        >
+                          Clear selection
+                        </button>
+                      </div>
+                    </div>
                   ) : (
-                    <input
-                      type="file"
-                      id="imager"
-                      onChange={handleFileChange}
-                      placeholder="Upload IMage"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      required={true}
-                    />
+                    <Input label="" type="file" id="imager" value={selectedFile ? selectedFile : undefined} onChange={handleFileChange} />
+                    // <input
+                    //   type="file"
+                    //   id="imager"
+                    //   accept="image/*"
+                    //   onChange={handleFileChange}
+                    //   placeholder="Upload Image"
+                    //   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    // />
                   )}
                 </div>
                 {loading ? (

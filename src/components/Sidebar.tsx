@@ -18,7 +18,7 @@ const Sidebar = () => {
       await signOut(auth);
       setLoading(false);
       toast({
-        type: "default",
+        type: "error",
         message: "User Logged Out!",
       });
       router.push("/");
@@ -29,7 +29,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="w-full p-2 h-full flex flex-col bg-amber-500 rounded-md shadow-xl shadow-amber-700">
+    <div className="w-full h-full flex flex-col mx-2 py-2 px-3 rounded-3xl bg-gradient-to-b from-amber-500 via-yellow-500 to-amber-300">
       <a
         href="/"
         className="flex items-center justify-center bg-inherit my-2 text-center rounded-lg w-full font-nunito font-bold text-lg"
@@ -39,25 +39,25 @@ const Sidebar = () => {
       
       <a
         href="/admin"
-        className="bg-yellow-300 dark:bg-yellow-600 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
+        className="bg-yellow-300 text-black dark:bg-yellow-600 my-2 text-center py-2 w-full font-nunito font-bold text-lg mt-2 rounded-3xl"
       >
         Home
       </a>
       <a
         href="/admin/messages"
-        className="bg-yellow-300 dark:bg-yellow-600 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
+        className="bg-yellow-300 text-black px-2 dark:bg-yellow-600 my-2 text-center py-2 w-full font-nunito font-bold text-lg mt-2 rounded-3xl"
       >
         Manage Messages
       </a>
       <a
         href="/admin/missing"
-        className="bg-yellow-300 dark:bg-yellow-600 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
+        className="bg-yellow-300 text-black px-2 dark:bg-yellow-600 my-2 mt-2 text-center py-2 rounded-3xl w-full font-nunito font-bold text-lg"
       >
         Manage Missings
       </a>
       <a
         href="/admin/wanted"
-        className="bg-yellow-300 dark:bg-yellow-600 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
+        className="bg-yellow-300 text-black px-2 dark:bg-yellow-600 my-2 mt-2 text-center py-2 rounded-3xl w-full font-nunito font-bold text-lg"
       >
         Manage Wanteds
       </a>
@@ -69,28 +69,28 @@ const Sidebar = () => {
       </a> */}
       <a
         href="/admin/adverts"
-        className="bg-yellow-300 dark:bg-yellow-600 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
+        className="bg-yellow-300 text-black px-2 dark:bg-yellow-600 my-2 mt-2 text-center py-2 rounded-3xl w-full font-nunito font-bold text-lg"
       >
         Advertisements
       </a>
       <a
         href="/admin/notifications"
-        className="bg-yellow-300 dark:bg-yellow-600 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
+        className="bg-yellow-300 px-2 text-black dark:bg-yellow-600 my-2 mt-2 text-center py-2 rounded-3xl w-full font-nunito font-bold text-lg"
       >
         Notifications
       </a>
       <a
         href="#"
-        className="bg-yellow-300 dark:bg-yellow-600 my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
+        className="bg-yellow-300 px-2 text-black dark:bg-yellow-600 my-2 mt-2 text-center py-2 rounded-3xl w-full font-nunito font-bold text-lg"
       >
         Annual Contributors
       </a>
-      <button
+      {/* <button
       onClick={logoutUser}
         className="bg-red-500 mt-auto text-white my-2 text-center py-2 rounded-lg w-full font-nunito font-bold text-lg"
       >
         Logout
-      </button>
+      </button> */}
     </div>
   );
 };

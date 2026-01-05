@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { NextUIProvider } from "@nextui-org/react";
 import ToastContextProvider from "@/lib/toastContext";
+import WebNavbar from "@/components/WebNavbar";
 
 export const metadata: Metadata = {
   title: "Crack Crime Bahamas",
@@ -21,7 +22,9 @@ export default function RootLayout({
       <body>
         <NextUIProvider>
           <ToastContextProvider>
-            <Navbar />
+            <div className="w-full pt-2">
+              <WebNavbar />
+            </div>
             {children}
             <Footer />
           </ToastContextProvider>

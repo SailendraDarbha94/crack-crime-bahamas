@@ -1,0 +1,21 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Allow read access to all images for development
+    match /adverts/{allPaths=**} {
+      allow read: if true;
+      allow write: if true; // Open for development - restrict later
+    }
+    
+    // Other file uploads
+    match /uploads/{allPaths=**} {
+      allow read, write: if true; // Open for development
+    }
+    
+    // Profile images
+    match /profiles/{userId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if true; // Open for development
+    }
+  }
+}

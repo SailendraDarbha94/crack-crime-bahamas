@@ -1,48 +1,95 @@
 "use client";
 
-import app from "@/lib/firebase";
+import { WantedPersonService, DatabaseService } from "@/lib/firebaseService";
+import { FirebaseErrorHandler } from "@/lib/firebaseErrorHandler";
+import { useToast } from "@/lib/toastContext";
 import { useEffect, useState } from "react";
-import { child, get, getDatabase, ref, remove } from "firebase/database";
-import { useRouter } from "next/navigation";
 import AddWanted from "./AddWanted";
 import MissingListItem from "../missing/MissingListItem";
-import { deleteObject, getStorage, ref as StorageRef } from "firebase/storage";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+} from "@nextui-org/react";
+
+import { Button } from "@nextui-org/react";
+
+interface WantedPerson {
+  id: string;
+  name: string;
+  age: string | number;
+  gender: string;
+  alias: string;
+  image: string;
+  wanted_for: string;
+  last_known_address: string;
+  description: string;
+  created_at: number;
+  current_status: string;
+}
 
 const Page = () => {
   const [showWanted, setShowWanted] = useState<boolean>(false);
   const [addWanted, setAddWanted] = useState<boolean>(false);
-  const [wantedIndices, setWantedIndices] = useState<any[] | null>(null);
-  const [wanteds, setWanteds] = useState<any>(null);
+  const [wanteds, setWanteds] = useState<WantedPerson[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { toast } = useToast();
 
   const fetchWantedPersons = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      const db = getDatabase(app);
-      const dbRef = await ref(db);
-      const data = await get(child(dbRef, "wanteds"));
-      if (data.exists()) {
-        const wanteds = await data.val();
-        const indices = Object.keys(wanteds);
+      console.log('🔍 Starting to fetch wanted persons...');
 
-        setWanteds(wanteds);
-        setWantedIndices(indices);
-      }
+      // THE COMMENTED PIECE OF CODE BELOW DOES NOT WORK
+      // Test database connection first
+      // const isConnected = await DatabaseService.testConnection();
+      // if (!isConnected) {
+      //   throw new Error('Database connection failed');
+      // }
+
+      const wantedPersons = await WantedPersonService.getAllWantedPersons();
+      console.log('✅ Successfully fetched wanted persons:', wantedPersons);
+      toast({ message: "Wanted Persons List Fetched", type: "info" });
+      setWanteds(wantedPersons);
     } catch (err) {
-      console.log(JSON.stringify(err));
+      const errorMessage = FirebaseErrorHandler.handleError(err);
+      setError(errorMessage);
+      console.error("❌ Error fetching wanted persons:", err);
+
+      // Additional debugging info
+      if (err instanceof Error && err.message.includes('Permission denied')) {
+        console.error('🔒 Permission denied error - check Firebase rules and authentication');
+        console.error('🔗 Database URL:', process.env.NEXT_PUBLIC_DATABASE_URL);
+        console.error('🔑 Project ID:', process.env.NEXT_PUBLIC_PROJECT_ID);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
-  const deleteWantedPost = async (id: string, path: string) => {
+  const deleteWantedPost = async (id: string, imagePath: string) => {
+    if (!confirm("Are you sure you want to delete this wanted person report?")) {
+      return;
+    }
+
     try {
-      const db = getDatabase(app);
-      const postRef = ref(db, `wanteds/${id}`);
-      const storage = getStorage(app);
-      const imageRef = StorageRef(storage, path);
-      await deleteObject(imageRef);
-      await remove(postRef);
-      console.log("post deleted successfullyy");
-      fetchWantedPersons();
+      await WantedPersonService.deleteWantedPerson(id, imagePath);
+      console.log("Post deleted successfully");
+
+      // Refresh the list
+      await fetchWantedPersons();
+
+      toast({ message: "Wanted person report deleted successfully", type: "success" });
     } catch (err) {
-      console.log("could not delete_______", JSON.stringify(err));
+      const errorMessage = FirebaseErrorHandler.handleError(err);
+      toast({ message: `Could not delete: ${errorMessage}`, type: "error" });
+      console.error("Could not delete:", err);
     }
   };
 
@@ -50,51 +97,120 @@ const Page = () => {
     fetchWantedPersons();
   }, []);
 
+  // Refresh data when the add form is closed (in case new data was added)
+  useEffect(() => {
+    if (!addWanted && showWanted) {
+      fetchWantedPersons();
+    }
+  }, [addWanted, showWanted]);
+
   return (
-    <main className="font-nunito py-3 h-full">
-      <h1 className="text-3xl border-b-2 border-black">Wanted Persons</h1>
+    <main className="font-nunito py-3 m-2 rounded-3xl">
+      <h1 className="text-2xl font-bold rounded-3xl border-2 border-black py-2 text-center">Wanted Persons</h1>
       <div className="flex p-2 mb-4 justify-around">
-        <button
-          className="bg-purple-200 dark:bg-slate-500 p-2 rounded-lg"
+        <Button
+          className="font-bold text-lg"
+          variant="flat"
+          color="primary"
           onClick={() => setShowWanted(!showWanted)}
         >
           {showWanted ? "Hide Wanted Persons" : "Show Wanted Persons"}
-        </button>
-        <button
+        </Button>
+        {/* <button
           className="bg-purple-200 dark:bg-slate-500 p-2 rounded-lg"
           onClick={() => setAddWanted(!addWanted)}
         >
-          {addWanted ? "Hide Wanted Form" : "Add Wanted Suspect"}
-        </button>
+          {addWanted ? "Hide Wanted Form" : "Add Wanted Person"}
+        </button> */}
+        <Button variant="ghost" color="warning" className="font-bold text-lg" onPress={() => {
+          () => setAddWanted(!addWanted)
+          onOpen();
+        }}>
+          Add Suspect
+        </Button>
       </div>
-      <div className="">{addWanted ? <AddWanted /> : null}</div>
-      <div className="">
-      {showWanted ? (
-        <div className="">
-          {wantedIndices &&
-            wantedIndices.map((wanted) => {
-              return (
-                <div
-                  key={wanted}
-                  className="border-2 border-black rounded-lg py-2 px-4 my-2"
-                >
-                  <MissingListItem {...wanteds[wanted]} />
-                  <div className="flex justify-center">
-                    <button
-                      className="bg-red-300 p-2 rounded-md"
-                      onClick={() =>
-                        deleteWantedPost(wanted, wanteds[wanted].image)
-                      }
-                    >
-                      Delete
-                    </button>
-                  </div>
+      <Modal className="max-h-full" isOpen={isOpen} onOpenChange={onOpenChange} size="lg">
+        <ModalContent>
+          {(onClose) => (
+            <>
+              {/* <ModalHeader className="flex flex-col gap-1 underline">Add Wanted Person</ModalHeader> */}
+              <ModalBody>
+                <AddWanted onSuccess={() => fetchWantedPersons()} />
+              </ModalBody>
+              <ModalFooter>
+                <Button color="secondary" variant="solid" onPress={onClose}>
+                  Close
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      {addWanted && <AddWanted onSuccess={() => fetchWantedPersons()} />}
+
+      {showWanted && (
+        <div className="w-full">
+          {loading ? (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+            </div>
+          ) : error ? (
+            <div className="text-red-600 text-center py-4">
+              Error: {error}
+              <button
+                onClick={fetchWantedPersons}
+                className="block mx-auto mt-2 bg-blue-500 text-white px-4 py-2 rounded"
+              >
+                Retry
+              </button>
+            </div>
+          ) : wanteds.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              No wanted persons reported
+            </div>
+          ) : (
+            wanteds.map((wanted) => (
+              <div
+                key={wanted.id}
+                className="bg-white text-black rounded-3xl py-2 px-4 my-2"
+              >
+                <MissingListItem
+                  name={wanted.name}
+                  age={typeof wanted.age === 'string' ? parseInt(wanted.age) || 0 : wanted.age}
+                  gender={wanted.gender}
+                  id={wanted.id}
+                  alias={wanted.alias}
+                  image={wanted.image}
+                />
+                <div className="mt-2 p-2 bg-gray-50 rounded">
+                  <h4 className="font-semibold text-red-600">Wanted For:</h4>
+                  <p className="text-sm">{wanted.wanted_for}</p>
+                  {wanted.description && (
+                    <>
+                      <h4 className="font-semibold mt-2">Description:</h4>
+                      <p className="text-sm">{wanted.description}</p>
+                    </>
+                  )}
+                  {wanted.last_known_address && (
+                    <>
+                      <h4 className="font-semibold mt-2">Last Known Address:</h4>
+                      <p className="text-sm">{wanted.last_known_address}</p>
+                    </>
+                  )}
                 </div>
-              );
-            })}
+                <div className="flex justify-center">
+                  <button
+                    className="bg-red-600/90 my-4 font-bold backdrop-blur-sm hover:bg-red-500/90 text-white   hover:border-red-300/50 relative px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ease-out transform active:scale-95"
+                    onClick={() => deleteWantedPost(wanted.id, wanted.image)}
+                  >
+                    DELETE
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
         </div>
-      ) : null}
-      </div>
+      )}
     </main>
   );
 };
