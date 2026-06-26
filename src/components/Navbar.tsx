@@ -42,11 +42,11 @@ const Navbar = () => {
 
   return (
     <main
-      className={`fixed md:hidden flex flex-wrap bottom-0 left-0 w-full bg-amber-950/85 backdrop-blur-xl border-t border-amber-400/30 ${height} transition-[height]`}
+      className={`fixed md:hidden flex flex-wrap bottom-0 left-0 w-full bg-amber-50/80 backdrop-blur-xl border-t border-white/50 ${height} transition-[height]`}
     >
       {height === "h-14" ? (
         <div
-          className={`bg-amber-400/15 backdrop-blur-sm w-full h-14 px-4 flex justify-between items-center hover:cursor-pointer`}
+          className={`bg-white/30 backdrop-blur-md text-amber-950 w-full h-14 px-4 flex justify-between items-center hover:cursor-pointer`}
           onClick={toggleNavbar}
         >
           <span className="font-nunito text-2xl font-extrabold flex items-center w-full">
@@ -59,7 +59,7 @@ const Navbar = () => {
           >
             <g
               fill="none"
-              stroke="#fef3c7"
+              stroke="#451a03"
               strokeDasharray="24"
               strokeDashoffset="24"
               strokeLinecap="round"
@@ -80,14 +80,14 @@ const Navbar = () => {
       ) : null}
       {paths.includes("admin") ? (
         <div
-          className="h-14 bg-red-500/20 backdrop-blur-sm border-b border-red-400/30 text-red-200 w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
+          className="h-14 bg-red-500/85 backdrop-blur-sm border-b border-red-300/50 text-white w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
           onClick={logoutUser}
         >
           Logout
         </div>
       ) : (
         <div
-          className="h-14 bg-amber-400/20 backdrop-blur-sm border-b border-amber-300/25 text-amber-50 w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
+          className="h-14 bg-white/30 backdrop-blur-md border-b border-white/40 text-amber-950 w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
           onClick={() => routeNavigator("/")}
         >
           <img src="/newfavicon.png" alt="logo" className="h-8 w-8 mx-2" />
@@ -95,7 +95,7 @@ const Navbar = () => {
         </div>
       )}
       <div
-        className="h-14 bg-amber-400/15 backdrop-blur-sm border-b border-amber-300/20 text-amber-50 w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
+        className="h-14 bg-white/25 backdrop-blur-md border-b border-white/40 text-amber-950 w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
         onClick={() =>
           paths.includes("admin")
             ? routeNavigator("/admin/missing")
@@ -105,7 +105,7 @@ const Navbar = () => {
         {paths.includes("admin") ? "Add Missing Person" : "Become A Sponsor"}
       </div>
       <div
-        className="h-14 bg-amber-400/12 backdrop-blur-sm border-b border-amber-300/18 text-amber-50 w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
+        className="h-14 bg-white/20 backdrop-blur-md border-b border-white/40 text-amber-950 w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
         onClick={() =>
           paths.includes("admin")
             ? routeNavigator("/admin/wanted")
@@ -115,7 +115,7 @@ const Navbar = () => {
         {paths.includes("admin") ? "Add Wanted Person" : "More About Us"}
       </div>
       <div
-        className="h-14 bg-amber-400/12 backdrop-blur-sm border-b border-amber-300/18 text-amber-50 w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
+        className="h-14 bg-white/20 backdrop-blur-md border-b border-white/40 text-amber-950 w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
         onClick={() =>
           paths.includes("admin")
             ? routeNavigator("/admin/adverts")
@@ -125,7 +125,7 @@ const Navbar = () => {
         {paths.includes("admin") ? "Advertisements" : "More About Us"}
       </div>
       <div
-        className="h-14 bg-amber-300/10 backdrop-blur-sm border-b border-amber-300/15 text-amber-100 w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
+        className="h-14 bg-white/20 backdrop-blur-md border-b border-white/40 text-amber-950 w-full px-4 flex items-center font-nunito text-2xl font-extrabold hover:cursor-pointer"
         onClick={() =>
           paths.includes("admin")
             ? routeNavigator("/admin")
@@ -135,7 +135,7 @@ const Navbar = () => {
         {paths.includes("admin") ? "Admin Account Home" : "Admin Login"}
       </div>
       <div
-        className={`bg-amber-400/10 backdrop-blur-sm border-t border-amber-300/20 w-full h-16 px-4 flex justify-between items-center hover:cursor-pointer`}
+        className={`bg-white/30 backdrop-blur-md border-t border-white/40 text-amber-950 w-full h-16 px-4 flex justify-between items-center hover:cursor-pointer`}
         onClick={toggleNavbar}
       >
         <span className="font-nunito text-2xl font-extrabold flex items-center w-full">
@@ -150,7 +150,7 @@ const Navbar = () => {
         >
           <g
             fill="none"
-            stroke="#fef3c7"
+            stroke="#451a03"
             strokeDasharray="16"
             strokeDashoffset="16"
             strokeLinecap="round"

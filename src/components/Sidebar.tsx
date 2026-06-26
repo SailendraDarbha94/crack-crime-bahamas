@@ -29,7 +29,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col mx-2 py-2 px-3 rounded-3xl bg-amber-400/10 backdrop-blur-xl border border-amber-300/20 shadow-[0_4px_24px_rgba(217,119,6,0.15)]">
+    <div className="w-full h-full flex flex-col mx-2 py-2 px-3 rounded-3xl bg-white/20 backdrop-blur-xl border border-white/50 shadow-[0_8px_32px_rgba(120,72,10,0.15)]">
       <a
         href="/"
         className="flex items-center justify-center bg-inherit my-2 text-center rounded-lg w-full font-nunito font-bold text-lg"
@@ -39,25 +39,25 @@ const Sidebar = () => {
       
       <a
         href="/admin"
-        className="bg-amber-400/15 backdrop-blur-sm border border-amber-300/25 text-amber-50 hover:bg-amber-400/25 hover:border-amber-200/40 transition-all duration-200 active:scale-[0.98] my-2 text-center py-2 w-full font-nunito font-bold text-lg mt-2 rounded-3xl"
+        className="bg-white/30 backdrop-blur-md border border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70 shadow-sm transition-all duration-200 active:scale-[0.98] my-2 text-center py-2 w-full font-nunito font-bold text-lg mt-2 rounded-3xl"
       >
         Home
       </a>
       <a
         href="/admin/messages"
-        className="bg-amber-400/15 backdrop-blur-sm border border-amber-300/25 text-amber-50 hover:bg-amber-400/25 hover:border-amber-200/40 transition-all duration-200 active:scale-[0.98] px-2 my-2 text-center py-2 w-full font-nunito font-bold text-lg mt-2 rounded-3xl"
+        className="bg-white/30 backdrop-blur-md border border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70 shadow-sm transition-all duration-200 active:scale-[0.98] px-2 my-2 text-center py-2 w-full font-nunito font-bold text-lg mt-2 rounded-3xl"
       >
         Manage Messages
       </a>
       <a
         href="/admin/missing"
-        className="bg-amber-400/15 backdrop-blur-sm border border-amber-300/25 text-amber-50 hover:bg-amber-400/25 hover:border-amber-200/40 transition-all duration-200 active:scale-[0.98] px-2 my-2 mt-2 text-center py-2 rounded-3xl w-full font-nunito font-bold text-lg"
+        className="bg-white/30 backdrop-blur-md border border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70 shadow-sm transition-all duration-200 active:scale-[0.98] px-2 my-2 mt-2 text-center py-2 rounded-3xl w-full font-nunito font-bold text-lg"
       >
         Manage Missings
       </a>
       <a
         href="/admin/wanted"
-        className="bg-amber-400/15 backdrop-blur-sm border border-amber-300/25 text-amber-50 hover:bg-amber-400/25 hover:border-amber-200/40 transition-all duration-200 active:scale-[0.98] px-2 my-2 mt-2 text-center py-2 rounded-3xl w-full font-nunito font-bold text-lg"
+        className="bg-white/30 backdrop-blur-md border border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70 shadow-sm transition-all duration-200 active:scale-[0.98] px-2 my-2 mt-2 text-center py-2 rounded-3xl w-full font-nunito font-bold text-lg"
       >
         Manage Wanteds
       </a>
@@ -69,19 +69,19 @@ const Sidebar = () => {
       </a> */}
       <a
         href="/admin/adverts"
-        className="bg-amber-400/15 backdrop-blur-sm border border-amber-300/25 text-amber-50 hover:bg-amber-400/25 hover:border-amber-200/40 transition-all duration-200 active:scale-[0.98] px-2 my-2 mt-2 text-center py-2 rounded-3xl w-full font-nunito font-bold text-lg"
+        className="bg-white/30 backdrop-blur-md border border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70 shadow-sm transition-all duration-200 active:scale-[0.98] px-2 my-2 mt-2 text-center py-2 rounded-3xl w-full font-nunito font-bold text-lg"
       >
         Advertisements
       </a>
       <a
         href="/admin/notifications"
-        className="bg-amber-400/15 backdrop-blur-sm border border-amber-300/25 text-amber-50 hover:bg-amber-400/25 hover:border-amber-200/40 transition-all duration-200 active:scale-[0.98] px-2 my-2 mt-2 text-center py-2 rounded-3xl w-full font-nunito font-bold text-lg"
+        className="bg-white/30 backdrop-blur-md border border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70 shadow-sm transition-all duration-200 active:scale-[0.98] px-2 my-2 mt-2 text-center py-2 rounded-3xl w-full font-nunito font-bold text-lg"
       >
         Notifications
       </a>
       <a
         href="#"
-        className="bg-amber-400/15 backdrop-blur-sm border border-amber-300/25 text-amber-50 hover:bg-amber-400/25 hover:border-amber-200/40 transition-all duration-200 active:scale-[0.98] px-2 my-2 mt-2 text-center py-2 rounded-3xl w-full font-nunito font-bold text-lg"
+        className="bg-white/30 backdrop-blur-md border border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70 shadow-sm transition-all duration-200 active:scale-[0.98] px-2 my-2 mt-2 text-center py-2 rounded-3xl w-full font-nunito font-bold text-lg"
       >
         Annual Contributors
       </a>

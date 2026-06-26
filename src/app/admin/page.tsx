@@ -67,7 +67,7 @@ const Page = () => {
         >
           <svg
             aria-hidden="true"
-            className="w-8 h-8 text-amber-900/40 animate-spin fill-amber-400"
+            className="w-8 h-8 text-amber-950/20 animate-spin fill-amber-700"
             viewBox="0 0 100 101"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -85,19 +85,19 @@ const Page = () => {
         </div>
       ) : (
         <div className="w-full font-nunito text-lg">
-          <h1 className="font-bold text-5xl pb-4 mb-4 text-center text-amber-50 drop-shadow-[0_2px_12px_rgba(251,191,36,0.3)]">ADMIN DASHBOARD</h1>
+          <h1 className="font-bold text-5xl pb-4 mb-4 text-center text-amber-950 drop-shadow-[0_2px_10px_rgba(255,255,255,0.5)]">ADMIN DASHBOARD</h1>
 
-          <div className="flex flex-wrap w-full p-4 rounded-2xl gap-4 bg-amber-400/8 backdrop-blur-md border border-amber-300/15">
-            <div className="w-full md:w-1/3 lg:w-1/4 min-h-80 hover:cursor-pointer bg-amber-400/10 backdrop-blur-sm border border-amber-300/20 rounded-3xl p-3">
-              <p className="text-center text-3xl font-bold text-amber-100">Missing : {numberOfMissings ? numberOfMissings : "Loading..."}</p>
+          <div className="flex flex-wrap w-full p-4 rounded-2xl gap-4 bg-white/20 backdrop-blur-xl border border-white/50">
+            <div className="w-full md:w-1/3 lg:w-1/4 min-h-80 hover:cursor-pointer bg-white/30 backdrop-blur-md border border-white/50 rounded-3xl p-3 hover:bg-white/40 transition-all duration-200">
+              <p className="text-center text-3xl font-bold text-amber-950">Missing : {numberOfMissings ? numberOfMissings : "Loading..."}</p>
               <img src="/thumbnails/missingThumbnail.png" alt="Missing Person Thumbnail" className="rounded-lg" />
             </div>
-            <div className="w-full md:w-1/3 lg:w-1/4 min-h-80 hover:cursor-pointer bg-amber-400/10 backdrop-blur-sm border border-amber-300/20 rounded-3xl p-3">
-              <p className="text-center text-3xl font-bold text-amber-100">Wanted : {numberOfWanteds ? numberOfWanteds : "Loading..."}</p>
+            <div className="w-full md:w-1/3 lg:w-1/4 min-h-80 hover:cursor-pointer bg-white/30 backdrop-blur-md border border-white/50 rounded-3xl p-3 hover:bg-white/40 transition-all duration-200">
+              <p className="text-center text-3xl font-bold text-amber-950">Wanted : {numberOfWanteds ? numberOfWanteds : "Loading..."}</p>
               <img src="/thumbnails/wantedThumbnail3.png" alt="Wanted Person Thumbnail" className="rounded-3xl" />
             </div>
-            <div className="w-full md:w-1/3 lg:w-1/4 min-h-80 hover:cursor-pointer bg-amber-400/10 backdrop-blur-sm border border-amber-300/20 rounded-3xl p-3">
-              <p className="text-center text-3xl font-bold text-amber-100">Tips : {numberOfMessages ? numberOfMessages : "Loading..."}</p>
+            <div className="w-full md:w-1/3 lg:w-1/4 min-h-80 hover:cursor-pointer bg-white/30 backdrop-blur-md border border-white/50 rounded-3xl p-3 hover:bg-white/40 transition-all duration-200">
+              <p className="text-center text-3xl font-bold text-amber-950">Tips : {numberOfMessages ? numberOfMessages : "Loading..."}</p>
               <img src="/thumbnails/tips.png" alt="Messages Thumbnail" className="rounded-xl" />
             </div>
           </div>

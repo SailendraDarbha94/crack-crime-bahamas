@@ -45,8 +45,8 @@ const WebNavbar: React.FC = () => {
     }) => {
         const baseClasses = "relative px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 ease-out transform active:scale-95";
         const variantClasses = {
-            primary: "bg-amber-400/15 backdrop-blur-sm border border-amber-300/25 text-amber-50 hover:bg-amber-400/25 hover:border-amber-200/40",
-            danger: "bg-red-500/20 backdrop-blur-sm border border-red-400/30 text-red-200 hover:bg-red-500/30 hover:border-red-300/45"
+            primary: "bg-white/30 backdrop-blur-md border border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70 shadow-sm",
+            danger: "bg-red-500/85 backdrop-blur-md border border-red-300/50 text-white hover:bg-red-600/90 hover:border-red-200/60 shadow-sm"
         };
 
         if (onClick) {
@@ -87,12 +87,12 @@ const WebNavbar: React.FC = () => {
     return (
         <nav className="relative">
             {/* Main Navbar */}
-            <div className="mx-4 my-1.5 rounded-3xl bg-amber-400/10 backdrop-blur-xl border border-amber-300/25 shadow-[0_4px_24px_rgba(217,119,6,0.2)]">
+            <div className="mx-4 my-1.5 rounded-3xl bg-white/20 backdrop-blur-xl border border-white/50 shadow-[0_8px_32px_rgba(120,72,10,0.18)]">
                 <div className="px-6 py-4">
                     <div className="flex items-center justify-between">
                         {/* Logo */}
                         <div className="flex items-center">
-                            <div className="text-amber-50 font-bold text-xl md:text-2xl font-nunito tracking-tight">
+                            <div className="text-amber-950 font-bold text-xl md:text-2xl font-nunito tracking-tight">
                                 Crack Crime Bahamas
                             </div>
                         </div>
@@ -157,11 +157,11 @@ const WebNavbar: React.FC = () => {
                         {/* Mobile Menu Button */}
                         <button
                             onClick={toggleMobileMenu}
-                            className="md:hidden p-2 rounded-xl bg-amber-400/15 hover:bg-amber-400/25 border border-amber-300/30 transition-all duration-200 ease-out transform active:scale-95"
+                            className="md:hidden p-2 rounded-xl bg-white/30 hover:bg-white/45 border border-white/50 transition-all duration-200 ease-out transform active:scale-95"
                             aria-label="Toggle mobile menu"
                         >
                             <div className="w-6 h-6 flex flex-col justify-center items-center">
-                                <div className={`w-5 h-0.5 bg-amber-100 rounded-full transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></div>
+                                <div className={`w-5 h-0.5 bg-amber-950 rounded-full transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></div>
                                 <div className={`w-5 h-0.5 bg-amber-100 rounded-full mt-1 transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`}></div>
                                 <div className={`w-5 h-0.5 bg-amber-100 rounded-full mt-1 transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></div>
                             </div>
@@ -171,7 +171,7 @@ const WebNavbar: React.FC = () => {
 
                 {/* Mobile Navigation Menu */}
                 <div className={`md:hidden overflow-hidden transition-all duration-300 ease-out ${isMobileMenuOpen ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'}`}>
-                    <div className="px-6 pb-4 border-t border-white/10">
+                    <div className="px-6 pb-4 border-t border-amber-900/15">
                         {pathname.includes("admin") ? (
                             <div className="flex flex-col space-y-3 pt-4">
                                 <NavLink href="/admin">

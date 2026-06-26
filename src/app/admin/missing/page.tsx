@@ -105,7 +105,7 @@ const Page = () => {
 
   return (
     <main className="font-nunito py-3 m-2 rounded-3xl">
-      <h1 className="text-2xl font-bold rounded-3xl border border-amber-300/30 bg-amber-400/10 backdrop-blur-sm py-2 text-center text-amber-50">Missing Persons</h1>
+      <h1 className="text-2xl font-bold rounded-3xl border border-white/50 bg-white/25 backdrop-blur-md py-2 text-center text-amber-950 shadow-sm">Missing Persons</h1>
       <div className="flex p-2 mb-4 justify-around">
         <Button
           className="font-bold text-lg"
@@ -146,27 +146,27 @@ const Page = () => {
         <div className="w-full">
           {loading ? (
             <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-400"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-800"></div>
             </div>
           ) : error ? (
-            <div className="text-red-300 text-center py-4">
+            <div className="text-red-800 text-center py-4">
               Error: {error}
               <button
                 onClick={fetchMissingPersons}
-                className="block mx-auto mt-2 bg-amber-400/20 backdrop-blur-sm border border-amber-300/30 text-amber-50 px-4 py-2 rounded-xl hover:bg-amber-400/30 transition-all duration-200"
+                className="block mx-auto mt-2 bg-white/35 backdrop-blur-md border border-white/60 text-amber-950 px-4 py-2 rounded-xl hover:bg-white/50 transition-all duration-200 shadow-sm"
               >
                 Retry
               </button>
             </div>
           ) : missings.length === 0 ? (
-            <div className="text-center py-8 text-amber-300/60">
+            <div className="text-center py-8 text-amber-900/70">
               No missing persons reported
             </div>
           ) : (
             missings.map((missing) => (
               <div
                 key={missing.id}
-                className="bg-amber-400/10 backdrop-blur-md border border-amber-300/20 text-amber-50 rounded-3xl py-2 px-4 my-2 shadow-[0_4px_16px_rgba(217,119,6,0.1)]"
+                className="bg-white/25 backdrop-blur-xl border border-white/50 text-amber-950 rounded-3xl py-2 px-4 my-2 shadow-[0_4px_16px_rgba(120,72,10,0.12)]"
               >
                 <MissingListItem 
                   name={missing.name}
@@ -177,13 +177,13 @@ const Page = () => {
                   image={missing.image}
                 />
                 {missing.description && (
-                  <div className="mt-2 p-2 bg-amber-400/8 border border-amber-300/15 rounded-xl">
-                    <h4 className="font-semibold text-amber-300">Description:</h4>
-                    <p className="text-sm text-amber-100/80">{missing.description}</p>
+                  <div className="mt-2 p-2 bg-white/30 border border-white/50 rounded-xl">
+                    <h4 className="font-semibold text-amber-800">Description:</h4>
+                    <p className="text-sm text-amber-900/90">{missing.description}</p>
                     {missing.last_known_address && (
                       <>
-                        <h4 className="font-semibold mt-2 text-amber-200">Last Known Address:</h4>
-                        <p className="text-sm text-amber-100/80">{missing.last_known_address}</p>
+                        <h4 className="font-semibold mt-2 text-amber-800">Last Known Address:</h4>
+                        <p className="text-sm text-amber-900/90">{missing.last_known_address}</p>
                       </>
                     )}
                   </div>
