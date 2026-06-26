@@ -21,25 +21,25 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center p-4 md:p-12 lg:p-24">
-      <h1 className="md:text-6xl lg:text-8xl text-4xl font-nunito font-extrabold mb-10 w-screen text-center">
+      <h1 className="md:text-6xl lg:text-8xl text-4xl font-nunito font-extrabold mb-10 w-screen text-center text-amber-50 drop-shadow-[0_2px_16px_rgba(251,191,36,0.4)]">
         Crack Crime Bahamas
       </h1>
-      <section className="bg-white dark:bg-gray-900 rounded-lg font-nunito mb-10 w-full">
+      <section className="bg-amber-400/10 backdrop-blur-md border border-amber-300/20 rounded-2xl font-nunito mb-10 w-full shadow-[0_8px_32px_rgba(217,119,6,0.1)]">
         <div className="grid w-full px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
           <div className="mr-auto place-self-center lg:col-span-7">
-            <h1 className="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-3xl xl:text-5xl text-black">
+            <h1 className="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-3xl xl:text-5xl text-amber-50">
               Crime Stoppers Bahamas
             </h1>
-            <p className="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
+            <p className="max-w-2xl mb-6 font-light text-amber-200/80 lg:mb-8 md:text-lg lg:text-xl">
               The worst amongst us have no chance of perpetrating any criminal
               acts if the the rest of us come together.
             </p>
             <Button
               onPress={appDownloader}
               radius="md"
-              //className="hover:shadow-gray-500 shadow-md bg-yellow-300"
               variant="solid"
-              color="primary"
+              color="warning"
+              className="bg-amber-400/25 backdrop-blur-sm border border-amber-300/40 text-amber-50 hover:bg-amber-400/40 font-bold"
             >
               <span className="font-bold text-lg">Download App</span>
               <svg
@@ -90,13 +90,13 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section className="bg-white dark:bg-gray-900 rounded-lg font-nunito mb-10">
+      <section className="bg-amber-400/10 backdrop-blur-md border border-amber-300/20 rounded-2xl font-nunito mb-10 shadow-[0_8px_32px_rgba(217,119,6,0.1)]">
         <div className="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
           <div className="max-w-screen-md mb-8 lg:mb-16">
-            <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+            <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-amber-50">
               Features of our App
             </h2>
-            <p className="text-gray-500 sm:text-xl dark:text-gray-400">
+            <p className="text-amber-200/75 sm:text-xl">
               We here at Crack Crime Bahamas believe that safety is one of the
               fundamental human rights and are steadfast in our commitment to
               keeping our communities safe.
@@ -104,10 +104,10 @@ export default function Home() {
           </div>
           <div className="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0">
             <div>
-              <div className="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
+              <div className="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-amber-400/20 border border-amber-300/30 lg:h-12 lg:w-12">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8 text-black"
+                  className="h-8 w-8 text-amber-200"
                   viewBox="0 0 20 24"
                 >
                   <path
@@ -116,18 +116,18 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="mb-2 text-xl font-bold text-black">
+              <h3 className="mb-2 text-xl font-bold text-amber-50">
                 Anonymity
               </h3>
-              <p className="text-gray-500 dark:text-gray-400">
+              <p className="text-amber-200/75">
                 Helpful in stopping crime and keeping you safe
               </p>
             </div>
             <div>
-              <div className="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
+              <div className="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-amber-400/20 border border-amber-300/30 lg:h-12 lg:w-12">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8 text-black"
+                  className="h-8 w-8 text-amber-200"
                   viewBox="0 0 24 24"
                 >
                   <path
@@ -136,19 +136,19 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="mb-2 text-xl font-bold text-black">
+              <h3 className="mb-2 text-xl font-bold text-amber-50">
                 Privacy
               </h3>
-              <p className="text-gray-500 dark:text-gray-400">
+              <p className="text-amber-200/75">
                 Your data is your own and you have a right to choose what data
                 you share with us and can delete it whenever you want.
               </p>
             </div>
             <div>
-              <div className="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
+              <div className="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-amber-400/20 border border-amber-300/30 lg:h-12 lg:w-12">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8 text-black"
+                  className="h-8 w-8 text-amber-200"
                   viewBox="0 0 24 24"
                 >
                   <path
@@ -157,19 +157,19 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="mb-2 text-xl font-bold text-black">
+              <h3 className="mb-2 text-xl font-bold text-amber-50">
                 Encryption
               </h3>
-              <p className="text-gray-500 dark:text-gray-400">
+              <p className="text-amber-200/75">
                 We encrypt any messages you send from our App hence it is not
                 prone to hackers and eliminates personal risk.
               </p>
             </div>
             <div>
-              <div className="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
+              <div className="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-amber-400/20 border border-amber-300/30 lg:h-12 lg:w-12">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8 text-black"
+                  className="h-8 w-8 text-amber-200"
                   viewBox="0 0 32 32"
                 >
                   <path
@@ -178,18 +178,18 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="mb-2 text-xl font-bold text-black">Events</h3>
-              <p className="text-gray-500 dark:text-gray-400">
+              <h3 className="mb-2 text-xl font-bold text-amber-50">Events</h3>
+              <p className="text-amber-200/75">
                 We also conduct events as part of our ongoing efforts in
                 community building, thus you shall not feel alone in fighting
                 crime.
               </p>
             </div>
             <div>
-              <div className="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
+              <div className="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-amber-400/20 border border-amber-300/30 lg:h-12 lg:w-12">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8 text-black"
+                  className="h-8 w-8 text-amber-200"
                   viewBox="0 0 24 24"
                 >
                   <path
@@ -198,16 +198,16 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="mb-2 text-xl font-bold text-black">
+              <h3 className="mb-2 text-xl font-bold text-amber-50">
                 Support
               </h3>
-              <p className="text-gray-500 dark:text-gray-400">
+              <p className="text-amber-200/75">
                 We strive to provide support to the most vulnerable amongst us
                 and you can contact us anytime of the day.
               </p>
             </div>
             <div>
-              <div className="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
+              <div className="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-amber-400/20 border border-amber-300/30 lg:h-12 lg:w-12">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="w-8 h-8 text-black"
@@ -219,10 +219,10 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="mb-2 text-xl font-bold text-black">
+              <h3 className="mb-2 text-xl font-bold text-amber-50">
                 Rewards
               </h3>
-              <p className="text-gray-500 dark:text-gray-400">
+              <p className="text-amber-200/75">
                 Heroic deeds should be incentivized and motivated hence we have
                 a rewards programme for helpful information that leads to an
                 arrest
@@ -231,10 +231,10 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section className="bg-white dark:bg-gray-900 rounded-lg font-nunito mb-10">
+      <section className="bg-amber-400/10 backdrop-blur-md border border-amber-300/20 rounded-2xl font-nunito mb-10 shadow-[0_8px_32px_rgba(217,119,6,0.1)]">
         <div className="gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 lg:py-16 lg:px-6">
-          <div className="font-light text-gray-500 sm:text-lg dark:text-gray-400">
-            <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+          <div className="font-light text-amber-200/80 sm:text-lg">
+            <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-amber-50">
               Meet the Team
             </h2>
             <p className="mb-4">

@@ -11,7 +11,7 @@ const ModalText = ({ isVisible, onClose, children }: any) => {
         className="absolute inset-0 bg-black opacity-70"
         onClick={onClose}
       ></div>
-      <div className="bg-white p-8 rounded-lg shadow-lg z-10">
+      <div className="bg-amber-950/85 backdrop-blur-2xl border border-amber-300/30 p-8 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10">
         {children}
         <span
           className="mt-4 flex justify-center items-center"
@@ -69,8 +69,8 @@ const Modal = ({
         {word}
       </span>
       <ModalText isVisible={isModalVisible} onClose={closeModal}>
-        <h2 className="text-2xl mb-4 dark:text-black font-nunito">{heading}</h2>
-        <p className="font-nunito text-lg text-wrap tracking-wide">
+        <h2 className="text-2xl mb-4 text-amber-50 font-nunito">{heading}</h2>
+        <p className="font-nunito text-lg text-wrap tracking-wide text-amber-200/80">
           {lines &&
             lines.map((line: string, index) => {
               return (

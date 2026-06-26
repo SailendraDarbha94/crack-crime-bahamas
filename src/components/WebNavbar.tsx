@@ -45,8 +45,8 @@ const WebNavbar: React.FC = () => {
     }) => {
         const baseClasses = "relative px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 ease-out transform active:scale-95";
         const variantClasses = {
-            primary: "bg-slate-300 hover:bg-slate-200 text-black  hover:border-white/30",
-            danger: "bg-red-600/90 backdrop-blur-sm hover:bg-red-500/90 text-white   hover:border-red-300/50"
+            primary: "bg-amber-400/15 backdrop-blur-sm border border-amber-300/25 text-amber-50 hover:bg-amber-400/25 hover:border-amber-200/40",
+            danger: "bg-red-500/20 backdrop-blur-sm border border-red-400/30 text-red-200 hover:bg-red-500/30 hover:border-red-300/45"
         };
 
         if (onClick) {
@@ -87,12 +87,12 @@ const WebNavbar: React.FC = () => {
     return (
         <nav className="relative">
             {/* Main Navbar */}
-            <div className="mx-4 my-1.5 rounded-3xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-300">
+            <div className="mx-4 my-1.5 rounded-3xl bg-amber-400/10 backdrop-blur-xl border border-amber-300/25 shadow-[0_4px_24px_rgba(217,119,6,0.2)]">
                 <div className="px-6 py-4">
                     <div className="flex items-center justify-between">
                         {/* Logo */}
                         <div className="flex items-center">
-                            <div className="text-white font-bold text-xl md:text-2xl font-nunito tracking-tight">
+                            <div className="text-amber-50 font-bold text-xl md:text-2xl font-nunito tracking-tight">
                                 Crack Crime Bahamas
                             </div>
                         </div>
@@ -157,13 +157,13 @@ const WebNavbar: React.FC = () => {
                         {/* Mobile Menu Button */}
                         <button
                             onClick={toggleMobileMenu}
-                            className="md:hidden p-2 rounded-xl bg-white/10 hover:bg-white border border-slate-700 transition-all duration-200 ease-out transform active:scale-95"
+                            className="md:hidden p-2 rounded-xl bg-amber-400/15 hover:bg-amber-400/25 border border-amber-300/30 transition-all duration-200 ease-out transform active:scale-95"
                             aria-label="Toggle mobile menu"
                         >
                             <div className="w-6 h-6 flex flex-col justify-center items-center">
-                                <div className={`w-5 h-0.5 bg-slate-700 rounded-full transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></div>
-                                <div className={`w-5 h-0.5 bg-slate-700 rounded-full mt-1 transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`}></div>
-                                <div className={`w-5 h-0.5 bg-slate-700 rounded-full mt-1 transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></div>
+                                <div className={`w-5 h-0.5 bg-amber-100 rounded-full transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></div>
+                                <div className={`w-5 h-0.5 bg-amber-100 rounded-full mt-1 transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`}></div>
+                                <div className={`w-5 h-0.5 bg-amber-100 rounded-full mt-1 transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></div>
                             </div>
                         </button>
                     </div>
