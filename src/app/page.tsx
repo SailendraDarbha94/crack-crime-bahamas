@@ -1,13 +1,8 @@
 "use client";
-import Donation from "@/components/Donation";
-import { ToastContext } from "@/lib/toastContext";
-import { Button, Link } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useContext } from "react";
 
 export default function Home() {
-  const router = useRouter();
   const appDownloader = () => {
     setTimeout(() => {
       window.open(
@@ -16,8 +11,6 @@ export default function Home() {
       );
     }, 300);
   };
-
-  const { toast } = useContext(ToastContext);
 
   return (
     <main className="flex min-h-screen flex-col items-center p-4 md:p-12 lg:p-24">
@@ -54,34 +47,8 @@ export default function Home() {
                 </g>
               </svg>
             </Button>
-            {/* <Button
-              onPress={() => {
-                //toast({ type: "success", message: "something to see" });
-                setTimeout(() => {
-                  router.push("/more-about-us");
-                }, 300);
-              }}
-              radius="md"
-              variant="solid"
-              color="secondary"
-              className="ml-4"
-            >
-              <span className="text-medium font-bold">More About Us</span>
-            </Button> */}
-            {/* <a
-              href=""
-              className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
-            >
-              More About Us
-            </a> */}
           </div>
           <div className="hidden lg:mt-0 lg:col-span-5 lg:flex relative">
-            {/* <Image
-              src="/landingPageTop.jpg"
-              fill
-              alt="mockup"
-              className="dark:rounded-lg"
-            /> */}
             <img
               src="/newfavicon.png"
               alt="logo image"
@@ -245,10 +212,6 @@ export default function Home() {
             </p>
             <p>
               We are a Non Governmental Organisation
-              {/* We are a Non Governmental Organisation and we depend on donations,
-              membership and corporate sponsors to help keep the program
-              running. Please consider making a
-              <Donation /> */}
             </p>
           </div>
           <div className="grid grid-cols-2 gap-4 mt-8">

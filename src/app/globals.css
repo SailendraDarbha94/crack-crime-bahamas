@@ -5,11 +5,7 @@
 @font-face {
   font-family: "Nunito";
   src: url("../../public/fonts/Nunito/Nunito-VariableFont_wght.ttf");
-}
-
-@font-face {
-  font-family: "Honk";
-  src: url("../../public//fonts/Honk/Honk-Regular-VariableFont_MORF\,SHLN.ttf");
+  font-display: swap;
 }
 
 :root {

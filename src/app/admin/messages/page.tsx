@@ -1,7 +1,6 @@
 "use client";
 import app from "@/lib/firebase";
-import { dateReader } from "@/lib/utils";
-import { child, get, getDatabase, ref, remove } from "firebase/database";
+import { child, get, getDatabase, ref } from "firebase/database";
 import { useEffect, useState } from "react";
 import CryptoES from "crypto-es";
 import MessageItem from "./MessageItem";
@@ -102,50 +101,6 @@ const Page = () => {
               <MessageItem key={item.id} item={item} refreshFunc={fetchMessages} />
             )
           })}
-          {/* {messages ? (
-            <div className="bg-green-500 w-full md:w-3/5">
-              {messageIndices.map((messageId: any) => {
-                return (
-                  <div
-                    key={messageId}
-                    className="bg-sky-300 p-2 m-2 max-w-full"
-                  >
-                    <p className=" overflow-hidden">
-                      Content : {JSON.stringify(messages[messageId].message)}
-                    </p>
-                    <p>
-                      Created : {dateReader(messages[messageId].created_at)}
-                    </p>
-                    {/* <button
-                      className="bg-red-500 mx-auto block p-2 rounded-lg text-slate-50"
-                      onClick={() => deleteMessage(messageId)}
-                    >
-                      Delete
-                    </button>
-                    <div className="flex justify-center items-center">
-                      <label htmlFor="salt">Salt For Decryption</label>
-                      <input
-                        type="text"
-                        id="salt"
-                        name="salt"
-                        value={salt}
-                        onChange={(e) => setSalt(e.target.value)}
-                        className=" focus:outline-none p-2 rounded-lg m-2"
-                      />
-                      <button
-                        className="bg-green-500 mx-auto block p-2 rounded-lg text-slate-50"
-                        onClick={() =>
-                          decryptMessage(messages[messageId].message)
-                        }
-                      >
-                        Decrypt
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : null} */}
         </div>
       )}
     </div>

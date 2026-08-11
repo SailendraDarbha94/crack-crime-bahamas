@@ -44,7 +44,7 @@ const Page = () => {
   };
 
   return (
-    <div className="min-h-screen p-4 pt-24 md:pt-0">
+    <div className="min-h-screen p-4">
       <section className="font-nunito mb-10 mx-auto max-w-lg rounded-lg">
         <div className="flex flex-col items-center justify-center px-3 md:px-8 py-4 mx-auto md:h-screen lg:py-0">
           <a
@@ -195,33 +195,6 @@ const Page = () => {
                     <label htmlFor="platinum">$2500(Platinum)</label>
                   </div>
                 </div>
-                {/* <div className="flex items-center justify-between">
-                    <div className="flex items-start">
-                      <div className="flex items-center h-5">
-                        <input
-                          id="remember"
-                          aria-describedby="remember"
-                          type="checkbox"
-                          className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                          required={true}
-                        />
-                      </div>
-                      <div className="ml-3 text-sm">
-                        <label
-                          htmlFor="remember"
-                          className="text-gray-500 dark:text-gray-300"
-                        >
-                          Remember me
-                        </label>
-                      </div>
-                    </div>
-                    <a
-                      href="#"
-                      className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
-                    >
-                      forgot password?
-                    </a>
-                  </div> */}
                 {loading ? (
                   <div role="status" className="flex justify-center">
                     <svg

@@ -9,8 +9,7 @@ import {
 } from "@nextui-org/react";
 import app from "@/lib/firebase";
 import { ToastContext } from "@/lib/toastContext";
-import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Input, Spinner } from "@nextui-org/react";
-import { getDatabase, ref, update } from "firebase/database";
+import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Input } from "@nextui-org/react";
 import { useContext, useEffect, useState } from "react";
 const Page = () => {
 
@@ -95,34 +94,6 @@ const Page = () => {
     } catch (err) {
       console.log(err)
       return 'Error Occurred! Please Try Again Later';
-    }
-  }
-
-
-  const sendNotificationSpecific = async (parmas:string) => {
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/notification/specific/${parmas}`, {
-        method: "GET",
-        headers: {
-          "content-type": "application/json",
-        },
-      });
-      const data = await res.json();
-      console.log(data);
-      setMessage(null);
-      toast({
-        type: "error",
-        message: "Notification sent to registered devices",
-      });
-      setLoading(false);
-    } catch (err) {
-      console.log(err)
-      toast({
-        type: "error",
-        message: "Error Occurred! Try Debugging"
-      });
-      setLoading(false);
     }
   }
 
@@ -263,71 +234,15 @@ const Page = () => {
             <Button className="hover:bg-primary-500 hover:text-white mx-auto" variant="bordered" radius="md" color="primary" onPress={sendNotification}>Push Notification</Button>
           </CardFooter>
         </Card>
-        <div>
-
-
-        </div>
       </div>
-      {/* {loading ? (
-        <div className="flex justify-center p-4">
-          <Spinner size="lg" />
-        </div>
-      ) : (
-        <div className=" p-4 flex justify-center flex-wrap">
-          <Input
-            label="Notification Message"
-            className="max-w-md"
-            value={notif ? notif : ""}
-            onChange={(e) => setNotif(e.target.value)}
-          />
-          <div className="w-full flex justify-around mt-8">
-            <Input
-              label="Latitude"
-              className="max-w-md"
-              value={latitude ? latitude as string : ""}
-              onChange={(e) => setLatitude(e.target.value)}
-            />
-            <Input
-              label="Longitude"
-              className="max-w-md"
-              value={longitude ? longitude as string : ""}
-              onChange={(e) => setLongtitude(e.target.value)}
-            />
-          </div>
-          <div className="w-full flex justify-center mt-4">
-            <Button className="" radius="md" color="primary" onPress={sendNotification}>Send</Button>
-          </div>
-        </div>
-      )} */}
-      {/* {loading ? (
-        <div className="flex justify-center p-4">
-          <Spinner size="lg" />
-        </div>
-      ) : (
-        <div>
-          <h1>ExponentPushToken[imCwVMKCbO3liQllzT_HfU]</h1>
-        </div>
-      )} */}
       <Divider className="mt-4" />
       {devicesList ? (
         <div>
           <p className="text-center font-bold text-3xl bg-white py-4 my-6 rounded-tl-lg rounded-bl-lg">Registered Devices List</p>
           {devicesList.map((device: any) => {
-            // let address:any = 'Address Not Found';
-            // if(device[1]?.Location) {
-            //   address = getProbableAddress(device[1]?.Location?.coords?.latitude, device[1]?.Location?.coords?.longitude);
-            // }
-
             return (
               <Card className="m-4 p-3 max-w-full" key={device[0]}>
                 <CardHeader className="flex gap-3">
-                  {/* <Image
-                    alt="heroui logo"
-                    height={40}
-                    radius="sm"
-                    src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
-                    width={40}
-                  /> */}
                   <div className="flex flex-col">
                     <p className="text-md">Token: {device[0]}</p>
                     <p className="text-small text-default-500">Brand : {device[1]?.Device?.brand}</p>
@@ -342,18 +257,12 @@ const Page = () => {
                     {device[1]?.Location ? (<><Divider />
                       <p><span className="block text-center mt-2 font-bold">Last Known Location</span> <br /> Latitude : {device[1]?.Location?.coords?.latitude} <br /> Longitude : {device[1]?.Location?.coords?.longitude}</p></>) : null}
                   </div>
-                  {/* <div>
-                    Probable Address : {testRun(device[1]?.Location?.coords?.latitude,device[1]?.Location?.coords?.longitude)}
-                  </div> */}
                 </CardBody>
                 <Divider />
                 <CardFooter>
                   <Button variant="flat" color="danger" className="mx-auto mt-2" onPress={() => deleteDeviceFromRegister(device[0])}>
                     Delete
                   </Button>
-                  {/* <Button variant="flat" color="secondary" className="mx-auto mt-2" onPress={() => sendNotificationSpecific(device[0])}>
-                    Send Notif
-                  </Button> */}
                   <Button variant="ghost" color="warning" className="mx-auto mt-2" onPress={() => {
                     getProbableAddress(device[1]?.Location?.coords?.latitude, device[1]?.Location?.coords?.longitude),
                     onOpen();

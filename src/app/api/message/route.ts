@@ -1,9 +1,7 @@
 import app from "@/lib/firebase";
-import mongoClient from "@/lib/mongo";
 import { child, get, getDatabase, push, ref, update } from "firebase/database";
 
 export async function GET() {
-    console.log("MESSAGE GET REQUEST RECEIVED : ==================================================")
     const db = await getDatabase(app);
     const dbRef = await ref(db);
     try {

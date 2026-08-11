@@ -1,6 +1,6 @@
 "use client";
 
-import { MissingPersonService, DatabaseService } from "@/lib/firebaseService";
+import { MissingPersonService } from "@/lib/firebaseService";
 import { FirebaseErrorHandler } from "@/lib/firebaseErrorHandler";
 import { useToast } from "@/lib/toastContext";
 import { useEffect, useState } from "react";
@@ -9,7 +9,6 @@ import MissingListItem from "./MissingListItem";
 import {
   Modal,
   ModalContent,
-  ModalHeader,
   ModalBody,
   ModalFooter,
   useDisclosure,

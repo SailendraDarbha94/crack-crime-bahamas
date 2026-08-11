@@ -1,6 +1,6 @@
 "use client";
 
-import { WantedPersonService, DatabaseService } from "@/lib/firebaseService";
+import { WantedPersonService } from "@/lib/firebaseService";
 import { FirebaseErrorHandler } from "@/lib/firebaseErrorHandler";
 import { useToast } from "@/lib/toastContext";
 import { useEffect, useState } from "react";
@@ -9,7 +9,6 @@ import MissingListItem from "../missing/MissingListItem";
 import {
   Modal,
   ModalContent,
-  ModalHeader,
   ModalBody,
   ModalFooter,
   useDisclosure,
@@ -116,12 +115,6 @@ const Page = () => {
         >
           {showWanted ? "Hide Wanted Persons" : "Show Wanted Persons"}
         </Button>
-        {/* <button
-          className="bg-purple-200 dark:bg-slate-500 p-2 rounded-lg"
-          onClick={() => setAddWanted(!addWanted)}
-        >
-          {addWanted ? "Hide Wanted Form" : "Add Wanted Person"}
-        </button> */}
         <Button variant="ghost" color="warning" className="font-bold text-lg" onPress={() => {
           () => setAddWanted(!addWanted)
           onOpen();
@@ -133,7 +126,6 @@ const Page = () => {
         <ModalContent>
           {(onClose) => (
             <>
-              {/* <ModalHeader className="flex flex-col gap-1 underline">Add Wanted Person</ModalHeader> */}
               <ModalBody>
                 <AddWanted onSuccess={() => fetchWantedPersons()} />
               </ModalBody>

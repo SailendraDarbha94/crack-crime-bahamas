@@ -7,12 +7,9 @@ import {
   frequentlyAskedQuestionsFirstBlock,
   frequentlyAskedQuestionsSecondBlock
 } from "@/constants/moreAboutUsTexts";
-import { Accordion, AccordionItem } from "@heroui/accordion";
 import { aboutUsParagraphs } from "@/constants/moreAboutUsTexts";
-import { useState } from "react";
 
 const Page = () => {
-  const [selectedKeys, setSelectedKeys] = useState<any>(new Set(["1"]));
   return (
     <div className="flex min-h-screen flex-col items-center p-4 md:p-12 lg:p-24">
       <section className=" dark:bg-gray-900 rounded-lg font-nunito mb-10">
@@ -48,17 +45,6 @@ const Page = () => {
           </div>
         </div>
       </section>
-      {/* <Accordion variant="splitted" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
-        <AccordionItem key="1" aria-label="Accordion 1" title={aboutUsParagraphs[0].heading}>
-          {aboutUsParagraphs[0].totalContent}
-        </AccordionItem>
-        <AccordionItem key="1" aria-label="Accordion 1" title={aboutUsParagraphs[1].heading}>
-          {aboutUsParagraphs[1].totalContent}
-        </AccordionItem>
-        <AccordionItem key="1" aria-label="Accordion 1" title="Accordion 1">
-          somethinfg
-        </AccordionItem>
-      </Accordion> */}
       {aboutUsParagraphs.map((paragraph: AboutUsParagraphs) => {
         return (
           <Expandable

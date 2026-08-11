@@ -1,13 +1,10 @@
 "use client";
-import app, { database } from "@/lib/firebase";
+import { database } from "@/lib/firebase";
 import { ref, get } from "firebase/database";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const Page = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const router = useRouter();
 
   const [numberOfMissings, setNumberOfMissings] = useState<number>(0);
   const [numberOfWanteds, setNumberOfWanteds] = useState<number>(0);
