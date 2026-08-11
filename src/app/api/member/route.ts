@@ -10,6 +10,7 @@ export async function GET() {
         const members = await data.val()
         return Response.json({data : members})
       }
+      return Response.json({ data: {} })
     } catch (err) {
       console.log(err)
       return Response.json({data: "request failure"})

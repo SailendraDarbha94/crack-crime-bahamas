@@ -11,6 +11,7 @@ export async function GET() {
       const list = await data.val()
       return Response.json({ data: list })
     }
+    return Response.json({ data: {} })
   } catch (err) {
     console.log(err)
     return Response.json({ data: "request failure" })

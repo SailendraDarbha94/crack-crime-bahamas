@@ -10,6 +10,7 @@ export async function GET() {
         const messages = await data.val()
         return Response.json({data : messages})
       }
+      return Response.json({ data: {} })
     } catch (err) {
       console.log(err)
       return Response.json({data: "request failure"})

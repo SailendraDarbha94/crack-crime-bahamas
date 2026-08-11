@@ -48,28 +48,9 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
         description: description.trim(),
       };
 
-      // Use the new WantedPersonService
-      const id = await WantedPersonService.createWantedPerson(personData, selectedFile || undefined);
-
-      // Also call your API endpoint to sync with your database
-      const res = await fetch("/api/wanted", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...personData,
-          created_at: Date.now(),
-          country_code: "BAH",
-          current_status: "",
-          image: selectedFile ? `wanteds/${selectedFile.name}` : "Image Not Available",
-        }),
-      });
-
-      const data = await res.json();
-      if (data === "request failure") {
-        throw new Error("API request failed");
-      }
+      // The service writes the full record (image, created_at, country_code,
+      // current_status) — no second API write needed.
+      await WantedPersonService.createWantedPerson(personData, selectedFile || undefined);
 
       // Reset form
       setName("");
@@ -174,7 +155,7 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
                       </div>
                     </div>
                   ) : (
-                    <Input label="" type="file" id="imager" value={selectedFile ? selectedFile : undefined} onChange={handleFileChange} />
+                    <Input label="" type="file" id="imager" accept="image/*" onChange={handleFileChange} />
                   )}
                 </div>
                 {loading ? (

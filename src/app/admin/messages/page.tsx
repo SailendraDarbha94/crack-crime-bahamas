@@ -1,5 +1,6 @@
 "use client";
 import app from "@/lib/firebase";
+import { useToast } from "@/lib/toastContext";
 import { child, get, getDatabase, ref } from "firebase/database";
 import { useEffect, useState } from "react";
 import CryptoES from "crypto-es";
@@ -8,60 +9,60 @@ import MessageItem from "./MessageItem";
 const Page = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [decryptedMessages, setDecryptedMessages] = useState<any[]>([]);
+  const { toast } = useToast();
+
+  const decryptMessage = (obj: any): string | null => {
+    try {
+      const decryptedCipher = CryptoES.AES.decrypt(obj.message, "ebiz242");
+      const decryptedMessage = decryptedCipher.toString(CryptoES.enc.Utf8);
+      return decryptedMessage || null;
+    } catch (err) {
+      console.error("Failed to decrypt tip:", err);
+      return null;
+    }
+  };
+
   const fetchMessages = async () => {
     setLoading(true);
     try {
       const db = getDatabase(app);
       const dbRef = ref(db);
       const data = await get(child(dbRef, "messages"));
+      // Rebuild the list from scratch so refreshes never duplicate entries
+      const list: any[] = [];
       if (data.exists()) {
-        const messages = await data.val();
-        const indices = Object.keys(messages);
-        await indices.forEach((index:any) => {
-          if(typeof messages[index].message === "string"){
-            setDecryptedMessages((prev:any[]) => {
-              return (
-                [...prev, { id: index, message : messages[index].message, created_at: messages[index].created_at}]
-              )
-            })
+        const messages = data.val();
+        for (const index of Object.keys(messages)) {
+          if (typeof messages[index].message === "string") {
+            list.push({
+              id: index,
+              message: messages[index].message,
+              created_at: messages[index].created_at,
+            });
           } else {
-            decryptMessage(messages[index], index)
+            const decrypted = decryptMessage(messages[index]);
+            list.push({
+              id: index,
+              message: decrypted ?? "[Could not decrypt this tip]",
+              created_at: messages[index].created_at,
+            });
           }
-        })
-        setLoading(false);
+        }
       }
+      // Newest tips first
+      list.sort((a, b) => (b.created_at ?? 0) - (a.created_at ?? 0));
+      setDecryptedMessages(list);
     } catch (err) {
-      JSON.stringify(err);
+      console.error("Error fetching tips:", err);
+      toast({ message: "Could not load tips. Please try again.", type: "error" });
+    } finally {
       setLoading(false);
-    }
-  };
-
-
-  const decryptMessage = async (obj: any, id: any) => {
-
-    console.log(obj)
-    try {
-      const decryptedCipher = await CryptoES.AES.decrypt(
-        obj.message,
-        "ebiz242"
-      );
-      console.log(
-        "DECRYPTED TEXT",
-        await decryptedCipher.toString(CryptoES.enc.Utf8)
-      );
-      const decryptedMessage = decryptedCipher.toString(CryptoES.enc.Utf8)
-      await setDecryptedMessages((prev:any[]) => {
-        return (
-          [...prev, { id: id, message : decryptedMessage, created_at: obj.created_at}]
-        )
-      })
-    } catch (err) {
-      console.log(JSON.stringify(err));
     }
   };
 
   useEffect(() => {
     fetchMessages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

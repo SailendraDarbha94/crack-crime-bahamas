@@ -17,10 +17,5 @@ export const dateReader = (timestamp: number) => {
     .toString()
     .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 
-  // Format the date as a string
-  const newFormattedDate = `${year}-${month.toString().padStart(2, "0")}-${day
-    .toString()
-    .padStart(2, "0")} ${hours}:${minutes}${seconds}`;
-
-  return newFormattedDate;
+  return formattedDate;
 };

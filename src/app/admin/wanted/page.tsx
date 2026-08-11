@@ -32,7 +32,6 @@ interface WantedPerson {
 
 const Page = () => {
   const [showWanted, setShowWanted] = useState<boolean>(false);
-  const [addWanted, setAddWanted] = useState<boolean>(false);
   const [wanteds, setWanteds] = useState<WantedPerson[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,33 +52,23 @@ const Page = () => {
       // }
 
       const wantedPersons = await WantedPersonService.getAllWantedPersons();
-      console.log('✅ Successfully fetched wanted persons:', wantedPersons);
-      toast({ message: "Wanted Persons List Fetched", type: "info" });
       setWanteds(wantedPersons);
     } catch (err) {
       const errorMessage = FirebaseErrorHandler.handleError(err);
       setError(errorMessage);
-      console.error("❌ Error fetching wanted persons:", err);
-
-      // Additional debugging info
-      if (err instanceof Error && err.message.includes('Permission denied')) {
-        console.error('🔒 Permission denied error - check Firebase rules and authentication');
-        console.error('🔗 Database URL:', process.env.NEXT_PUBLIC_DATABASE_URL);
-        console.error('🔑 Project ID:', process.env.NEXT_PUBLIC_PROJECT_ID);
-      }
+      console.error("Error fetching wanted persons:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  const deleteWantedPost = async (id: string, imagePath: string) => {
-    if (!confirm("Are you sure you want to delete this wanted person report?")) {
+  const deleteWantedPost = async (id: string, imagePath: string, personName: string) => {
+    if (!confirm(`Are you sure you want to delete the wanted person report for ${personName}?`)) {
       return;
     }
 
     try {
       await WantedPersonService.deleteWantedPerson(id, imagePath);
-      console.log("Post deleted successfully");
 
       // Refresh the list
       await fetchWantedPersons();
@@ -96,13 +85,6 @@ const Page = () => {
     fetchWantedPersons();
   }, []);
 
-  // Refresh data when the add form is closed (in case new data was added)
-  useEffect(() => {
-    if (!addWanted && showWanted) {
-      fetchWantedPersons();
-    }
-  }, [addWanted, showWanted]);
-
   return (
     <main className="font-nunito py-3 m-2 rounded-3xl">
       <h1 className="text-2xl font-bold rounded-3xl border border-white/50 bg-white/25 backdrop-blur-md py-2 text-center text-amber-950 shadow-sm">Wanted Persons</h1>
@@ -115,10 +97,7 @@ const Page = () => {
         >
           {showWanted ? "Hide Wanted Persons" : "Show Wanted Persons"}
         </Button>
-        <Button variant="ghost" color="warning" className="font-bold text-lg" onPress={() => {
-          () => setAddWanted(!addWanted)
-          onOpen();
-        }}>
+        <Button variant="ghost" color="warning" className="font-bold text-lg" onPress={onOpen}>
           Add Suspect
         </Button>
       </div>
@@ -138,8 +117,6 @@ const Page = () => {
           )}
         </ModalContent>
       </Modal>
-      {addWanted && <AddWanted onSuccess={() => fetchWantedPersons()} />}
-
       {showWanted && (
         <div className="w-full">
           {loading ? (
@@ -173,6 +150,7 @@ const Page = () => {
                   id={wanted.id}
                   alias={wanted.alias}
                   image={wanted.image}
+                  kind="wanted"
                 />
                 <div className="mt-2 p-2 bg-white/30 border border-white/50 rounded-xl">
                   <h4 className="font-semibold text-red-700">Wanted For:</h4>
@@ -193,7 +171,7 @@ const Page = () => {
                 <div className="flex justify-center">
                   <button
                     className="bg-red-600/90 my-4 font-bold backdrop-blur-sm hover:bg-red-500/90 text-white   hover:border-red-300/50 relative px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ease-out transform active:scale-95"
-                    onClick={() => deleteWantedPost(wanted.id, wanted.image)}
+                    onClick={() => deleteWantedPost(wanted.id, wanted.image, wanted.name)}
                   >
                     DELETE
                   </button>

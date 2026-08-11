@@ -49,7 +49,6 @@ export async function POST(req: Request) {
         to: pushToken,
         sound: "default",
         body: data.notification,
-        data: { body: "o stree kal notification lana" },
       });
     }
   

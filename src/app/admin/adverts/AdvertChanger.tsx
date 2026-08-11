@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { AdvertisementService } from "@/lib/firebaseService";
+import { useToast } from "@/lib/toastContext";
 import { Button } from "@nextui-org/react";
 
 const AdvertChanger = ({ group }: { group: string }) => {
@@ -8,7 +9,8 @@ const AdvertChanger = ({ group }: { group: string }) => {
   const [uploading, setUploading] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [advertisement, setAdvertisement] = useState<string>("");
-  const [uploadProgress, setUploadProgress] = useState<number>(0);
+
+  const { toast } = useToast();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -16,41 +18,39 @@ const AdvertChanger = ({ group }: { group: string }) => {
       // Validate file type
       const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
       if (!validTypes.includes(file.type)) {
-        alert('Please select a valid image file (JPEG, PNG, or GIF)');
+        toast({ message: 'Please select a valid image file (JPEG, PNG, or GIF)', type: "error" });
         return;
       }
-      
+
       // Validate file size (max 5MB)
       const maxSize = 5 * 1024 * 1024; // 5MB
       if (file.size > maxSize) {
-        alert('File size must be less than 5MB');
+        toast({ message: 'File size must be less than 5MB', type: "error" });
         return;
       }
-      
+
       setSelectedFile(file);
     }
   };
 
   const uploadAdvertisement = async () => {
     if (!selectedFile) {
-      alert('Please select a file first');
+      toast({ message: 'Please select a file first', type: "warning" });
       return;
     }
 
     setUploading(true);
-    setUploadProgress(0);
 
     try {
       await AdvertisementService.uploadAdvertisement(group, selectedFile);
       setSelectedFile(null);
       await fetchAdvertisement();
-      alert('Advertisement uploaded successfully!');
+      toast({ message: `${group} advertisement uploaded successfully`, type: "success" });
     } catch (error) {
       console.error('Upload failed:', error);
-      alert('Upload failed. Please try again.');
+      toast({ message: 'Upload failed. Please try again.', type: "error" });
     } finally {
       setUploading(false);
-      setUploadProgress(0);
     }
   };
 
@@ -106,16 +106,19 @@ const AdvertChanger = ({ group }: { group: string }) => {
             <div className="border-2 border-double border-black rounded-lg min-h-20 p-2 flex flex-wrap items-center justify-center">
               <h1 className="w-full mb-2">
                 {advertisement === ""
-                  ? "cannot load advertisement image"
+                  ? "No advertisement uploaded yet"
                   : "Current Advertisement :"}
               </h1>
-              <div>
-                <img
-                  src={advertisement}
-                  alt="Advertisement Image"
-                  className=" max-h-40"
-                />
-              </div>
+              {advertisement !== "" && (
+                <div>
+                  <img
+                    src={advertisement}
+                    alt={`Current ${group} advertisement`}
+                    className=" max-h-40"
+                    loading="lazy"
+                  />
+                </div>
+              )}
             </div>
             <div className="min-h-20 py-3">
               <label className="block" htmlFor="advertFileUpload">
@@ -144,17 +147,6 @@ const AdvertChanger = ({ group }: { group: string }) => {
               )}
             </div>
             <br />
-            {uploading && (
-              <div className="mb-4">
-                <div className="bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${uploadProgress}%` }}
-                  ></div>
-                </div>
-                <p className="text-sm text-center mt-1">Uploading... {Math.round(uploadProgress)}%</p>
-              </div>
-            )}
             <Button
               onClick={uploadAdvertisement}
               disabled={uploading || !selectedFile}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useToast } from "@/lib/toastContext";
 import { useState } from "react";
 
 const Page = () => {
@@ -9,7 +10,18 @@ const Page = () => {
   const [email, setEmail] = useState<string>("");
   const [support, setSupport] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const registerMember = async () => {
+  const { toast } = useToast();
+
+  const registerMember = async (e: React.FormEvent) => {
+    // Never let the browser do a native GET submit — it would put the
+    // submitter's personal details into the URL and abort the save.
+    e.preventDefault();
+
+    if (!support) {
+      toast({ message: "Please select a membership tier", type: "warning" });
+      return;
+    }
+
     setLoading(true);
     const currentTime = Date.now();
     try {
@@ -27,19 +39,22 @@ const Page = () => {
           created_at: currentTime
         }),
       });
-      const data = await res.json();
+      const { data } = await res.json();
       if (data !== "request failure") {
-        console.log(data);
         setName("");
         setAddress("");
         setEmail("");
         setMobile("");
         setSupport("");
-        setLoading(false)
+        toast({ message: "Thank you! Your membership request has been submitted.", type: "success" });
+      } else {
+        toast({ message: "Submission failed. Please try again later.", type: "error" });
       }
     } catch (err) {
       console.error(err);
-      setLoading(false)
+      toast({ message: "Submission failed. Please try again later.", type: "error" });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -48,10 +63,10 @@ const Page = () => {
       <section className="font-nunito mb-10 mx-auto max-w-lg rounded-lg">
         <div className="flex flex-col items-center justify-center px-3 md:px-8 py-4 mx-auto md:h-screen lg:py-0">
           <a
-            href="#"
+            href="/"
             className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
           >
-            <img className="w-8 h-8 mr-2" src="/newfavicon.png" alt="logo" />
+            <img className="w-8 h-8 mr-2" src="/newfavicon.png" alt="Crack Crime Bahamas logo" />
             Crack Crime Bahamas
           </a>
           <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
@@ -59,7 +74,7 @@ const Page = () => {
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Membership Form
               </h1>
-              <form className="space-y-4 md:space-y-6" action="#">
+              <form className="space-y-4 md:space-y-6" onSubmit={registerMember}>
                 <div>
                   <label
                     htmlFor="name"
@@ -132,14 +147,15 @@ const Page = () => {
                     required={true}
                   />
                 </div>
-                <div>
-                  <p>Select Your Annual Membership Fees</p>
+                <fieldset>
+                  <legend>Select Your Annual Membership Fees</legend>
                   <div className="m-2 inline-block text-green-600">
                     <input
                       type="radio"
                       id="friend"
-                      name="friend"
+                      name="support"
                       value="friend"
+                      checked={support === "friend"}
                       onChange={(e) => setSupport(e.target.value)}
                     />
                     <label htmlFor="friend">$25(Friend)</label>
@@ -148,8 +164,9 @@ const Page = () => {
                     <input
                       type="radio"
                       id="supporter"
-                      name="supporter"
+                      name="support"
                       value="supporter"
+                      checked={support === "supporter"}
                       onChange={(e) => setSupport(e.target.value)}
                     />
                     <label htmlFor="supporter">$100(Supporter)</label>
@@ -158,8 +175,9 @@ const Page = () => {
                     <input
                       type="radio"
                       id="bronze"
-                      name="bronze"
+                      name="support"
                       value="bronze"
+                      checked={support === "bronze"}
                       onChange={(e) => setSupport(e.target.value)}
                     />
                     <label htmlFor="bronze">$250(Bronze)</label>
@@ -168,8 +186,9 @@ const Page = () => {
                     <input
                       type="radio"
                       id="silver"
-                      name="silver"
+                      name="support"
                       value="silver"
+                      checked={support === "silver"}
                       onChange={(e) => setSupport(e.target.value)}
                     />
                     <label htmlFor="silver">$500(Silver)</label>
@@ -178,8 +197,9 @@ const Page = () => {
                     <input
                       type="radio"
                       id="gold"
-                      name="gold"
+                      name="support"
                       value="gold"
+                      checked={support === "gold"}
                       onChange={(e) => setSupport(e.target.value)}
                     />
                     <label htmlFor="gold">$1000(Gold)</label>
@@ -188,13 +208,14 @@ const Page = () => {
                     <input
                       type="radio"
                       id="platinum"
-                      name="platinum"
+                      name="support"
                       value="platinum"
+                      checked={support === "platinum"}
                       onChange={(e) => setSupport(e.target.value)}
                     />
                     <label htmlFor="platinum">$2500(Platinum)</label>
                   </div>
-                </div>
+                </fieldset>
                 {loading ? (
                   <div role="status" className="flex justify-center">
                     <svg
@@ -217,22 +238,12 @@ const Page = () => {
                   </div>
                 ) : (
                   <button
-                    onClick={registerMember}
+                    type="submit"
                     className="w-full rounded-lg bg-slate-200 hover:bg-slate-300 dark:hover:bg-blue-700 dark:text-white focus:ring-4 dark:bg-blue-600 focus:outline-none font-medium text-lg px-5 py-2.5 text-center"
                   >
                     Submit
                   </button>
                 )}
-
-                {/* <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                    Don&apos;t have an account yet?{" "}
-                    <a
-                      href="#"
-                      className="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                    >
-                      Sign up
-                    </a>
-                  </p> */}
               </form>
             </div>
           </div>

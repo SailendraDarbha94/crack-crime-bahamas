@@ -40,31 +40,10 @@ const AddMissing = ({ onSuccess }: AddMissingProps) => {
         description: description.trim(),
       };
 
-      // Use the new MissingPersonService
-      const id = await MissingPersonService.createMissingPerson(personData, selectedFile || undefined);
-      
-      // Also call your API endpoint to sync with your database
-      const res = await fetch("/api/missing", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...personData,
-          created_at: Date.now(),
-          country_code: "BAH",
-          current_status: "",
-          image: selectedFile ? `missings/${selectedFile.name}` : "Image Not Available",
-        }),
-      });
+      // The service writes the full record (image, created_at, country_code,
+      // current_status) — no second API write needed.
+      await MissingPersonService.createMissingPerson(personData, selectedFile || undefined);
 
-      const data = await res.json();
-      if (data === "request failure") {
-        throw new Error("API request failed");
-      }
-
-      console.log("Missing person registered successfully:", { id, apiResponse: data });
-      
       // Reset form
       setName("");
       setAge("");

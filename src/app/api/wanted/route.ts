@@ -17,14 +17,6 @@ export async function POST(req:Request) {
 }
 
 export async function GET(req:Request) {
-  console.log("WANTED GET REQUEST RECEIVED : ==================================================", req)
-  // await dbConnect();
-  // try {
-  //   const wanteds = await Wanted.find({});
-  //   return Response.json({ data: wanteds });
-  // } catch (error) {
-  //   return Response.json({ data: "request failure"})
-  // }
   const db = await getDatabase(app);
   const dbRef = await ref(db);
   try {
@@ -33,6 +25,7 @@ export async function GET(req:Request) {
       const wanteds = await data.val()
       return Response.json({data : wanteds})
     }
+    return Response.json({ data: {} })
   } catch (err) {
     console.log(err)
     return Response.json({data: "request failure"})

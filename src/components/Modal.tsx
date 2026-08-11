@@ -24,7 +24,7 @@ const ModalText = ({ isVisible, onClose, children }: any) => {
           >
             <defs>
               <mask id="ipSCloseOne0">
-                <g fill="none" stroke-linejoin="round" strokeWidth="4">
+                <g fill="none" strokeLinejoin="round" strokeWidth="4">
                   <path
                     fill="#fff"
                     stroke="#fff"
@@ -70,17 +70,12 @@ const Modal = ({
       </span>
       <ModalText isVisible={isModalVisible} onClose={closeModal}>
         <h2 className="text-2xl mb-4 text-amber-950 font-nunito">{heading}</h2>
-        <p className="font-nunito text-lg text-wrap tracking-wide text-amber-900/80">
+        <div className="font-nunito text-lg text-wrap tracking-wide text-amber-900/80">
           {lines &&
             lines.map((line: string, index) => {
-              return (
-                <p key={index}>
-                  {line}
-                  <br />
-                </p>
-              );
+              return <p key={index}>{line}</p>;
             })}
-        </p>
+        </div>
       </ModalText>
     </>
   );

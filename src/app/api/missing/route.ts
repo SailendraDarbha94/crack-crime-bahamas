@@ -25,6 +25,7 @@ export async function GET(req: Request) {
       const missings = await data.val()
       return Response.json({data : missings})
     }
+    return Response.json({ data: {} })
   } catch (err) {
     console.log(err)
     return Response.json({data: "request failure"})

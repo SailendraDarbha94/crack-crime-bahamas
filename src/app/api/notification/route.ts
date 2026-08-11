@@ -1,67 +1,54 @@
-import app from "@/lib/firebase";
 import { Expo } from "expo-server-sdk";
-import { child, get, getDatabase, ref } from "firebase/database";
 
+// True circular geofence: haversine distance between the two points must be
+// within the requested radius (metres).
+const isWithinRadius = (
+  deviceLat: number,
+  deviceLon: number,
+  targetLat: number,
+  targetLon: number,
+  radiusMetres: number
+): boolean => {
+  if ([deviceLat, deviceLon, targetLat, targetLon, radiusMetres].some((n) => !Number.isFinite(n))) {
+    return false;
+  }
+  const earthRadius = 6371000; // metres
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const dLat = toRad(deviceLat - targetLat);
+  const dLon = toRad(deviceLon - targetLon);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(targetLat)) * Math.cos(toRad(deviceLat)) * Math.sin(dLon / 2) ** 2;
+  const distance = 2 * earthRadius * Math.asin(Math.sqrt(a));
+  return distance <= radiusMetres;
+};
 
 export async function POST(req: Request) {
 
-  let somePushTokens:any[] = [];
+  let somePushTokens: string[] = [];
   const { data } = await req.json();
-  const isWithin500Meters = (targetLat: any, targetLon: any, receivedLat: any, receivedLon: any,) => {
-    const earthRadius = 6371000; // Radius of the Earth in meters
 
-    // Approximate degree conversions
-    const latDiff = data?.rad / earthRadius * (180 / Math.PI); // Convert 50m to latitude degrees
-    const lonDiff = data?.rad / (earthRadius * Math.cos(targetLat * Math.PI / 180)) * (180 / Math.PI); // Convert 50m to longitude degrees
-
-    // Define bounding box
-    const minLat = targetLat - latDiff;
-    const maxLat = targetLat + latDiff;
-    const minLon = targetLon - lonDiff;
-    const maxLon = targetLon + lonDiff;
-
-    // Check if received coordinates fall within the bounding box
-    if (receivedLat >= minLat && receivedLat <= maxLat) {
-      if (receivedLon >= minLon && receivedLon <= maxLon) {
-        console.log("Within Radius")
-        return true;
-      }
-    } else {
-      console.log("Should Not Fire Notification")
-      return false;
-    }
-  };
-
-  
-  console.log(data);
-
-  data.devices.forEach((element:any) => {
-    console.log("checking", element[0]);
-    if(isWithin500Meters(element[1]?.Location?.coords?.latitude,element[1]?.Location?.coords?.longitude,data.lat, data.lon)){
-      somePushTokens.push(`ExponentPushToken[{token}]`.replace("{token}", element[0]))
-    }
-    return (
-      somePushTokens
-    )
-  });
-
-  
-
-  const db = await getDatabase(app);
-  const dbRef = await ref(db);
-  try {
-    const data = await get(child(dbRef, '/notifications_register'))
-    if(data.exists()){
-      const tokens = await data.val()
-      console.log("should change this part")
-      //somePushTokens = Object.keys(tokens).map(token => 'ExponentPushToken[{token}]'.replace("{token}", token))
-    } else {
-      console.log("errrorrrrrrr")
-    }
-  } catch (err) {
-    console.log(err)
-    return Response.json({data: "request failure"})
+  if (!data || !Array.isArray(data.devices) || typeof data.message !== "string") {
+    return Response.json({ data: "request failure" }, { status: 400 });
   }
+
+  const targetLat = Number(data.lat);
+  const targetLon = Number(data.lon);
+  const radius = Number(data.rad);
+
+  data.devices.forEach((element: any) => {
+    if (
+      isWithinRadius(
+        Number(element[1]?.Location?.coords?.latitude),
+        Number(element[1]?.Location?.coords?.longitude),
+        targetLat,
+        targetLon,
+        radius
+      )
+    ) {
+      somePushTokens.push(`ExponentPushToken[{token}]`.replace("{token}", element[0]));
+    }
+  });
 
   let expo = new Expo({
     accessToken: process.env.NEXT_PUBLIC_EXPO_ACCESS_TOKEN,
@@ -84,7 +71,6 @@ export async function POST(req: Request) {
       to: pushToken,
       sound: "default",
       body: data.message,
-      data: { body: "o stree kal notification lana" },
     });
   }
 

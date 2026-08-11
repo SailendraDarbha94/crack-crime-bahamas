@@ -26,7 +26,14 @@ const Page = () => {
   const { toast } = useContext(ToastContext);
 
   const sendNotification = async () => {
-    console.log(JSON.stringify({ data: { "message": notif, "lat": latitude, "lon": longitude } }));
+    if (!notif?.trim() || !latitude?.trim() || !longitude?.trim()) {
+      toast({ type: "warning", message: "Message, latitude and longitude are required" });
+      return;
+    }
+    if (!devicesList || devicesList.length === 0) {
+      toast({ type: "error", message: "No registered devices loaded yet" });
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch("/api/notification", {
@@ -36,21 +43,26 @@ const Page = () => {
         },
         body: JSON.stringify({ data: { "message": notif, "lat": latitude, "lon": longitude, devices: devicesList, rad : radius } }),
       });
-      const data = await res.json();
-      console.log(data);
-      setNotif(null);
-      toast({
-        type: "error",
-        message: "Notification sent to registered devices",
-      });
-      setLoading(false);
+      const { data } = await res.json();
+      if (data === "success") {
+        setNotif(null);
+        toast({ type: "success", message: "Notification sent to devices in the selected area" });
+      } else {
+        toast({ type: "error", message: "Notification could not be sent" });
+      }
     } catch (err) {
+      console.error("Location notification failed:", err);
+      toast({ type: "error", message: "Notification could not be sent" });
+    } finally {
       setLoading(false);
-      console.log(JSON.stringify(err));
     }
   };
 
   const sendNotificationGeneral = async () => {
+    if (!message?.trim()) {
+      toast({ type: "warning", message: "Notification message is required" });
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch("/api/notification/general", {
@@ -60,26 +72,28 @@ const Page = () => {
         },
         body: JSON.stringify({ data: { "notification": message, } }),
       });
-      const data = await res.json();
-      console.log(data);
-      setMessage(null);
-      toast({
-        type: "error",
-        message: "Notification sent to registered devices",
-      });
-      setLoading(false);
+      const { data } = await res.json();
+      if (data === "success") {
+        setMessage(null);
+        toast({ type: "success", message: "Notification sent to all registered devices" });
+      } else {
+        toast({ type: "error", message: "Notification could not be sent" });
+      }
     } catch (err) {
-      console.log(err)
-      toast({
-        type: "error",
-        message: "Error Occurred! Try Debugging"
-      });
+      console.error("General notification failed:", err);
+      toast({ type: "error", message: "Notification could not be sent" });
+    } finally {
       setLoading(false);
     }
   }
 
-  const getProbableAddress = async (lat:string='25.0806704', long:string='-77.4311452') => {
-    console.log(lat, long);
+  const getProbableAddress = async (lat?: string, long?: string) => {
+    // Reset so the modal never shows a previous device's address
+    setAddress(null);
+    if (!lat || !long) {
+      setAddress("No location data recorded for this device");
+      return;
+    }
     try {
       const res = await fetch('/api/notification/geocode',{
         method: "POST",
@@ -90,10 +104,9 @@ const Page = () => {
       })
       const { data } = await res.json();
       setAddress(data);
-      return 
     } catch (err) {
-      console.log(err)
-      return 'Error Occurred! Please Try Again Later';
+      console.error("Geocoding failed:", err);
+      setAddress("Could not resolve address. Please try again later.");
     }
   }
 
@@ -108,43 +121,40 @@ const Page = () => {
         }
       });
       const { data } = await res.json();
-      console.log(Object.entries(data));
-      setDevicesList(Object.entries(data));
-      setLoading(false);
-      toast({
-        type: "info",
-        message: "List of Devices Fetched!",
-      });
+      setDevicesList(data ? Object.entries(data) : []);
     } catch (err) {
       toast({
         type: "error",
         message: "List Not Fetched! Try again Later",
       });
-      console.log(err)
-      setLoading(false)
+      console.error("Device list fetch failed:", err);
+    } finally {
+      setLoading(false);
     }
   }
 
   const deleteDeviceFromRegister = async (params: string) => {
+    if (!confirm("Remove this device from the notification register?")) {
+      return;
+    }
     setLoading(true);
     try {
-      const res = await fetch("/api/registrations", {
+      await fetch("/api/registrations", {
         method: "DELETE",
         headers: {
           "content-type": "application/json",
         },
         body: JSON.stringify(params)
       });
-      const { data } = await res.json();
-      console.log(data)
-      setLoading(false);
-      window.location.reload();
+      toast({ type: "success", message: "Device removed from register" });
+      await fetchDeviceRegister();
     } catch (err) {
       toast({
         type: "error",
         message: "Server Error Occurred! Try again Later",
       });
-      console.log(err);
+      console.error("Device delete failed:", err);
+    } finally {
       setLoading(false);
     }
   }

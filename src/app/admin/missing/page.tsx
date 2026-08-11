@@ -30,12 +30,11 @@ interface MissingPerson {
 
 const Page = () => {
   const [showMissing, setShowMissing] = useState<boolean>(false);
-  const [addMissing, setAddMissing] = useState<boolean>(false);
   const [missings, setMissings] = useState<MissingPerson[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  
+
   const { toast } = useToast();
 
   const fetchMissingPersons = async () => {
@@ -52,37 +51,27 @@ const Page = () => {
       // }
       
       const missingPersons = await MissingPersonService.getAllMissingPersons();
-      console.log('✅ Successfully fetched missing persons:', missingPersons);
-      toast({ message: "Missing Persons List Fetched", type: "info" });
       setMissings(missingPersons);
     } catch (err) {
       const errorMessage = FirebaseErrorHandler.handleError(err);
       setError(errorMessage);
-      console.error("❌ Error fetching missing persons:", err);
-      
-      // Additional debugging info
-      if (err instanceof Error && err.message.includes('Permission denied')) {
-        console.error('🔒 Permission denied error - check Firebase rules and authentication');
-        console.error('🔗 Database URL:', process.env.NEXT_PUBLIC_DATABASE_URL);
-        console.error('🔑 Project ID:', process.env.NEXT_PUBLIC_PROJECT_ID);
-      }
+      console.error("Error fetching missing persons:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  const deleteMissingPost = async (id: string, imagePath: string) => {
-    if (!confirm("Are you sure you want to delete this missing person report?")) {
+  const deleteMissingPost = async (id: string, imagePath: string, personName: string) => {
+    if (!confirm(`Are you sure you want to delete the missing person report for ${personName}?`)) {
       return;
     }
 
     try {
       await MissingPersonService.deleteMissingPerson(id, imagePath);
-      console.log("Post deleted successfully");
-      
+
       // Refresh the list
       await fetchMissingPersons();
-      
+
       toast({ message: "Missing person report deleted successfully", type: "success" });
     } catch (err) {
       const errorMessage = FirebaseErrorHandler.handleError(err);
@@ -94,13 +83,6 @@ const Page = () => {
   useEffect(() => {
     fetchMissingPersons();
   }, []);
-
-  // Refresh data when the add form is closed (in case new data was added)
-  useEffect(() => {
-    if (!addMissing && showMissing) {
-      fetchMissingPersons();
-    }
-  }, [addMissing, showMissing]);
 
   return (
     <main className="font-nunito py-3 m-2 rounded-3xl">
@@ -114,10 +96,7 @@ const Page = () => {
         >
           {showMissing ? "Hide Missing Persons" : "Show Missing Persons"}
         </Button>
-        <Button className="font-bold text-lg" variant="ghost" color="warning" onPress={() => {
-          () => setAddMissing(!addMissing)
-          onOpen();
-        }}>
+        <Button className="font-bold text-lg" variant="ghost" color="warning" onPress={onOpen}>
           Add Missing Person
         </Button>
       </div>
@@ -138,8 +117,6 @@ const Page = () => {
           )}
         </ModalContent>
       </Modal>
-      
-      {addMissing && <AddMissing onSuccess={() => fetchMissingPersons()} />}
       
       {showMissing && (
         <div className="w-full">
@@ -190,7 +167,7 @@ const Page = () => {
                 <div className="flex justify-center">
                   <button
                     className="bg-red-600/90 my-4 font-bold backdrop-blur-sm hover:bg-red-500/90 text-white hover:border-red-300/50 relative px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ease-out transform active:scale-95"
-                    onClick={() => deleteMissingPost(missing.id, missing.image)}
+                    onClick={() => deleteMissingPost(missing.id, missing.image, missing.name)}
                   >
                     DELETE
                   </button>
