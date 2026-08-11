@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Contact | Crack Crime Bahamas",
+  title: "Contact",
   description:
     "Get in touch with Crack Crime Bahamas, or report a crime anonymously via the 328-TIPS hotline.",
 };
