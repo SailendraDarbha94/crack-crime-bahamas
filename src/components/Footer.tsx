@@ -1,44 +1,40 @@
-import Modal from "./Modal";
+import Link from "next/link";
 
 export default function Footer() {
+  const year = new Date().getFullYear();
   return (
     <div className="w-full">
       <footer className="p-4 bg-white/15 backdrop-blur-md border-t border-white/40 sm:p-6">
         <div className="mx-auto max-w-screen-xl">
           <div className="md:flex md:justify-between">
             <div className="mb-6 md:mb-0">
-              <a href="/" className="flex items-center">
-                <img src="/newfavicon.png" className="mr-3 h-8" alt="Logo" />
+              <Link href="/" className="flex items-center">
+                <img src="/newfavicon.png" className="mr-3 h-8" alt="Crack Crime Bahamas logo" />
                 <span className="self-center text-2xl font-semibold whitespace-nowrap text-amber-950">
                   CrackCrimeBahamas
                 </span>
-              </a>
+              </Link>
             </div>
             <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
               <div>
                 <h2 className="mb-6 text-sm font-semibold text-amber-900 uppercase">
-                  Resources
+                  Get Involved
                 </h2>
                 <ul className="text-amber-800/80">
                   <li className="mb-4">
-                    <a
-                      rel="noopener"
-                      href="https://www.royalbahamaspolice.org/crimeprevention/"
-                      target="_blank"
-                      className="hover:underline hover:text-amber-950 transition-colors duration-200"
-                    >
-                      Crime Prevention Tips
-                    </a>
+                    <Link href="/wanted" className="hover:underline hover:text-amber-950 transition-colors duration-200">
+                      Wanted Persons
+                    </Link>
+                  </li>
+                  <li className="mb-4">
+                    <Link href="/missing" className="hover:underline hover:text-amber-950 transition-colors duration-200">
+                      Missing Persons
+                    </Link>
                   </li>
                   <li>
-                    <a
-                      href="https://www.royalbahamaspolice.org/community/announcements/"
-                      className="hover:underline hover:text-amber-950 transition-colors duration-200"
-                      target="_blank"
-                      rel="noopener"
-                    >
-                      Announcements
-                    </a>
+                    <Link href="/submit-tip" className="hover:underline hover:text-amber-950 transition-colors duration-200">
+                      Submit a Tip
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -48,16 +44,19 @@ export default function Footer() {
                 </h2>
                 <ul className="text-amber-800/80">
                   <li className="mb-4">
-                    <a href="/login" className="hover:underline ">
-                      Admin Login
-                    </a>
+                    <Link href="/contact" className="hover:underline hover:text-amber-950 transition-colors duration-200">
+                      Contact Us
+                    </Link>
+                  </li>
+                  <li className="mb-4">
+                    <Link href="/member" className="hover:underline hover:text-amber-950 transition-colors duration-200">
+                      Become a Sponsor
+                    </Link>
                   </li>
                   <li>
-                    <Modal
-                      word="Contact Us"
-                      heading="Get In Touch With Us"
-                      content="1-242-322-3320,crimestoppersbahamas@gmail.com"
-                    />
+                    <Link href="/login" className="hover:underline hover:text-amber-950 transition-colors duration-200">
+                      Admin Login
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -67,14 +66,14 @@ export default function Footer() {
                 </h2>
                 <ul className="text-amber-800/80">
                   <li className="mb-4">
-                    <a href="/legal/privacy" className="hover:underline hover:text-amber-950 transition-colors duration-200">
+                    <Link href="/legal/privacy" className="hover:underline hover:text-amber-950 transition-colors duration-200">
                       Privacy Policy
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="/legal/terms" className="hover:underline hover:text-amber-950 transition-colors duration-200">
+                    <Link href="/legal/terms" className="hover:underline hover:text-amber-950 transition-colors duration-200">
                       Terms &amp; Conditions
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -83,10 +82,10 @@ export default function Footer() {
           <hr className="my-6 border-amber-900/15 sm:mx-auto lg:my-8" />
           <div className="sm:flex sm:items-center sm:justify-between">
             <span className="text-sm text-amber-800/70 sm:text-center">
-              © 2024{" "}
-              <a href="/" className="hover:underline hover:text-amber-950 transition-colors duration-200">
+              © {year}{" "}
+              <Link href="/" className="hover:underline hover:text-amber-950 transition-colors duration-200">
                 CrackCrimeBahamas™
-              </a>
+              </Link>
               . All Rights Reserved.
             </span>
             <div className="flex mt-4 space-x-6 sm:justify-center sm:mt-0">

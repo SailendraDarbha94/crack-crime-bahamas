@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@nextui-org/react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   const appDownloader = () => {
@@ -20,33 +21,45 @@ export default function Home() {
       <section className="bg-white/20 backdrop-blur-xl border border-white/50 rounded-2xl font-nunito mb-10 w-full shadow-[0_8px_32px_rgba(120,72,10,0.12)]">
         <div className="grid w-full px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
           <div className="mr-auto place-self-center lg:col-span-7">
-            <h1 className="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-3xl xl:text-5xl text-amber-950">
+            <h2 className="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-3xl xl:text-5xl text-amber-950">
               Crime Stoppers Bahamas
-            </h1>
+            </h2>
             <p className="max-w-2xl mb-6 font-light text-amber-900/80 lg:mb-8 md:text-lg lg:text-xl">
               The worst amongst us have no chance of perpetrating any criminal
               acts if the the rest of us come together.
             </p>
-            <Button
-              onPress={appDownloader}
-              radius="md"
-              variant="solid"
-              color="warning"
-              className="bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 font-bold shadow-md"
-            >
-              <span className="font-bold text-lg">Download App</span>
-              <svg
-                className="w-6 h-6"
-                fill="currentColor"
-                viewBox="0 0 16 16"
-                xmlns="http://www.w3.org/2000/svg"
+            <div className="flex flex-wrap gap-3 items-center">
+              <Button
+                onPress={appDownloader}
+                radius="md"
+                variant="solid"
+                color="warning"
+                className="bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 font-bold shadow-md"
               >
-                <g fill="currentColor">
-                  <path d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
-                  <path d="M8 14a1 1 0 1 0 0-2a1 1 0 0 0 0 2" />
-                </g>
-              </svg>
-            </Button>
+                <span className="font-bold text-lg">Download App</span>
+                <svg
+                  className="w-6 h-6"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g fill="currentColor">
+                    <path d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                    <path d="M8 14a1 1 0 1 0 0-2a1 1 0 0 0 0 2" />
+                  </g>
+                </svg>
+              </Button>
+              <Link
+                href="/submit-tip"
+                className="inline-flex items-center rounded-lg bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 font-bold text-lg px-4 py-2 shadow-md transition-all duration-200 active:scale-95"
+              >
+                Submit a Tip
+              </Link>
+            </div>
+            <div className="flex flex-wrap gap-4 mt-4 text-amber-950 font-semibold">
+              <Link href="/wanted" className="underline hover:text-amber-900">View Wanted Persons</Link>
+              <Link href="/missing" className="underline hover:text-amber-900">View Missing Persons</Link>
+            </div>
           </div>
           <div className="hidden lg:mt-0 lg:col-span-5 lg:flex relative">
             <img
