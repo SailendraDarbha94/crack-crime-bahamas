@@ -175,7 +175,7 @@ const Page = () => {
 
   return (
     <div className="w-full min-h-screen">
-      <h1 className="text-center font-bold text-5xl bg-white py-4 my-6 rounded-tl-lg rounded-bl-lg">Notifications Center</h1>
+      <h1 className="text-center font-bold text-4xl md:text-5xl text-amber-950 drop-shadow-[0_2px_10px_rgba(255,255,255,0.5)] py-4 my-6">Notifications Center</h1>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
@@ -252,7 +252,7 @@ const Page = () => {
       <Divider className="mt-4" />
       {devicesList ? (
         <div>
-          <p className="text-center font-bold text-3xl bg-white py-4 my-6 rounded-tl-lg rounded-bl-lg">Registered Devices List</p>
+          <p className="text-center font-bold text-3xl text-amber-950 py-4 my-6">Registered Devices List</p>
           {devicesList.map((device: any) => {
             return (
               <Card className="m-4 p-3 max-w-full" key={device[0]}>

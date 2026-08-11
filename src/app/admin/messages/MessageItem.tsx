@@ -36,10 +36,10 @@ const MessageItem = ({ item, refreshFunc }: any) => {
       </div>
     </div>
   ) : (
-    <div className="bg-slate-50 text-black max-w-md mx-auto rounded-lg shadow-lg my-2 p-4 flex flex-col min-h-40 justify-between">
+    <div className="bg-white/25 backdrop-blur-xl border border-white/50 text-amber-950 max-w-md mx-auto rounded-2xl shadow-[0_8px_32px_rgba(120,72,10,0.12)] my-2 p-4 flex flex-col min-h-40 justify-between">
       <p className="font-bold font-nunito text-xl">{item.message}</p>
 
-      <p className="font-nunito font-semibold text-sm">
+      <p className="font-nunito font-semibold text-sm text-amber-900/80">
         Sent : {dateReader(item.created_at)}
       </p>
       <div className="flex justify-center pt-8">

@@ -73,7 +73,7 @@ const MissingListItem = ({ name, age, gender, alias, image, kind = "missing" }: 
               onError={() => setImager("/newfavicon.png")}
             />
             {image === "Image Not Available" && (
-              <h3 className="text-center text-sm text-gray-500 mt-1">
+              <h3 className="text-center text-sm text-amber-900/70 mt-1">
                 Image Not Uploaded
               </h3>
             )}

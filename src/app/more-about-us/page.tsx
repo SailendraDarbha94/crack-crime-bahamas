@@ -12,7 +12,7 @@ import { aboutUsParagraphs } from "@/constants/moreAboutUsTexts";
 const Page = () => {
   return (
     <div className="flex min-h-screen flex-col items-center p-4 md:p-12 lg:p-24">
-      <section className=" dark:bg-gray-900 rounded-lg font-nunito mb-10">
+      <section className=" rounded-lg font-nunito mb-10">
         <div className="gap-8 items-center py-8 px-4 mx-auto max-w-screen-xl xl:gap-16 md:grid md:grid-cols-2 sm:py-16 lg:px-6">
           <div className="">
             <Image
@@ -24,24 +24,24 @@ const Page = () => {
             />
           </div>
           <div className="mt-4 md:mt-0">
-            <h2 className="mb-4 text-3xl md:text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+            <h2 className="mb-4 text-3xl md:text-4xl tracking-tight font-extrabold text-amber-950">
               Help combat crime by reporting what you see and what you know to{" "}
-              <a className="text-blue-700 dark:text-blue-500 underline" href="/">
+              <a className="text-amber-800 hover:text-amber-950 underline" href="/">
                 Crack Crime Bahamas{" "}
               </a>
             </h2>
-            <p className="mb-6 font-light text-gray-500 md:text-lg dark:text-gray-400">
+            <p className="mb-6 font-light text-amber-900/80 md:text-lg">
               Our initiative helps you protect your friends and loved ones and
               makes your community that much more safer. We have a mission
               bigger than ourselves and aspire towards a world without crime, an ordeal which
               can not be realised without individual action and participation at a grassroots level.
             </p>
-            {/* <a
+            <a
               href="/member"
-              className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 border border-gray-900 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
+              className="inline-flex items-center justify-center px-5 py-3 text-base font-bold text-center text-amber-950 bg-white/40 backdrop-blur-md border border-white/60 rounded-xl hover:bg-white/55 focus:ring-4 focus:ring-amber-300/50 transition-all duration-200 active:scale-95"
             >
-              Become a Member
-            </a> */}
+              Become a Sponsor
+            </a>
           </div>
         </div>
       </section>
@@ -55,19 +55,19 @@ const Page = () => {
           />
         );
       })}
-      <section className="bg-white dark:bg-gray-900 rounded-lg font-nunito mb-10">
+      <section className="bg-white/20 backdrop-blur-xl border border-white/50 rounded-2xl font-nunito mb-10 shadow-[0_8px_32px_rgba(120,72,10,0.12)]">
         <div className="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
-          <h2 className="mb-8 text-3xl md:text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+          <h2 className="mb-8 text-3xl md:text-4xl tracking-tight font-extrabold text-amber-950">
             Frequently asked questions
           </h2>
-          <div className="grid pt-8 text-left border-t border-gray-200 md:gap-16 dark:border-gray-700 md:grid-cols-2">
+          <div className="grid pt-8 text-left border-t border-white/40 md:gap-16 md:grid-cols-2">
             <div>
               {frequentlyAskedQuestionsFirstBlock.map((FAQ: FAQs) => {
                 return (
                   <div className="mb-10 font-nunito" key={FAQ.id}>
-                    <h3 className="flex items-center mb-4 text-lg font-medium text-gray-900 dark:text-white">
+                    <h3 className="flex items-center mb-4 text-lg font-bold text-amber-950">
                       <svg
-                        className="flex-shrink-0 mr-2 w-5 h-5 text-gray-500 dark:text-gray-400"
+                        className="flex-shrink-0 mr-2 w-5 h-5 text-amber-700"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg"
@@ -80,7 +80,7 @@ const Page = () => {
                       </svg>
                       {FAQ.question} ?
                     </h3>
-                    <p className="text-gray-500 dark:text-gray-400">
+                    <p className="text-amber-900/80">
                       {FAQ.answer}
                     </p>
                   </div>
@@ -91,9 +91,9 @@ const Page = () => {
               {frequentlyAskedQuestionsSecondBlock.map((FAQ: FAQs) => {
                 return (
                   <div className="mb-10 font-nunito" key={FAQ.id}>
-                    <h3 className="flex items-center mb-4 text-lg font-medium text-gray-900 dark:text-white">
+                    <h3 className="flex items-center mb-4 text-lg font-bold text-amber-950">
                       <svg
-                        className="flex-shrink-0 mr-2 w-5 h-5 text-gray-500 dark:text-gray-400"
+                        className="flex-shrink-0 mr-2 w-5 h-5 text-amber-700"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg"
@@ -106,7 +106,7 @@ const Page = () => {
                       </svg>
                       {FAQ.question} ?
                     </h3>
-                    <p className="text-gray-500 dark:text-gray-400">
+                    <p className="text-amber-900/80">
                       {FAQ.answer}
                     </p>
                   </div>

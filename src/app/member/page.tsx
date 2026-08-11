@@ -64,21 +64,21 @@ const Page = () => {
         <div className="flex flex-col items-center justify-center px-3 md:px-8 py-4 mx-auto md:h-screen lg:py-0">
           <a
             href="/"
-            className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+            className="flex items-center mb-6 text-2xl font-semibold text-amber-950"
           >
             <img className="w-8 h-8 mr-2" src="/newfavicon.png" alt="Crack Crime Bahamas logo" />
             Crack Crime Bahamas
           </a>
-          <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+          <div className="w-full bg-white/25 backdrop-blur-xl border border-white/50 rounded-2xl shadow-[0_8px_32px_rgba(120,72,10,0.12)] md:mt-0 sm:max-w-md xl:p-0">
             <div className="p-4 md:p-6 space-y-4 md:space-y-6 sm:p-8 w-fu">
-              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+              <h1 className="text-xl font-bold leading-tight tracking-tight text-amber-950 md:text-2xl">
                 Membership Form
               </h1>
               <form className="space-y-4 md:space-y-6" onSubmit={registerMember}>
                 <div>
                   <label
                     htmlFor="name"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm font-medium text-amber-950"
                   >
                     Name
                   </label>
@@ -87,7 +87,7 @@ const Page = () => {
                     name="name"
                     id="name"
                     value={name}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="bg-white/40 backdrop-blur-md border border-white/60 focus:outline-none focus:ring-2 focus:ring-amber-400/60 text-amber-950 placeholder-amber-900/50 sm:text-sm rounded-xl block w-full p-2.5"
                     placeholder=""
                     required={true}
                     onChange={(e) => setName(e.target.value)}
@@ -96,7 +96,7 @@ const Page = () => {
                 <div>
                   <label
                     htmlFor="email"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm font-medium text-amber-950"
                   >
                     E-Mail
                   </label>
@@ -107,14 +107,14 @@ const Page = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="abc@example.com"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="bg-white/40 backdrop-blur-md border border-white/60 focus:outline-none focus:ring-2 focus:ring-amber-400/60 text-amber-950 placeholder-amber-900/50 sm:text-sm rounded-xl block w-full p-2.5"
                     required={true}
                   />
                 </div>
                 <div>
                   <label
                     htmlFor="address"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm font-medium text-amber-950"
                   >
                     Address
                   </label>
@@ -125,14 +125,14 @@ const Page = () => {
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     placeholder=""
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="bg-white/40 backdrop-blur-md border border-white/60 focus:outline-none focus:ring-2 focus:ring-amber-400/60 text-amber-950 placeholder-amber-900/50 sm:text-sm rounded-xl block w-full p-2.5"
                     required={true}
                   />
                 </div>
                 <div>
                   <label
                     htmlFor="mobile"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm font-medium text-amber-950"
                   >
                     Mobile
                   </label>
@@ -143,7 +143,7 @@ const Page = () => {
                     value={mobile}
                     onChange={(e) => setMobile(e.target.value)}
                     placeholder=""
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="bg-white/40 backdrop-blur-md border border-white/60 focus:outline-none focus:ring-2 focus:ring-amber-400/60 text-amber-950 placeholder-amber-900/50 sm:text-sm rounded-xl block w-full p-2.5"
                     required={true}
                   />
                 </div>
@@ -220,7 +220,7 @@ const Page = () => {
                   <div role="status" className="flex justify-center">
                     <svg
                       aria-hidden="true"
-                      className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                      className="w-8 h-8 text-amber-900/30 animate-spin fill-amber-700"
                       viewBox="0 0 100 101"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
@@ -239,7 +239,7 @@ const Page = () => {
                 ) : (
                   <button
                     type="submit"
-                    className="w-full rounded-lg bg-slate-200 hover:bg-slate-300 dark:hover:bg-blue-700 dark:text-white focus:ring-4 dark:bg-blue-600 focus:outline-none font-medium text-lg px-5 py-2.5 text-center"
+                    className="w-full rounded-xl bg-white/40 backdrop-blur-md border border-white/60 hover:bg-white/55 text-amber-950 focus:ring-4 focus:ring-amber-300/50 focus:outline-none font-bold text-lg px-5 py-2.5 text-center transition-all duration-200 active:scale-95"
                   >
                     Submit
                   </button>

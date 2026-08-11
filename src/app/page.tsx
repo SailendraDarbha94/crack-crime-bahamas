@@ -190,7 +190,7 @@ export default function Home() {
               <div className="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-white/40 border border-white/60 lg:h-12 lg:w-12">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="w-8 h-8 text-black"
+                  className="w-8 h-8 text-amber-900"
                   viewBox="0 0 24 24"
                 >
                   <path
