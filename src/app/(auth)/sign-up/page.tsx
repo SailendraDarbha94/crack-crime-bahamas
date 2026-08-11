@@ -22,26 +22,51 @@ const Page = () => {
       !password ||
       !confirmPassword ||
       !firstName ||
-      !lastName
+      !lastName ||
+      !inviteCode
     ) {
       toast({
         type: "error",
-        message: "Please fill the details",
+        message: "Please fill the details, including your invite code",
       });
     } else {
+      // Server-verified invite gate — the code is compared against a
+      // server-only env var, never shipped to the browser.
+      try {
+        const inviteRes = await fetch("/api/auth/verify-invite", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code: inviteCode }),
+        });
+        const { ok } = await inviteRes.json();
+        if (!ok) {
+          toast({
+            type: "error",
+            message: "Invalid invite code. Contact an administrator for access.",
+          });
+          return;
+        }
+      } catch {
+        toast({
+          type: "error",
+          message: "Could not verify invite code. Please try again.",
+        });
+        return;
+      }
+
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           const user = userCredential.user;
-          console.log(user);
           saveUserData(user.uid, firstName, lastName, user.email);
           setFirstName("");
           setLastName("");
           setPassword("");
           setConfirmPassword("");
           setEmail("");
+          setInviteCode("");
           toast({
             type: "success",
-            message: "User Sign-Up Successfull!",
+            message: "Account created! An administrator must approve it before you can access the dashboard.",
           });
         })
         .catch((err) => {
@@ -109,6 +134,7 @@ const Page = () => {
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
+  const [inviteCode, setInviteCode] = useState<string>("");
 
   return (
     <main>
@@ -217,8 +243,26 @@ const Page = () => {
                     required={true}
                   />
                 </div>
+                <div>
+                  <label
+                    htmlFor="invitecode"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Invite Code
+                  </label>
+                  <input
+                    type="password"
+                    name="invitecode"
+                    id="invitecode"
+                    className="bg-gray-50 border focus:outline-none border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                    placeholder="Provided by an administrator"
+                    value={inviteCode}
+                    onChange={(e) => setInviteCode(e.target.value)}
+                    required={true}
+                  />
+                </div>
                 <button
-                  //type="submit"
+                  type="button"
                   onClick={createNewUser}
                   className="w-full rounded-lg bg-slate-200 hover:bg-slate-300 dark:hover:bg-blue-700 dark:text-white focus:ring-4 dark:bg-blue-600 focus:outline-none font-medium text-lg px-5 py-2.5 text-center"
                 >

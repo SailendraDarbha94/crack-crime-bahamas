@@ -1,4 +1,5 @@
 import { Expo } from "expo-server-sdk";
+import { verifyAdmin } from "@/lib/serverAuth";
 
 // True circular geofence: haversine distance between the two points must be
 // within the requested radius (metres).
@@ -24,11 +25,18 @@ const isWithinRadius = (
 };
 
 export async function POST(req: Request) {
+  // Only allowlisted admins may broadcast through the Expo account
+  if (!(await verifyAdmin(req))) {
+    return Response.json({ data: "unauthorized" }, { status: 401 });
+  }
 
   let somePushTokens: string[] = [];
   const { data } = await req.json();
 
   if (!data || !Array.isArray(data.devices) || typeof data.message !== "string") {
+    return Response.json({ data: "request failure" }, { status: 400 });
+  }
+  if (data.devices.length > 500) {
     return Response.json({ data: "request failure" }, { status: 400 });
   }
 
@@ -51,7 +59,7 @@ export async function POST(req: Request) {
   });
 
   let expo = new Expo({
-    accessToken: process.env.NEXT_PUBLIC_EXPO_ACCESS_TOKEN,
+    accessToken: process.env.EXPO_ACCESS_TOKEN,
     useFcmV1: true, // this can be set to true in order to use the FCM v1 API
   });
 

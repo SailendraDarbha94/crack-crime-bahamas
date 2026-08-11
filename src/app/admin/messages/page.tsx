@@ -33,17 +33,20 @@ const Page = () => {
       if (data.exists()) {
         const messages = data.val();
         for (const index of Object.keys(messages)) {
-          if (typeof messages[index].message === "string") {
-            list.push({
-              id: index,
-              message: messages[index].message,
-              created_at: messages[index].created_at,
-            });
-          } else {
+          if (messages[index].encrypted === true || typeof messages[index].message !== "string") {
+            // Server-encrypted string tips (encrypted flag) and mobile-app
+            // cipher objects both go through AES decryption
             const decrypted = decryptMessage(messages[index]);
             list.push({
               id: index,
               message: decrypted ?? "[Could not decrypt this tip]",
+              created_at: messages[index].created_at,
+            });
+          } else {
+            // Legacy plaintext tips
+            list.push({
+              id: index,
+              message: messages[index].message,
               created_at: messages[index].created_at,
             });
           }

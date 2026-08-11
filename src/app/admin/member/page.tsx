@@ -1,19 +1,23 @@
 "use client";
 
+import { DatabaseService } from "@/lib/firebaseService";
 import { useEffect, useState } from "react";
 
 const Page = () => {
-  const [members, setMembers] = useState<any | null>(null);
-  const [memberIndex, setMemberIndices] = useState<any[] | null>(null);
+  const [members, setMembers] = useState<any[] | null>(null);
+
+  // Reads /members directly as the signed-in admin — the unauthenticated
+  // GET /api/member endpoint (a PII leak) was removed.
   const getMembershipRequests = async () => {
-    const res = await fetch("/api/member");
-    const { data } = await res.json();
-    if (data !== "request failure") {
-      console.log(data);
-      setMemberIndices(Object.keys(data));
-      setMembers(data);
+    try {
+      const results = await DatabaseService.getAll("members");
+      setMembers(results);
+    } catch (err) {
+      console.error("Could not fetch membership requests:", err);
+      setMembers([]);
     }
   };
+
   useEffect(() => {
     getMembershipRequests();
   }, []);

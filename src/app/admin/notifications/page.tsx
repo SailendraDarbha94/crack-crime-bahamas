@@ -7,10 +7,20 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/react";
-import app from "@/lib/firebase";
+import app, { database } from "@/lib/firebase";
 import { ToastContext } from "@/lib/toastContext";
 import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Input } from "@nextui-org/react";
+import { getAuth } from "firebase/auth";
+import { get, ref, remove } from "firebase/database";
 import { useContext, useEffect, useState } from "react";
+
+// The notification APIs require an admin ID token (verified server-side
+// against the /admins allowlist).
+const getAuthHeader = async (): Promise<Record<string, string>> => {
+  const idToken = await getAuth(app).currentUser?.getIdToken();
+  return idToken ? { authorization: `Bearer ${idToken}` } : {};
+};
+
 const Page = () => {
 
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
@@ -40,6 +50,7 @@ const Page = () => {
         method: "POST",
         headers: {
           "content-type": "application/json",
+          ...(await getAuthHeader()),
         },
         body: JSON.stringify({ data: { "message": notif, "lat": latitude, "lon": longitude, devices: devicesList, rad : radius } }),
       });
@@ -69,8 +80,9 @@ const Page = () => {
         method: "POST",
         headers: {
           "content-type": "application/json",
+          ...(await getAuthHeader()),
         },
-        body: JSON.stringify({ data: { "notification": message, } }),
+        body: JSON.stringify({ data: { "notification": message, devices: devicesList ?? [] } }),
       });
       const { data } = await res.json();
       if (data === "success") {
@@ -99,6 +111,7 @@ const Page = () => {
         method: "POST",
         headers: {
           "content-type": "application/json",
+          ...(await getAuthHeader()),
         },
         body: JSON.stringify({ data: { "latitude": lat, "longitude": long } }),
       })
@@ -111,17 +124,14 @@ const Page = () => {
   }
 
 
+  // Reads the device register directly as the signed-in admin — the
+  // unauthenticated GET /api/registrations endpoint (a device-PII leak)
+  // was removed.
   const fetchDeviceRegister = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/registrations", {
-        method: "GET",
-        headers: {
-          "content-type": "application/json",
-        }
-      });
-      const { data } = await res.json();
-      setDevicesList(data ? Object.entries(data) : []);
+      const snapshot = await get(ref(database, "notifications_register"));
+      setDevicesList(snapshot.exists() ? Object.entries(snapshot.val()) : []);
     } catch (err) {
       toast({
         type: "error",
@@ -133,25 +143,19 @@ const Page = () => {
     }
   }
 
-  const deleteDeviceFromRegister = async (params: string) => {
+  const deleteDeviceFromRegister = async (token: string) => {
     if (!confirm("Remove this device from the notification register?")) {
       return;
     }
     setLoading(true);
     try {
-      await fetch("/api/registrations", {
-        method: "DELETE",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify(params)
-      });
+      await remove(ref(database, `notifications_register/${token}`));
       toast({ type: "success", message: "Device removed from register" });
       await fetchDeviceRegister();
     } catch (err) {
       toast({
         type: "error",
-        message: "Server Error Occurred! Try again Later",
+        message: "Could not remove device. Try again later.",
       });
       console.error("Device delete failed:", err);
     } finally {
