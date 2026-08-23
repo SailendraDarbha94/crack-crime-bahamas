@@ -1,21 +1,45 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    // Allow read access to all images for development
+    // Storage rules cannot read the Realtime Database, so admin identity is
+    // pinned by uid here. BEFORE DEPLOYING: replace the placeholder below
+    // with the real admin uid(s) from Firebase Console -> Authentication.
+    // Keep this list in sync with the /admins node in the database.
+    function isAdmin() {
+      return request.auth != null &&
+             request.auth.uid in ['REPLACE_WITH_ADMIN_UID'];
+    }
+
+    // request.resource == null keeps admin DELETES legal (no resource on delete).
+    // Size/type limits mirror the client-side validation (5MB, images only).
+    function isValidImage() {
+      return request.resource == null ||
+             (request.resource.size < 5 * 1024 * 1024 &&
+              request.resource.contentType.matches('image/.*'));
+    }
+
+    // Public content rendered by the website and the mobile app
     match /adverts/{allPaths=**} {
       allow read: if true;
-      allow write: if true; // Open for development - restrict later
+      allow write: if isAdmin() && isValidImage();
     }
-    
-    // Other file uploads
+    match /missings/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidImage();
+    }
+    match /wanteds/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidImage();
+    }
+
+    // Legacy paths — nothing in the web app writes these today
     match /uploads/{allPaths=**} {
-      allow read, write: if true; // Open for development
+      allow read: if true;
+      allow write: if isAdmin();
     }
-    
-    // Profile images
     match /profiles/{userId}/{allPaths=**} {
       allow read: if true;
-      allow write: if true; // Open for development
+      allow write: if isAdmin();
     }
   }
 }

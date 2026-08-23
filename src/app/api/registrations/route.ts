@@ -1,73 +1,45 @@
 import app from "@/lib/firebase";
-import { child, get, getDatabase, push, ref, remove, set, update } from "firebase/database";
+import { getDatabase, ref, set, update } from "firebase/database";
 
-
-export async function GET() {
-  // const mongoDb = (await mongoClient).db("members");
-  // const members = await mongoDb.collection("dev").find({}).toArray();
-  // console.log("server hitted")
-
-  // return Response.json({data : members})
-  const db = await getDatabase(app);
-  const dbRef = await ref(db);
-  try {
-    const data = await get(child(dbRef, 'notifications_register'))
-    if (data.exists()) {
-      const list = await data.val()
-      return Response.json({ data: list })
-    }
-  } catch (err) {
-    console.log(err)
-    return Response.json({ data: "request failure" })
-  }
-}
-
+// Mobile-app device registration endpoints (create + location refresh).
+// Both remain public because the app calls them anonymously; the database
+// rules permit public create/update on /notifications_register/$token but
+// deny public reads and deletes.
+//
+// The GET handler (returned every device's push token, model and GPS
+// coordinates to any caller) and the DELETE handler were removed — the
+// admin notifications page now reads and deletes as an authed admin
+// directly against the database.
 
 export async function POST(req: Request) {
   const data = await req.json();
-  console.log("this is the request data", data);
-  const db = await getDatabase(app);
+  if (!data?.Token || typeof data.Token !== "string") {
+    return Response.json({ data: "request failure" }, { status: 400 });
+  }
+  const db = getDatabase(app);
   const dataRef = ref(db, `/notifications_register/${data.Token}`);
   try {
-    // const updates: any = {};
-    // updates["/notifications_register/" + newKey] = { ...data };
-    // await update(ref(db), updates);
     await set(dataRef, data);
     return Response.json({ data: "success" });
   } catch (err) {
-    console.log(err);
-    return Response.json({ data: "request failure" });
+    console.error("Device registration failed:", err);
+    return Response.json({ data: "request failure" }, { status: 500 });
   }
 }
 
 export async function PUT(req: Request) {
   const data = await req.json();
-  console.log("this is the update data", data);
-  const db = await getDatabase(app);
+  if (!data?.Token || typeof data.Token !== "string") {
+    return Response.json({ data: "request failure" }, { status: 400 });
+  }
+  const db = getDatabase(app);
   const dataRef = ref(db, `/notifications_register/${data.Token}`);
 
   try {
-    // const updates: any = {};
-    // updates["/notifications_register/" + newKey] = { ...data };
-    // await update(ref(db), updates);
     await update(dataRef, data);
     return Response.json({ data: "success" });
   } catch (err) {
-    console.log(err);
-    return Response.json({ data: "request failure" });
-  }
-}
-
-export async function DELETE(req: Request) {
-  const data = await req.json();
-  console.log("this is the request data", data);
-  const db = await getDatabase(app);
-  const dataRef = ref(db, `/notifications_register/${data}`);
-  try {
-    await remove(dataRef);
-    return Response.json({ data: "data removed at resource"})
-  } catch (err) {
-    console.log(err)
-    return Response.json({ data: "request failure" })
+    console.error("Device update failed:", err);
+    return Response.json({ data: "request failure" }, { status: 500 });
   }
 }

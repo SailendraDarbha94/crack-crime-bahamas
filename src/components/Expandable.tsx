@@ -18,15 +18,15 @@ const Expandable = ({
   };
 
   return (
-    <section className="bg-white dark:bg-gray-900 rounded-lg my-8">
-      <div className="py-8 px-4">
+    <section className="bg-white/20 backdrop-blur-xl border border-white/50 rounded-2xl my-8 shadow-[0_8px_32px_rgba(120,72,10,0.12)] w-full">
+      <div className="py-8 px-4 text-amber-950">
         <div id="initial-content" className="">
-          <h2 className="mb-4 text-3xl md:text-4xl tracking-tight font-bold font-nunito text-center text-blue-500">{heading}</h2>
-          <p className="font-medium font-nunito text-lg tracking-wide">{initialContent}</p>
+          <h2 className="mb-4 text-3xl md:text-4xl tracking-tight font-bold font-nunito text-center text-amber-950">{heading}</h2>
+          <p className="font-medium font-nunito text-lg tracking-wide text-amber-900/90">{initialContent}</p>
           {isExpanded ? null : (
             <button
               onClick={handleToggle}
-              className="inline-flex items-center font-medium bg-slate-200 mt-4 rounded-xl py-2 pl-4 pr-2 text-black"
+              className="inline-flex items-center font-bold bg-white/40 backdrop-blur-md border border-white/60 hover:bg-white/55 mt-4 rounded-xl py-2 pl-4 pr-2 text-amber-950 transition-all duration-200 active:scale-95"
             >
               Learn more
               <svg
@@ -50,7 +50,7 @@ const Expandable = ({
             isExpanded ? "max-h-screen" : "max-h-0"
           }`}
         >
-          <p className="mb-4 font-medium font-nunito text-lg tracking-wide">{moreContent}</p>
+          <p className="mb-4 font-medium font-nunito text-lg tracking-wide text-amber-900/90">{moreContent}</p>
         </div>
       </div>
     </section>

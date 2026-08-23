@@ -40,31 +40,10 @@ const AddMissing = ({ onSuccess }: AddMissingProps) => {
         description: description.trim(),
       };
 
-      // Use the new MissingPersonService
-      const id = await MissingPersonService.createMissingPerson(personData, selectedFile || undefined);
-      
-      // Also call your API endpoint to sync with your database
-      const res = await fetch("/api/missing", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...personData,
-          created_at: Date.now(),
-          country_code: "BAH",
-          current_status: "",
-          image: selectedFile ? `missings/${selectedFile.name}` : "Image Not Available",
-        }),
-      });
+      // The service writes the full record (image, created_at, country_code,
+      // current_status) — no second API write needed.
+      await MissingPersonService.createMissingPerson(personData, selectedFile || undefined);
 
-      const data = await res.json();
-      if (data === "request failure") {
-        throw new Error("API request failed");
-      }
-
-      console.log("Missing person registered successfully:", { id, apiResponse: data });
-      
       // Reset form
       setName("");
       setAge("");
@@ -119,9 +98,9 @@ const AddMissing = ({ onSuccess }: AddMissingProps) => {
     <div className="w-full">
       <section className="font-nunito mx-auto max-w-lg rounded-lg">
         <div className="flex flex-col items-center justify-center mx-auto lg:py-0">
-          <div className="w-full bg-white rounded-lg dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+          <div className="w-full bg-white rounded-lg md:mt-0 sm:max-w-md xl:p-0">
             <div className="p-4 md:p-6 space-y-4 md:space-y-6 sm:p-8 w-fu">
-              <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+              <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
                 Missing Person Report
               </h1>
               <form className="space-y-2" onSubmit={registerMissingPerson}>
@@ -184,7 +163,7 @@ const AddMissing = ({ onSuccess }: AddMissingProps) => {
                 <div>
                   <label
                     htmlFor="imager"
-                    className="block mb-2 text-sm text-center pt-4 font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm text-center pt-4 font-medium text-gray-900"
                   >
                     Image
                   </label>
@@ -216,7 +195,7 @@ const AddMissing = ({ onSuccess }: AddMissingProps) => {
                   <div role="status" className="flex justify-center">
                     <svg
                       aria-hidden="true"
-                      className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                      className="w-8 h-8 text-gray-200 animate-spin fill-amber-600"
                       viewBox="0 0 100 101"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
@@ -235,7 +214,7 @@ const AddMissing = ({ onSuccess }: AddMissingProps) => {
                 ) : (
                   <button
                     type="submit"
-                    className="w-full rounded-lg bg-slate-200 hover:bg-slate-300 dark:hover:bg-blue-700 dark:text-white focus:ring-4 dark:bg-blue-600 focus:outline-none font-medium text-lg px-5 py-2.5 text-center"
+                    className="w-full rounded-xl bg-slate-200 hover:bg-slate-300 text-gray-900 focus:ring-4 focus:ring-amber-300/50 focus:outline-none font-bold text-lg px-5 py-2.5 text-center transition-all duration-200 active:scale-95"
                   >
                     Submit
                   </button>

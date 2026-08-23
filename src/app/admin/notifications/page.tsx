@@ -7,11 +7,20 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/react";
-import app from "@/lib/firebase";
+import app, { database } from "@/lib/firebase";
 import { ToastContext } from "@/lib/toastContext";
-import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Input, Spinner } from "@nextui-org/react";
-import { getDatabase, ref, update } from "firebase/database";
+import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Input } from "@nextui-org/react";
+import { getAuth } from "firebase/auth";
+import { get, ref, remove } from "firebase/database";
 import { useContext, useEffect, useState } from "react";
+
+// The notification APIs require an admin ID token (verified server-side
+// against the /admins allowlist).
+const getAuthHeader = async (): Promise<Record<string, string>> => {
+  const idToken = await getAuth(app).currentUser?.getIdToken();
+  return idToken ? { authorization: `Bearer ${idToken}` } : {};
+};
+
 const Page = () => {
 
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
@@ -27,153 +36,129 @@ const Page = () => {
   const { toast } = useContext(ToastContext);
 
   const sendNotification = async () => {
-    console.log(JSON.stringify({ data: { "message": notif, "lat": latitude, "lon": longitude } }));
+    if (!notif?.trim() || !latitude?.trim() || !longitude?.trim()) {
+      toast({ type: "warning", message: "Message, latitude and longitude are required" });
+      return;
+    }
+    if (!devicesList || devicesList.length === 0) {
+      toast({ type: "error", message: "No registered devices loaded yet" });
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch("/api/notification", {
         method: "POST",
         headers: {
           "content-type": "application/json",
+          ...(await getAuthHeader()),
         },
         body: JSON.stringify({ data: { "message": notif, "lat": latitude, "lon": longitude, devices: devicesList, rad : radius } }),
       });
-      const data = await res.json();
-      console.log(data);
-      setNotif(null);
-      toast({
-        type: "error",
-        message: "Notification sent to registered devices",
-      });
-      setLoading(false);
+      const { data } = await res.json();
+      if (data === "success") {
+        setNotif(null);
+        toast({ type: "success", message: "Notification sent to devices in the selected area" });
+      } else {
+        toast({ type: "error", message: "Notification could not be sent" });
+      }
     } catch (err) {
+      console.error("Location notification failed:", err);
+      toast({ type: "error", message: "Notification could not be sent" });
+    } finally {
       setLoading(false);
-      console.log(JSON.stringify(err));
     }
   };
 
   const sendNotificationGeneral = async () => {
+    if (!message?.trim()) {
+      toast({ type: "warning", message: "Notification message is required" });
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch("/api/notification/general", {
         method: "POST",
         headers: {
           "content-type": "application/json",
+          ...(await getAuthHeader()),
         },
-        body: JSON.stringify({ data: { "notification": message, } }),
+        body: JSON.stringify({ data: { "notification": message, devices: devicesList ?? [] } }),
       });
-      const data = await res.json();
-      console.log(data);
-      setMessage(null);
-      toast({
-        type: "error",
-        message: "Notification sent to registered devices",
-      });
-      setLoading(false);
+      const { data } = await res.json();
+      if (data === "success") {
+        setMessage(null);
+        toast({ type: "success", message: "Notification sent to all registered devices" });
+      } else {
+        toast({ type: "error", message: "Notification could not be sent" });
+      }
     } catch (err) {
-      console.log(err)
-      toast({
-        type: "error",
-        message: "Error Occurred! Try Debugging"
-      });
+      console.error("General notification failed:", err);
+      toast({ type: "error", message: "Notification could not be sent" });
+    } finally {
       setLoading(false);
     }
   }
 
-  const getProbableAddress = async (lat:string='25.0806704', long:string='-77.4311452') => {
-    console.log(lat, long);
+  const getProbableAddress = async (lat?: string, long?: string) => {
+    // Reset so the modal never shows a previous device's address
+    setAddress(null);
+    if (!lat || !long) {
+      setAddress("No location data recorded for this device");
+      return;
+    }
     try {
       const res = await fetch('/api/notification/geocode',{
         method: "POST",
         headers: {
           "content-type": "application/json",
+          ...(await getAuthHeader()),
         },
         body: JSON.stringify({ data: { "latitude": lat, "longitude": long } }),
       })
       const { data } = await res.json();
       setAddress(data);
-      return 
     } catch (err) {
-      console.log(err)
-      return 'Error Occurred! Please Try Again Later';
+      console.error("Geocoding failed:", err);
+      setAddress("Could not resolve address. Please try again later.");
     }
   }
 
 
-  const sendNotificationSpecific = async (parmas:string) => {
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/notification/specific/${parmas}`, {
-        method: "GET",
-        headers: {
-          "content-type": "application/json",
-        },
-      });
-      const data = await res.json();
-      console.log(data);
-      setMessage(null);
-      toast({
-        type: "error",
-        message: "Notification sent to registered devices",
-      });
-      setLoading(false);
-    } catch (err) {
-      console.log(err)
-      toast({
-        type: "error",
-        message: "Error Occurred! Try Debugging"
-      });
-      setLoading(false);
-    }
-  }
-
-
+  // Reads the device register directly as the signed-in admin — the
+  // unauthenticated GET /api/registrations endpoint (a device-PII leak)
+  // was removed.
   const fetchDeviceRegister = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/registrations", {
-        method: "GET",
-        headers: {
-          "content-type": "application/json",
-        }
-      });
-      const { data } = await res.json();
-      console.log(Object.entries(data));
-      setDevicesList(Object.entries(data));
-      setLoading(false);
-      toast({
-        type: "info",
-        message: "List of Devices Fetched!",
-      });
+      const snapshot = await get(ref(database, "notifications_register"));
+      setDevicesList(snapshot.exists() ? Object.entries(snapshot.val()) : []);
     } catch (err) {
       toast({
         type: "error",
         message: "List Not Fetched! Try again Later",
       });
-      console.log(err)
-      setLoading(false)
+      console.error("Device list fetch failed:", err);
+    } finally {
+      setLoading(false);
     }
   }
 
-  const deleteDeviceFromRegister = async (params: string) => {
+  const deleteDeviceFromRegister = async (token: string) => {
+    if (!confirm("Remove this device from the notification register?")) {
+      return;
+    }
     setLoading(true);
     try {
-      const res = await fetch("/api/registrations", {
-        method: "DELETE",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify(params)
-      });
-      const { data } = await res.json();
-      console.log(data)
-      setLoading(false);
-      window.location.reload();
+      await remove(ref(database, `notifications_register/${token}`));
+      toast({ type: "success", message: "Device removed from register" });
+      await fetchDeviceRegister();
     } catch (err) {
       toast({
         type: "error",
-        message: "Server Error Occurred! Try again Later",
+        message: "Could not remove device. Try again later.",
       });
-      console.log(err);
+      console.error("Device delete failed:", err);
+    } finally {
       setLoading(false);
     }
   }
@@ -190,7 +175,7 @@ const Page = () => {
 
   return (
     <div className="w-full min-h-screen">
-      <h1 className="text-center font-bold text-5xl bg-white py-4 my-6 rounded-tl-lg rounded-bl-lg">Notifications Center</h1>
+      <h1 className="text-center font-bold text-4xl md:text-5xl text-amber-950 drop-shadow-[0_2px_10px_rgba(255,255,255,0.5)] py-4 my-6">Notifications Center</h1>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
@@ -263,71 +248,15 @@ const Page = () => {
             <Button className="hover:bg-primary-500 hover:text-white mx-auto" variant="bordered" radius="md" color="primary" onPress={sendNotification}>Push Notification</Button>
           </CardFooter>
         </Card>
-        <div>
-
-
-        </div>
       </div>
-      {/* {loading ? (
-        <div className="flex justify-center p-4">
-          <Spinner size="lg" />
-        </div>
-      ) : (
-        <div className=" p-4 flex justify-center flex-wrap">
-          <Input
-            label="Notification Message"
-            className="max-w-md"
-            value={notif ? notif : ""}
-            onChange={(e) => setNotif(e.target.value)}
-          />
-          <div className="w-full flex justify-around mt-8">
-            <Input
-              label="Latitude"
-              className="max-w-md"
-              value={latitude ? latitude as string : ""}
-              onChange={(e) => setLatitude(e.target.value)}
-            />
-            <Input
-              label="Longitude"
-              className="max-w-md"
-              value={longitude ? longitude as string : ""}
-              onChange={(e) => setLongtitude(e.target.value)}
-            />
-          </div>
-          <div className="w-full flex justify-center mt-4">
-            <Button className="" radius="md" color="primary" onPress={sendNotification}>Send</Button>
-          </div>
-        </div>
-      )} */}
-      {/* {loading ? (
-        <div className="flex justify-center p-4">
-          <Spinner size="lg" />
-        </div>
-      ) : (
-        <div>
-          <h1>ExponentPushToken[imCwVMKCbO3liQllzT_HfU]</h1>
-        </div>
-      )} */}
       <Divider className="mt-4" />
       {devicesList ? (
         <div>
-          <p className="text-center font-bold text-3xl bg-white py-4 my-6 rounded-tl-lg rounded-bl-lg">Registered Devices List</p>
+          <p className="text-center font-bold text-3xl text-amber-950 py-4 my-6">Registered Devices List</p>
           {devicesList.map((device: any) => {
-            // let address:any = 'Address Not Found';
-            // if(device[1]?.Location) {
-            //   address = getProbableAddress(device[1]?.Location?.coords?.latitude, device[1]?.Location?.coords?.longitude);
-            // }
-
             return (
               <Card className="m-4 p-3 max-w-full" key={device[0]}>
                 <CardHeader className="flex gap-3">
-                  {/* <Image
-                    alt="heroui logo"
-                    height={40}
-                    radius="sm"
-                    src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
-                    width={40}
-                  /> */}
                   <div className="flex flex-col">
                     <p className="text-md">Token: {device[0]}</p>
                     <p className="text-small text-default-500">Brand : {device[1]?.Device?.brand}</p>
@@ -342,18 +271,12 @@ const Page = () => {
                     {device[1]?.Location ? (<><Divider />
                       <p><span className="block text-center mt-2 font-bold">Last Known Location</span> <br /> Latitude : {device[1]?.Location?.coords?.latitude} <br /> Longitude : {device[1]?.Location?.coords?.longitude}</p></>) : null}
                   </div>
-                  {/* <div>
-                    Probable Address : {testRun(device[1]?.Location?.coords?.latitude,device[1]?.Location?.coords?.longitude)}
-                  </div> */}
                 </CardBody>
                 <Divider />
                 <CardFooter>
                   <Button variant="flat" color="danger" className="mx-auto mt-2" onPress={() => deleteDeviceFromRegister(device[0])}>
                     Delete
                   </Button>
-                  {/* <Button variant="flat" color="secondary" className="mx-auto mt-2" onPress={() => sendNotificationSpecific(device[0])}>
-                    Send Notif
-                  </Button> */}
                   <Button variant="ghost" color="warning" className="mx-auto mt-2" onPress={() => {
                     getProbableAddress(device[1]?.Location?.coords?.latitude, device[1]?.Location?.coords?.longitude),
                     onOpen();

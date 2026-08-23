@@ -2,11 +2,11 @@ const Page = () => {
   return (
     <div className="w-full min-h-screen p-4 md:p-14 lg:p-24 font-nunito">
       <div className="mt-10">
-        <h1 className="text-xs p-1 font-extralight">Posted on 19th May 2024</h1>
-        <h1 className="text-5xl font-bold">Terms of Service</h1>
+        <p className="text-xs p-1 font-extralight text-amber-900/70">Posted on 19th May 2024</p>
+        <h1 className="text-4xl md:text-5xl font-bold text-amber-950 drop-shadow-[0_2px_10px_rgba(255,255,255,0.5)]">Terms of Service</h1>
       </div>
       <div className="my-8">
-        <h1 className="text-3xl font-semibold">Introduction</h1>
+        <h2 className="text-3xl font-semibold text-amber-900 mb-1">Introduction</h2>
         <p className="tracking-wide mt-2 text-lg font-thin">
           Welcome to CrackCrimeBahamas! These terms of service govern your use
           of our platform, which helps citizens in the Bahamas provide tips to
@@ -15,7 +15,7 @@ const Page = () => {
         </p>
       </div>
       <div className="my-8">
-        <h1 className="text-3xl font-semibold">Disclaimer</h1>
+        <h2 className="text-3xl font-semibold text-amber-900 mb-1">Disclaimer</h2>
         <p className="tracking-wide mt-2 text-lg font-thin">
           This disclaimer governs your use of this mobile application
           (hereinafter called App); by using this App, you accept in full all
@@ -27,7 +27,7 @@ const Page = () => {
         </p>
       </div>
       <div className="my-8">
-        <h1 className="text-3xl font-semibold">License to use app</h1>
+        <h2 className="text-3xl font-semibold text-amber-900 mb-1">License to use app</h2>
         <p className="tracking-wide mt-2 text-lg font-thin">
           You may download this App for your own personal use only, subject to
           the restrictions below. You must not:{" "}
@@ -40,9 +40,9 @@ const Page = () => {
         </p>
       </div>
       <div className="my-8">
-        <h1 className="text-3xl font-semibold">
+        <h2 className="text-3xl font-semibold text-amber-900 mb-1">
           Limitation and Exclusion of Warranties and Liability
-        </h1>
+        </h2>
         <p className="tracking-wide mt-2 text-lg font-thin">
           This material contained within or released by this App is intended for
           informational purposes only. eBiz, staff of eBiz, Marisa Ahwai, Crime
@@ -77,7 +77,7 @@ const Page = () => {
         </p>
       </div>
       <div className="my-8">
-        <h1 className="text-3xl font-semibold">Revisions</h1>
+        <h2 className="text-3xl font-semibold text-amber-900 mb-1">Revisions</h2>
         <p className="tracking-wide mt-2 text-lg font-thin">
           The Developers may revise this disclaimer from time to time. The
           revised disclaimer will apply to the use of the App from the date of
@@ -85,7 +85,7 @@ const Page = () => {
         </p>
       </div>
       <div className="my-8">
-        <h1 className="text-3xl font-semibold">Entire agreement</h1>
+        <h2 className="text-3xl font-semibold text-amber-900 mb-1">Entire agreement</h2>
         <p className="tracking-wide mt-2 text-lg font-thin">
           This disclaimer constitutes the entire agreement between you and the
           Developers in relation to your use of this App and supersedes all
@@ -94,7 +94,7 @@ const Page = () => {
         </p>
       </div>
       <div className="my-8">
-        <h1 className="text-3xl font-semibold">Law and jurisdiction</h1>
+        <h2 className="text-3xl font-semibold text-amber-900 mb-1">Law and jurisdiction</h2>
         <p className="tracking-wide mt-2 text-lg font-thin">
           This disclaimer will be governed by and construed in accordance with
           English law, and any disputes relating to this disclaimer will be
@@ -103,7 +103,7 @@ const Page = () => {
         </p>
       </div>
       <div className="my-8">
-        <h1 className="text-3xl font-semibold">Pictures within APP</h1>
+        <h2 className="text-3xl font-semibold text-amber-900 mb-1">Pictures within APP</h2>
         <p className="tracking-wide mt-2 text-lg font-thin">
           The pictures contained within or released by the APP have been
           obtained from public sources or law enforcement agencies and the
@@ -114,7 +114,7 @@ const Page = () => {
       </div>
 
       <div className="my-8">
-        <h1 className="text-3xl font-semibold">User Accounts</h1>
+        <h2 className="text-3xl font-semibold text-amber-900 mb-1">User Accounts</h2>
         <div className="tracking-wide mt-2 text-lg">
           <ul className="list-disc list-inside font-thin">
             <li>
@@ -135,7 +135,7 @@ const Page = () => {
         </div>
       </div>
       <div className="my-8">
-        <h1 className="text-3xl font-semibold">Submitting Tips</h1>
+        <h2 className="text-3xl font-semibold text-amber-900 mb-1">Submitting Tips</h2>
         <div className="tracking-wide mt-2 text-lg">
           <ul className="list-disc list-inside font-thin">
             <li>
@@ -157,7 +157,7 @@ const Page = () => {
         </div>
       </div>
       <div className="my-8">
-        <h1 className="text-3xl font-semibold">Your Rights</h1>
+        <h2 className="text-3xl font-semibold text-amber-900 mb-1">Your Rights</h2>
         <div className="tracking-wide mt-2 text-lg">
           <ul className="list-disc list-inside font-thin">
             <li>
@@ -167,7 +167,7 @@ const Page = () => {
             <li>
               <span className="font-semibold">Privacy Policy</span>: Please
               refer to our{" "}
-              <a href="/legal/privacy" className="text-blue-500 underline">
+              <a href="/legal/privacy" className="text-amber-800 hover:text-amber-950 underline">
                 Privacy Policy
               </a>{" "}
               for details on how we collect, use, and protect your information.
@@ -176,7 +176,7 @@ const Page = () => {
         </div>
       </div>
       <div className="my-8">
-        <h1 className="text-3xl font-semibold">Prohibited Uses</h1>
+        <h2 className="text-3xl font-semibold text-amber-900 mb-1">Prohibited Uses</h2>
         <div className="tracking-wide mt-2 text-lg">
           <ul className="list-disc list-inside font-thin">
             <li>Use our services for any unlawful purpose.</li>
@@ -186,7 +186,7 @@ const Page = () => {
         </div>
       </div>
       <div className="my-8">
-        <h1 className="text-3xl font-semibold">Termination</h1>
+        <h2 className="text-3xl font-semibold text-amber-900 mb-1">Termination</h2>
         <p className="tracking-wide mt-2 text-lg font-thin">
           We may suspend or terminate your access to our services if you violate
           these terms or engage in activities that harm the community or our
@@ -194,23 +194,23 @@ const Page = () => {
         </p>
       </div>
       <div className="my-8">
-        <h1 className="text-3xl font-semibold">Changes to Terms</h1>
+        <h2 className="text-3xl font-semibold text-amber-900 mb-1">Changes to Terms</h2>
         <p className="tracking-wide mt-2 text-lg font-thin">
           We may update these terms from time to time. We will notify you of any
           significant changes via email or through our platform.
         </p>
       </div>
       <div className="my-8">
-        <h1 className="text-3xl font-semibold">Limitation of Liability</h1>
+        <h2 className="text-3xl font-semibold text-amber-900 mb-1">Limitation of Liability</h2>
         <p className="tracking-wide mt-2 text-lg font-thin">
           CrackCrimeBahamas is not liable for any indirect, incidental, or
           consequential damages arising from your use of our services.
         </p>
       </div>
       <div className="my-8">
-        <h1 className="text-3xl font-semibold">
+        <h2 className="text-3xl font-semibold text-amber-900 mb-1">
           Development Company&apos;s Contact Information
-        </h1>
+        </h2>
         <p className="tracking-wide mt-2 text-lg font-thin">
           The full name of the development company is eBiz Ltd, We are
           incorporated under the laws of The Commonwealth of The Bahamas. You

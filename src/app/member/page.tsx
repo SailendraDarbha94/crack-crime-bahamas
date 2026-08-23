@@ -1,5 +1,6 @@
 "use client";
 
+import { useToast } from "@/lib/toastContext";
 import { useState } from "react";
 
 const Page = () => {
@@ -9,7 +10,18 @@ const Page = () => {
   const [email, setEmail] = useState<string>("");
   const [support, setSupport] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const registerMember = async () => {
+  const { toast } = useToast();
+
+  const registerMember = async (e: React.FormEvent) => {
+    // Never let the browser do a native GET submit — it would put the
+    // submitter's personal details into the URL and abort the save.
+    e.preventDefault();
+
+    if (!support) {
+      toast({ message: "Please select a membership tier", type: "warning" });
+      return;
+    }
+
     setLoading(true);
     const currentTime = Date.now();
     try {
@@ -27,43 +39,46 @@ const Page = () => {
           created_at: currentTime
         }),
       });
-      const data = await res.json();
+      const { data } = await res.json();
       if (data !== "request failure") {
-        console.log(data);
         setName("");
         setAddress("");
         setEmail("");
         setMobile("");
         setSupport("");
-        setLoading(false)
+        toast({ message: "Thank you! Your membership request has been submitted.", type: "success" });
+      } else {
+        toast({ message: "Submission failed. Please try again later.", type: "error" });
       }
     } catch (err) {
       console.error(err);
-      setLoading(false)
+      toast({ message: "Submission failed. Please try again later.", type: "error" });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen p-4 pt-24 md:pt-0">
+    <div className="min-h-screen p-4">
       <section className="font-nunito mb-10 mx-auto max-w-lg rounded-lg">
         <div className="flex flex-col items-center justify-center px-3 md:px-8 py-4 mx-auto md:h-screen lg:py-0">
           <a
-            href="#"
-            className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+            href="/"
+            className="flex items-center mb-6 text-2xl font-semibold text-amber-950"
           >
-            <img className="w-8 h-8 mr-2" src="/newfavicon.png" alt="logo" />
+            <img className="w-8 h-8 mr-2" src="/newfavicon.png" alt="Crack Crime Bahamas logo" />
             Crack Crime Bahamas
           </a>
-          <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+          <div className="w-full bg-white/25 backdrop-blur-xl border border-white/50 rounded-2xl shadow-[0_8px_32px_rgba(120,72,10,0.12)] md:mt-0 sm:max-w-md xl:p-0">
             <div className="p-4 md:p-6 space-y-4 md:space-y-6 sm:p-8 w-fu">
-              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+              <h1 className="text-xl font-bold leading-tight tracking-tight text-amber-950 md:text-2xl">
                 Membership Form
               </h1>
-              <form className="space-y-4 md:space-y-6" action="#">
+              <form className="space-y-4 md:space-y-6" onSubmit={registerMember}>
                 <div>
                   <label
                     htmlFor="name"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm font-medium text-amber-950"
                   >
                     Name
                   </label>
@@ -72,7 +87,7 @@ const Page = () => {
                     name="name"
                     id="name"
                     value={name}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="bg-white/40 backdrop-blur-md border border-white/60 focus:outline-none focus:ring-2 focus:ring-amber-400/60 text-amber-950 placeholder-amber-900/50 sm:text-sm rounded-xl block w-full p-2.5"
                     placeholder=""
                     required={true}
                     onChange={(e) => setName(e.target.value)}
@@ -81,7 +96,7 @@ const Page = () => {
                 <div>
                   <label
                     htmlFor="email"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm font-medium text-amber-950"
                   >
                     E-Mail
                   </label>
@@ -92,14 +107,14 @@ const Page = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="abc@example.com"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="bg-white/40 backdrop-blur-md border border-white/60 focus:outline-none focus:ring-2 focus:ring-amber-400/60 text-amber-950 placeholder-amber-900/50 sm:text-sm rounded-xl block w-full p-2.5"
                     required={true}
                   />
                 </div>
                 <div>
                   <label
                     htmlFor="address"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm font-medium text-amber-950"
                   >
                     Address
                   </label>
@@ -110,14 +125,14 @@ const Page = () => {
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     placeholder=""
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="bg-white/40 backdrop-blur-md border border-white/60 focus:outline-none focus:ring-2 focus:ring-amber-400/60 text-amber-950 placeholder-amber-900/50 sm:text-sm rounded-xl block w-full p-2.5"
                     required={true}
                   />
                 </div>
                 <div>
                   <label
                     htmlFor="mobile"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm font-medium text-amber-950"
                   >
                     Mobile
                   </label>
@@ -128,18 +143,19 @@ const Page = () => {
                     value={mobile}
                     onChange={(e) => setMobile(e.target.value)}
                     placeholder=""
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="bg-white/40 backdrop-blur-md border border-white/60 focus:outline-none focus:ring-2 focus:ring-amber-400/60 text-amber-950 placeholder-amber-900/50 sm:text-sm rounded-xl block w-full p-2.5"
                     required={true}
                   />
                 </div>
-                <div>
-                  <p>Select Your Annual Membership Fees</p>
+                <fieldset>
+                  <legend>Select Your Annual Membership Fees</legend>
                   <div className="m-2 inline-block text-green-600">
                     <input
                       type="radio"
                       id="friend"
-                      name="friend"
+                      name="support"
                       value="friend"
+                      checked={support === "friend"}
                       onChange={(e) => setSupport(e.target.value)}
                     />
                     <label htmlFor="friend">$25(Friend)</label>
@@ -148,8 +164,9 @@ const Page = () => {
                     <input
                       type="radio"
                       id="supporter"
-                      name="supporter"
+                      name="support"
                       value="supporter"
+                      checked={support === "supporter"}
                       onChange={(e) => setSupport(e.target.value)}
                     />
                     <label htmlFor="supporter">$100(Supporter)</label>
@@ -158,8 +175,9 @@ const Page = () => {
                     <input
                       type="radio"
                       id="bronze"
-                      name="bronze"
+                      name="support"
                       value="bronze"
+                      checked={support === "bronze"}
                       onChange={(e) => setSupport(e.target.value)}
                     />
                     <label htmlFor="bronze">$250(Bronze)</label>
@@ -168,8 +186,9 @@ const Page = () => {
                     <input
                       type="radio"
                       id="silver"
-                      name="silver"
+                      name="support"
                       value="silver"
+                      checked={support === "silver"}
                       onChange={(e) => setSupport(e.target.value)}
                     />
                     <label htmlFor="silver">$500(Silver)</label>
@@ -178,8 +197,9 @@ const Page = () => {
                     <input
                       type="radio"
                       id="gold"
-                      name="gold"
+                      name="support"
                       value="gold"
+                      checked={support === "gold"}
                       onChange={(e) => setSupport(e.target.value)}
                     />
                     <label htmlFor="gold">$1000(Gold)</label>
@@ -188,45 +208,19 @@ const Page = () => {
                     <input
                       type="radio"
                       id="platinum"
-                      name="platinum"
+                      name="support"
                       value="platinum"
+                      checked={support === "platinum"}
                       onChange={(e) => setSupport(e.target.value)}
                     />
                     <label htmlFor="platinum">$2500(Platinum)</label>
                   </div>
-                </div>
-                {/* <div className="flex items-center justify-between">
-                    <div className="flex items-start">
-                      <div className="flex items-center h-5">
-                        <input
-                          id="remember"
-                          aria-describedby="remember"
-                          type="checkbox"
-                          className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                          required={true}
-                        />
-                      </div>
-                      <div className="ml-3 text-sm">
-                        <label
-                          htmlFor="remember"
-                          className="text-gray-500 dark:text-gray-300"
-                        >
-                          Remember me
-                        </label>
-                      </div>
-                    </div>
-                    <a
-                      href="#"
-                      className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
-                    >
-                      forgot password?
-                    </a>
-                  </div> */}
+                </fieldset>
                 {loading ? (
                   <div role="status" className="flex justify-center">
                     <svg
                       aria-hidden="true"
-                      className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                      className="w-8 h-8 text-amber-900/30 animate-spin fill-amber-700"
                       viewBox="0 0 100 101"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
@@ -244,22 +238,12 @@ const Page = () => {
                   </div>
                 ) : (
                   <button
-                    onClick={registerMember}
-                    className="w-full rounded-lg bg-slate-200 hover:bg-slate-300 dark:hover:bg-blue-700 dark:text-white focus:ring-4 dark:bg-blue-600 focus:outline-none font-medium text-lg px-5 py-2.5 text-center"
+                    type="submit"
+                    className="w-full rounded-xl bg-white/40 backdrop-blur-md border border-white/60 hover:bg-white/55 text-amber-950 focus:ring-4 focus:ring-amber-300/50 focus:outline-none font-bold text-lg px-5 py-2.5 text-center transition-all duration-200 active:scale-95"
                   >
                     Submit
                   </button>
                 )}
-
-                {/* <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                    Don&apos;t have an account yet?{" "}
-                    <a
-                      href="#"
-                      className="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                    >
-                      Sign up
-                    </a>
-                  </p> */}
               </form>
             </div>
           </div>

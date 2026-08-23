@@ -1,70 +1,65 @@
-import app from "@/lib/firebase";
 import { Expo } from "expo-server-sdk";
-import { child, get, getDatabase, ref } from "firebase/database";
+import { verifyAdmin } from "@/lib/serverAuth";
 
+// True circular geofence: haversine distance between the two points must be
+// within the requested radius (metres).
+const isWithinRadius = (
+  deviceLat: number,
+  deviceLon: number,
+  targetLat: number,
+  targetLon: number,
+  radiusMetres: number
+): boolean => {
+  if ([deviceLat, deviceLon, targetLat, targetLon, radiusMetres].some((n) => !Number.isFinite(n))) {
+    return false;
+  }
+  const earthRadius = 6371000; // metres
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const dLat = toRad(deviceLat - targetLat);
+  const dLon = toRad(deviceLon - targetLon);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(targetLat)) * Math.cos(toRad(deviceLat)) * Math.sin(dLon / 2) ** 2;
+  const distance = 2 * earthRadius * Math.asin(Math.sqrt(a));
+  return distance <= radiusMetres;
+};
 
 export async function POST(req: Request) {
-
-  let somePushTokens:any[] = [];
-  const { data } = await req.json();
-  const isWithin500Meters = (targetLat: any, targetLon: any, receivedLat: any, receivedLon: any,) => {
-    const earthRadius = 6371000; // Radius of the Earth in meters
-
-    // Approximate degree conversions
-    const latDiff = data?.rad / earthRadius * (180 / Math.PI); // Convert 50m to latitude degrees
-    const lonDiff = data?.rad / (earthRadius * Math.cos(targetLat * Math.PI / 180)) * (180 / Math.PI); // Convert 50m to longitude degrees
-
-    // Define bounding box
-    const minLat = targetLat - latDiff;
-    const maxLat = targetLat + latDiff;
-    const minLon = targetLon - lonDiff;
-    const maxLon = targetLon + lonDiff;
-
-    // Check if received coordinates fall within the bounding box
-    if (receivedLat >= minLat && receivedLat <= maxLat) {
-      if (receivedLon >= minLon && receivedLon <= maxLon) {
-        console.log("Within Radius")
-        return true;
-      }
-    } else {
-      console.log("Should Not Fire Notification")
-      return false;
-    }
-  };
-
-  
-  console.log(data);
-
-  data.devices.forEach((element:any) => {
-    console.log("checking", element[0]);
-    if(isWithin500Meters(element[1]?.Location?.coords?.latitude,element[1]?.Location?.coords?.longitude,data.lat, data.lon)){
-      somePushTokens.push(`ExponentPushToken[{token}]`.replace("{token}", element[0]))
-    }
-    return (
-      somePushTokens
-    )
-  });
-
-  
-
-  const db = await getDatabase(app);
-  const dbRef = await ref(db);
-  try {
-    const data = await get(child(dbRef, '/notifications_register'))
-    if(data.exists()){
-      const tokens = await data.val()
-      console.log("should change this part")
-      //somePushTokens = Object.keys(tokens).map(token => 'ExponentPushToken[{token}]'.replace("{token}", token))
-    } else {
-      console.log("errrorrrrrrr")
-    }
-  } catch (err) {
-    console.log(err)
-    return Response.json({data: "request failure"})
+  // Only allowlisted admins may broadcast through the Expo account
+  if (!(await verifyAdmin(req))) {
+    return Response.json({ data: "unauthorized" }, { status: 401 });
   }
 
+  let somePushTokens: string[] = [];
+  const { data } = await req.json();
+
+  if (!data || !Array.isArray(data.devices) || typeof data.message !== "string") {
+    return Response.json({ data: "request failure" }, { status: 400 });
+  }
+  if (data.devices.length > 500) {
+    return Response.json({ data: "request failure" }, { status: 400 });
+  }
+
+  const targetLat = Number(data.lat);
+  const targetLon = Number(data.lon);
+  const radius = Number(data.rad);
+
+  data.devices.forEach((element: any) => {
+    if (
+      isWithinRadius(
+        Number(element[1]?.Location?.coords?.latitude),
+        Number(element[1]?.Location?.coords?.longitude),
+        targetLat,
+        targetLon,
+        radius
+      )
+    ) {
+      somePushTokens.push(`ExponentPushToken[{token}]`.replace("{token}", element[0]));
+    }
+  });
+
   let expo = new Expo({
-    accessToken: process.env.NEXT_PUBLIC_EXPO_ACCESS_TOKEN,
+    accessToken: process.env.EXPO_ACCESS_TOKEN,
     useFcmV1: true, // this can be set to true in order to use the FCM v1 API
   });
 
@@ -84,7 +79,6 @@ export async function POST(req: Request) {
       to: pushToken,
       sound: "default",
       body: data.message,
-      data: { body: "o stree kal notification lana" },
     });
   }
 
@@ -112,66 +106,6 @@ export async function POST(req: Request) {
 
 
 
-  // Later, after the Expo push notification service has delivered the
-  // notifications to Apple or Google (usually quickly, but allow the service
-  // up to 30 minutes when under load), a "receipt" for each notification is
-  // created. The receipts will be available for at least a day; stale receipts
-  // are deleted.
-  //
-  // The ID of each receipt is sent back in the response "ticket" for each
-  // notification. In summary, sending a notification produces a ticket, which
-  // contains a receipt ID you later use to get the receipt.
-  //
-  // The receipts may contain error codes to which you must respond. In
-  // particular, Apple or Google may block apps that continue to send
-  // notifications to devices that have blocked notifications or have uninstalled
-  // your app. Expo does not control this policy and sends back the feedback from
-  // Apple and Google so you can handle it appropriately.
-  // let receiptIds = [];
-  // for (let ticket of tickets) {
-  //   // NOTE: Not all tickets have IDs; for example, tickets for notifications
-  //   // that could not be enqueued will have error information and no receipt ID.
-  //   if (ticket.status === "ok") {
-  //     receiptIds.push(ticket.id);
-  //   }
-  // }
-
-  // let receiptIdChunks = expo.chunkPushNotificationReceiptIds(receiptIds);
-  // (async () => {
-  //   // Like sending notifications, there are different strategies you could use
-  //   // to retrieve batches of receipts from the Expo service.
-  //   for (let chunk of receiptIdChunks) {
-  //     try {
-  //       let receipts = await expo.getPushNotificationReceiptsAsync(chunk);
-  //       console.log(receipts);
-
-  //       // The receipts specify whether Apple or Google successfully received the
-  //       // notification and information about an error, if one occurred.
-  //       for (let receiptId in receipts) {
-  //         let { status, details } = receipts[receiptId];
-  //         //
-  //         if (status === "ok") {
-  //           continue;
-  //         } else if (status === "error") {
-  //           console.error(`There was an error sending a notification`);
-  //           if (details) {
-  //             // The error codes are listed in the Expo documentation:
-  //             // https://docs.expo.io/push-notifications/sending-notifications/#individual-errors
-  //             // You must handle the errors appropriately.
-  //             console.error(`The error code is ${JSON.stringify(details)}`);
-  //           }
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   }
-  // })();
-
-  console.log(
-    "Push Token List Within Radius RECEIVED : ==================================================",);
-    console.log(somePushTokens)
-  
   pushNotifs();
   return Response.json({ data: "success" });
 }

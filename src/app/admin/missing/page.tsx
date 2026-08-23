@@ -1,6 +1,6 @@
 "use client";
 
-import { MissingPersonService, DatabaseService } from "@/lib/firebaseService";
+import { MissingPersonService } from "@/lib/firebaseService";
 import { FirebaseErrorHandler } from "@/lib/firebaseErrorHandler";
 import { useToast } from "@/lib/toastContext";
 import { useEffect, useState } from "react";
@@ -9,7 +9,6 @@ import MissingListItem from "./MissingListItem";
 import {
   Modal,
   ModalContent,
-  ModalHeader,
   ModalBody,
   ModalFooter,
   useDisclosure,
@@ -31,12 +30,11 @@ interface MissingPerson {
 
 const Page = () => {
   const [showMissing, setShowMissing] = useState<boolean>(false);
-  const [addMissing, setAddMissing] = useState<boolean>(false);
   const [missings, setMissings] = useState<MissingPerson[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  
+
   const { toast } = useToast();
 
   const fetchMissingPersons = async () => {
@@ -53,37 +51,27 @@ const Page = () => {
       // }
       
       const missingPersons = await MissingPersonService.getAllMissingPersons();
-      console.log('✅ Successfully fetched missing persons:', missingPersons);
-      toast({ message: "Missing Persons List Fetched", type: "info" });
       setMissings(missingPersons);
     } catch (err) {
       const errorMessage = FirebaseErrorHandler.handleError(err);
       setError(errorMessage);
-      console.error("❌ Error fetching missing persons:", err);
-      
-      // Additional debugging info
-      if (err instanceof Error && err.message.includes('Permission denied')) {
-        console.error('🔒 Permission denied error - check Firebase rules and authentication');
-        console.error('🔗 Database URL:', process.env.NEXT_PUBLIC_DATABASE_URL);
-        console.error('🔑 Project ID:', process.env.NEXT_PUBLIC_PROJECT_ID);
-      }
+      console.error("Error fetching missing persons:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  const deleteMissingPost = async (id: string, imagePath: string) => {
-    if (!confirm("Are you sure you want to delete this missing person report?")) {
+  const deleteMissingPost = async (id: string, imagePath: string, personName: string) => {
+    if (!confirm(`Are you sure you want to delete the missing person report for ${personName}?`)) {
       return;
     }
 
     try {
       await MissingPersonService.deleteMissingPerson(id, imagePath);
-      console.log("Post deleted successfully");
-      
+
       // Refresh the list
       await fetchMissingPersons();
-      
+
       toast({ message: "Missing person report deleted successfully", type: "success" });
     } catch (err) {
       const errorMessage = FirebaseErrorHandler.handleError(err);
@@ -96,16 +84,9 @@ const Page = () => {
     fetchMissingPersons();
   }, []);
 
-  // Refresh data when the add form is closed (in case new data was added)
-  useEffect(() => {
-    if (!addMissing && showMissing) {
-      fetchMissingPersons();
-    }
-  }, [addMissing, showMissing]);
-
   return (
     <main className="font-nunito py-3 m-2 rounded-3xl">
-      <h1 className="text-2xl font-bold rounded-3xl border-2 border-black py-2 text-center">Missing Persons</h1>
+      <h1 className="text-2xl font-bold rounded-3xl border border-white/50 bg-white/25 backdrop-blur-md py-2 text-center text-amber-950 shadow-sm">Missing Persons</h1>
       <div className="flex p-2 mb-4 justify-around">
         <Button
           className="font-bold text-lg"
@@ -115,10 +96,7 @@ const Page = () => {
         >
           {showMissing ? "Hide Missing Persons" : "Show Missing Persons"}
         </Button>
-        <Button className="font-bold text-lg" variant="ghost" color="warning" onPress={() => {
-          () => setAddMissing(!addMissing)
-          onOpen();
-        }}>
+        <Button className="font-bold text-lg" variant="ghost" color="warning" onPress={onOpen}>
           Add Missing Person
         </Button>
       </div>
@@ -140,33 +118,31 @@ const Page = () => {
         </ModalContent>
       </Modal>
       
-      {addMissing && <AddMissing onSuccess={() => fetchMissingPersons()} />}
-      
       {showMissing && (
         <div className="w-full">
           {loading ? (
             <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-800"></div>
             </div>
           ) : error ? (
-            <div className="text-red-600 text-center py-4">
+            <div className="text-red-800 text-center py-4">
               Error: {error}
-              <button 
+              <button
                 onClick={fetchMissingPersons}
-                className="block mx-auto mt-2 bg-blue-500 text-white px-4 py-2 rounded"
+                className="block mx-auto mt-2 bg-white/35 backdrop-blur-md border border-white/60 text-amber-950 px-4 py-2 rounded-xl hover:bg-white/50 transition-all duration-200 shadow-sm"
               >
                 Retry
               </button>
             </div>
           ) : missings.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-amber-900/70">
               No missing persons reported
             </div>
           ) : (
             missings.map((missing) => (
               <div
                 key={missing.id}
-                className="bg-white text-black rounded-3xl py-2 px-4 my-2"
+                className="bg-white/25 backdrop-blur-xl border border-white/50 text-amber-950 rounded-3xl py-2 px-4 my-2 shadow-[0_4px_16px_rgba(120,72,10,0.12)]"
               >
                 <MissingListItem 
                   name={missing.name}
@@ -177,13 +153,13 @@ const Page = () => {
                   image={missing.image}
                 />
                 {missing.description && (
-                  <div className="mt-2 p-2 bg-gray-50 rounded">
-                    <h4 className="font-semibold text-blue-600">Description:</h4>
-                    <p className="text-sm">{missing.description}</p>
+                  <div className="mt-2 p-2 bg-white/30 border border-white/50 rounded-xl">
+                    <h4 className="font-semibold text-amber-800">Description:</h4>
+                    <p className="text-sm text-amber-900/90">{missing.description}</p>
                     {missing.last_known_address && (
                       <>
-                        <h4 className="font-semibold mt-2">Last Known Address:</h4>
-                        <p className="text-sm">{missing.last_known_address}</p>
+                        <h4 className="font-semibold mt-2 text-amber-800">Last Known Address:</h4>
+                        <p className="text-sm text-amber-900/90">{missing.last_known_address}</p>
                       </>
                     )}
                   </div>
@@ -191,7 +167,7 @@ const Page = () => {
                 <div className="flex justify-center">
                   <button
                     className="bg-red-600/90 my-4 font-bold backdrop-blur-sm hover:bg-red-500/90 text-white hover:border-red-300/50 relative px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ease-out transform active:scale-95"
-                    onClick={() => deleteMissingPost(missing.id, missing.image)}
+                    onClick={() => deleteMissingPost(missing.id, missing.image, missing.name)}
                   >
                     DELETE
                   </button>

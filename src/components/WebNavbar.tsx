@@ -2,6 +2,7 @@
 import app from '@/lib/firebase';
 import { ToastContext } from '@/lib/toastContext';
 import { getAuth, signOut } from 'firebase/auth';
+import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react';
 
@@ -37,6 +38,11 @@ const WebNavbar: React.FC = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
     };
 
+    // Close the mobile menu whenever the route changes
+    useEffect(() => {
+        setIsMobileMenuOpen(false);
+    }, [pathname]);
+
     const NavLink = ({ href, children, onClick, variant = "primary" }: {
         href?: string;
         children: React.ReactNode;
@@ -45,8 +51,8 @@ const WebNavbar: React.FC = () => {
     }) => {
         const baseClasses = "relative px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 ease-out transform active:scale-95";
         const variantClasses = {
-            primary: "bg-slate-300 hover:bg-slate-200 text-black  hover:border-white/30",
-            danger: "bg-red-600/90 backdrop-blur-sm hover:bg-red-500/90 text-white   hover:border-red-300/50"
+            primary: "bg-white/30 backdrop-blur-md border border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70 shadow-sm",
+            danger: "bg-red-500/85 backdrop-blur-md border border-red-300/50 text-white hover:bg-red-600/90 hover:border-red-200/60 shadow-sm"
         };
 
         if (onClick) {
@@ -69,44 +75,30 @@ const WebNavbar: React.FC = () => {
         }
 
         return (
-            <a
-                href={href}
+            <Link
+                href={href ?? "#"}
                 className={`${baseClasses} ${variantClasses[variant]} inline-block`}
             >
                 {children}
-            </a>
+            </Link>
         );
     };
-
-    useEffect(() => {
-        if (pathname.includes("admin")) {
-            console.log("admin route")
-        }
-    }, [])
 
     return (
         <nav className="relative">
             {/* Main Navbar */}
-            <div className="mx-4 my-1.5 rounded-3xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-300">
+            <div className="mx-4 my-1.5 rounded-3xl bg-white/20 backdrop-blur-xl border border-white/50 shadow-[0_8px_32px_rgba(120,72,10,0.18)]">
                 <div className="px-6 py-4">
                     <div className="flex items-center justify-between">
                         {/* Logo */}
                         <div className="flex items-center">
-                            <div className="text-white font-bold text-xl md:text-2xl font-nunito tracking-tight">
+                            <div className="text-amber-950 font-bold text-xl md:text-2xl font-nunito tracking-tight">
                                 Crack Crime Bahamas
                             </div>
                         </div>
                         {/* Desktop Navigation */}
                         {pathname.includes("admin") ? (
                             <div className="hidden md:flex items-center space-x-3">
-                                {/* <NavLink href="/admin">
-                                    <div className="flex items-center gap-3">
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                                        </svg>
-                                        Home
-                                    </div>
-                                </NavLink> */}
                                 <NavLink href="/admin/profile">
                                     <div className="flex items-center gap-3">
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -125,31 +117,13 @@ const WebNavbar: React.FC = () => {
                                 </NavLink>
                             </div>
                         ) : (
-                            <div className="hidden md:flex items-center space-x-3">
-                                <NavLink href="/">
-                                    <div className="flex items-center gap-3">
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                                        </svg>
-                                        Home
-                                    </div>
-                                </NavLink>
-                                <NavLink href="/more-about-us">
-                                    <div className="flex items-center gap-3">
-                                        {/* <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                        </svg> */}
-                                        About Us
-                                    </div>
-                                </NavLink>
-                                {/* <NavLink href="/contact">
-                                    <div className="flex items-center gap-2">
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                        </svg>
-                                        Contact
-                                    </div>
-                                </NavLink> */}
+                            <div className="hidden md:flex items-center space-x-2 lg:space-x-3">
+                                <NavLink href="/wanted"><span>Wanted</span></NavLink>
+                                <NavLink href="/missing"><span>Missing</span></NavLink>
+                                <NavLink href="/submit-tip"><span>Submit a Tip</span></NavLink>
+                                <NavLink href="/member"><span>Sponsor</span></NavLink>
+                                <NavLink href="/more-about-us"><span>About</span></NavLink>
+                                <NavLink href="/contact"><span>Contact</span></NavLink>
                             </div>
                         )}
 
@@ -157,21 +131,21 @@ const WebNavbar: React.FC = () => {
                         {/* Mobile Menu Button */}
                         <button
                             onClick={toggleMobileMenu}
-                            className="md:hidden p-2 rounded-xl bg-white/10 hover:bg-white border border-slate-700 transition-all duration-200 ease-out transform active:scale-95"
+                            className="md:hidden p-2 rounded-xl bg-white/30 hover:bg-white/45 border border-white/50 transition-all duration-200 ease-out transform active:scale-95"
                             aria-label="Toggle mobile menu"
                         >
                             <div className="w-6 h-6 flex flex-col justify-center items-center">
-                                <div className={`w-5 h-0.5 bg-slate-700 rounded-full transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></div>
-                                <div className={`w-5 h-0.5 bg-slate-700 rounded-full mt-1 transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`}></div>
-                                <div className={`w-5 h-0.5 bg-slate-700 rounded-full mt-1 transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></div>
+                                <div className={`w-5 h-0.5 bg-amber-950 rounded-full transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></div>
+                                <div className={`w-5 h-0.5 bg-amber-950 rounded-full mt-1 transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`}></div>
+                                <div className={`w-5 h-0.5 bg-amber-950 rounded-full mt-1 transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></div>
                             </div>
                         </button>
                     </div>
                 </div>
 
                 {/* Mobile Navigation Menu */}
-                <div className={`md:hidden overflow-hidden transition-all duration-300 ease-out ${isMobileMenuOpen ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'}`}>
-                    <div className="px-6 pb-4 border-t border-white/10">
+                <div className={`md:hidden overflow-hidden transition-all duration-300 ease-out ${isMobileMenuOpen ? 'max-h-[36rem] opacity-100' : 'max-h-0 opacity-0'}`}>
+                    <div className="px-6 pb-4 border-t border-amber-900/15">
                         {pathname.includes("admin") ? (
                             <div className="flex flex-col space-y-3 pt-4">
                                 <NavLink href="/admin">
@@ -206,6 +180,9 @@ const WebNavbar: React.FC = () => {
                                         Wanted Persons
                                     </div>
                                 </NavLink>
+                                <NavLink href="/admin/messages"><div className="flex items-center gap-3">Tip Messages</div></NavLink>
+                                <NavLink href="/admin/notifications"><div className="flex items-center gap-3">Notifications</div></NavLink>
+                                <NavLink href="/admin/adverts"><div className="flex items-center gap-3">Advertisements</div></NavLink>
                                 <NavLink onClick={logoutUser} variant="danger">
                                     <div className="flex items-center gap-3">
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -214,41 +191,16 @@ const WebNavbar: React.FC = () => {
                                         Logout
                                     </div>
                                 </NavLink>
-                                {/* <NavLink onClick={logoutUser} variant="danger">
-                                    <div className="flex items-center gap-3">
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                        </svg>
-                                        Logout
-                                    </div>
-                                </NavLink> */}
                             </div>
                         ) : (
                             <div className="flex flex-col space-y-3 pt-4">
-                                <NavLink href="/">
-                                    <div className="flex items-center gap-3">
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                                        </svg>
-                                        Home
-                                    </div>
-                                </NavLink>
-                                <NavLink href="/more-about-us">
-                                    <div className="flex items-center gap-3">
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                        </svg>
-                                        About Us
-                                    </div>
-                                </NavLink>
-                                {/* <NavLink onClick={logoutUser} variant="danger">
-                                    <div className="flex items-center gap-3">
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                        </svg>
-                                        Logout
-                                    </div>
-                                </NavLink> */}
+                                <NavLink href="/"><div className="flex items-center gap-3">Home</div></NavLink>
+                                <NavLink href="/wanted"><div className="flex items-center gap-3">Wanted Persons</div></NavLink>
+                                <NavLink href="/missing"><div className="flex items-center gap-3">Missing Persons</div></NavLink>
+                                <NavLink href="/submit-tip"><div className="flex items-center gap-3">Submit a Tip</div></NavLink>
+                                <NavLink href="/member"><div className="flex items-center gap-3">Become a Sponsor</div></NavLink>
+                                <NavLink href="/more-about-us"><div className="flex items-center gap-3">About Us</div></NavLink>
+                                <NavLink href="/contact"><div className="flex items-center gap-3">Contact</div></NavLink>
                             </div>
                         )}
 

@@ -5,35 +5,25 @@
 @font-face {
   font-family: "Nunito";
   src: url("../../public/fonts/Nunito/Nunito-VariableFont_wght.ttf");
-}
-
-@font-face {
-  font-family: "Honk";
-  src: url("../../public//fonts/Honk/Honk-Regular-VariableFont_MORF\,SHLN.ttf");
+  font-display: swap;
 }
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 241, 214, 98;
-  --background-end-rgb: 240, 220, 100;
+  --foreground-rgb: 51, 28, 4;
+  --background-start-rgb: 253, 224, 71;
+  --background-end-rgb: 245, 158, 11;
 }
-
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-} */
 
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+    145deg,
+    rgb(var(--background-start-rgb)) 0%,
+    rgb(251, 191, 36) 50%,
+    rgb(var(--background-end-rgb)) 100%
+  );
+  min-height: 100vh;
+  background-attachment: fixed;
 }
 
 @layer utilities {

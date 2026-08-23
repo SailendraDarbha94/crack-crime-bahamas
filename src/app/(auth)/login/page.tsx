@@ -7,6 +7,7 @@ import {
   setPersistence,
   signInWithEmailAndPassword,
 } from "firebase/auth";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
 
@@ -19,13 +20,13 @@ const Page = () => {
   const router = useRouter();
   const { toast } = useContext(ToastContext);
 
-  const loginUser = async () => {
+  const loginUser = async (e: React.FormEvent) => {
+    e.preventDefault();
     setLoading(true);
     const auth = getAuth(app);
     setPersistence(auth, browserLocalPersistence).then(() => {
       signInWithEmailAndPassword(auth, email, password)
         .then((cb) => {
-          console.log(cb);
           setLoading(false);
           if (cb.user) {
             toast({
@@ -49,25 +50,25 @@ const Page = () => {
 
   return (
     <main className="min-h-screen">
-      <section className=" dark:bg-gray-900 font-nunito p-4">
+      <section className="font-nunito p-4">
         <div className="flex flex-col items-center justify-center mx-auto md:min-h-screen lg:py-0">
-          <a
-            href="#"
-            className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+          <Link
+            href="/"
+            className="flex items-center mb-6 text-2xl font-semibold text-amber-950"
           >
-            <img className="w-8 h-8 mr-2" src="/newfavicon.png" alt="logo" />
+            <img className="w-8 h-8 mr-2" src="/newfavicon.png" alt="Crack Crime Bahamas logo" />
             Crack Crime Bahamas
-          </a>
-          <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+          </Link>
+          <div className="w-full bg-white/25 backdrop-blur-xl border border-white/50 rounded-2xl shadow-[0_8px_32px_rgba(120,72,10,0.12)] md:mt-0 sm:max-w-md xl:p-0">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+              <h1 className="text-xl font-bold leading-tight tracking-tight text-amber-950 md:text-2xl">
                 Login to Admin Account
               </h1>
-              <div className="space-y-4 md:space-y-6">
+              <form className="space-y-4 md:space-y-6" onSubmit={loginUser}>
                 <div>
                   <label
                     htmlFor="email"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm font-medium text-amber-950"
                   >
                     Your email
                   </label>
@@ -75,7 +76,7 @@ const Page = () => {
                     type="email"
                     name="email"
                     id="email"
-                    className="bg-gray-50 border focus:outline-none border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                    className="bg-white/40 backdrop-blur-md border border-white/60 focus:outline-none focus:ring-2 focus:ring-amber-400/60 text-amber-950 placeholder-amber-900/50 sm:text-sm rounded-xl block w-full p-2.5"
                     placeholder="name@company.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -85,7 +86,7 @@ const Page = () => {
                 <div>
                   <label
                     htmlFor="password"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm font-medium text-amber-950"
                   >
                     Password
                   </label>
@@ -96,14 +97,13 @@ const Page = () => {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="bg-gray-50 border focus:outline-none border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                    className="bg-white/40 backdrop-blur-md border border-white/60 focus:outline-none focus:ring-2 focus:ring-amber-400/60 text-amber-950 placeholder-amber-900/50 sm:text-sm rounded-xl block w-full p-2.5"
                     required={true}
                   />
                 </div>
                 <button
-                  //type="submit"
-                  onClick={loginUser}
-                  className="w-full rounded-lg bg-slate-200 hover:bg-slate-300 dark:hover:bg-blue-700 dark:text-white focus:ring-4 dark:bg-blue-600 focus:outline-none font-medium text-lg px-5 py-2.5 text-center"
+                  type="submit"
+                  className="w-full rounded-xl bg-white/40 backdrop-blur-md border border-white/60 hover:bg-white/55 text-amber-950 focus:ring-4 focus:ring-amber-300/50 focus:outline-none font-bold text-lg px-5 py-2.5 text-center transition-all duration-200 active:scale-95"
                 >
                   {loading ? (
                     <span className="animate-pulse">Loading...</span>
@@ -111,16 +111,16 @@ const Page = () => {
                     <span>Submit</span>
                   )}
                 </button>
-                <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+                <p className="text-sm font-light text-amber-900/80">
                   Don&apos;t have an Admin Account?{" "}
-                  <a
+                  <Link
                     href="/sign-up"
-                    className="font-medium underline text-blue-500"
+                    className="font-medium underline text-amber-800 hover:text-amber-950"
                   >
                     Request Admin Priviliges
-                  </a>
+                  </Link>
                 </p>
-              </div>
+              </form>
             </div>
           </div>
         </div>

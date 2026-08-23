@@ -1,6 +1,6 @@
 "use client";
 
-import { WantedPersonService, DatabaseService } from "@/lib/firebaseService";
+import { WantedPersonService } from "@/lib/firebaseService";
 import { FirebaseErrorHandler } from "@/lib/firebaseErrorHandler";
 import { useToast } from "@/lib/toastContext";
 import { useEffect, useState } from "react";
@@ -9,7 +9,6 @@ import MissingListItem from "../missing/MissingListItem";
 import {
   Modal,
   ModalContent,
-  ModalHeader,
   ModalBody,
   ModalFooter,
   useDisclosure,
@@ -33,7 +32,6 @@ interface WantedPerson {
 
 const Page = () => {
   const [showWanted, setShowWanted] = useState<boolean>(false);
-  const [addWanted, setAddWanted] = useState<boolean>(false);
   const [wanteds, setWanteds] = useState<WantedPerson[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -54,33 +52,23 @@ const Page = () => {
       // }
 
       const wantedPersons = await WantedPersonService.getAllWantedPersons();
-      console.log('✅ Successfully fetched wanted persons:', wantedPersons);
-      toast({ message: "Wanted Persons List Fetched", type: "info" });
       setWanteds(wantedPersons);
     } catch (err) {
       const errorMessage = FirebaseErrorHandler.handleError(err);
       setError(errorMessage);
-      console.error("❌ Error fetching wanted persons:", err);
-
-      // Additional debugging info
-      if (err instanceof Error && err.message.includes('Permission denied')) {
-        console.error('🔒 Permission denied error - check Firebase rules and authentication');
-        console.error('🔗 Database URL:', process.env.NEXT_PUBLIC_DATABASE_URL);
-        console.error('🔑 Project ID:', process.env.NEXT_PUBLIC_PROJECT_ID);
-      }
+      console.error("Error fetching wanted persons:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  const deleteWantedPost = async (id: string, imagePath: string) => {
-    if (!confirm("Are you sure you want to delete this wanted person report?")) {
+  const deleteWantedPost = async (id: string, imagePath: string, personName: string) => {
+    if (!confirm(`Are you sure you want to delete the wanted person report for ${personName}?`)) {
       return;
     }
 
     try {
       await WantedPersonService.deleteWantedPerson(id, imagePath);
-      console.log("Post deleted successfully");
 
       // Refresh the list
       await fetchWantedPersons();
@@ -97,16 +85,9 @@ const Page = () => {
     fetchWantedPersons();
   }, []);
 
-  // Refresh data when the add form is closed (in case new data was added)
-  useEffect(() => {
-    if (!addWanted && showWanted) {
-      fetchWantedPersons();
-    }
-  }, [addWanted, showWanted]);
-
   return (
     <main className="font-nunito py-3 m-2 rounded-3xl">
-      <h1 className="text-2xl font-bold rounded-3xl border-2 border-black py-2 text-center">Wanted Persons</h1>
+      <h1 className="text-2xl font-bold rounded-3xl border border-white/50 bg-white/25 backdrop-blur-md py-2 text-center text-amber-950 shadow-sm">Wanted Persons</h1>
       <div className="flex p-2 mb-4 justify-around">
         <Button
           className="font-bold text-lg"
@@ -116,16 +97,7 @@ const Page = () => {
         >
           {showWanted ? "Hide Wanted Persons" : "Show Wanted Persons"}
         </Button>
-        {/* <button
-          className="bg-purple-200 dark:bg-slate-500 p-2 rounded-lg"
-          onClick={() => setAddWanted(!addWanted)}
-        >
-          {addWanted ? "Hide Wanted Form" : "Add Wanted Person"}
-        </button> */}
-        <Button variant="ghost" color="warning" className="font-bold text-lg" onPress={() => {
-          () => setAddWanted(!addWanted)
-          onOpen();
-        }}>
+        <Button variant="ghost" color="warning" className="font-bold text-lg" onPress={onOpen}>
           Add Suspect
         </Button>
       </div>
@@ -133,7 +105,6 @@ const Page = () => {
         <ModalContent>
           {(onClose) => (
             <>
-              {/* <ModalHeader className="flex flex-col gap-1 underline">Add Wanted Person</ModalHeader> */}
               <ModalBody>
                 <AddWanted onSuccess={() => fetchWantedPersons()} />
               </ModalBody>
@@ -146,33 +117,31 @@ const Page = () => {
           )}
         </ModalContent>
       </Modal>
-      {addWanted && <AddWanted onSuccess={() => fetchWantedPersons()} />}
-
       {showWanted && (
         <div className="w-full">
           {loading ? (
             <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-800"></div>
             </div>
           ) : error ? (
-            <div className="text-red-600 text-center py-4">
+            <div className="text-red-800 text-center py-4">
               Error: {error}
               <button
                 onClick={fetchWantedPersons}
-                className="block mx-auto mt-2 bg-blue-500 text-white px-4 py-2 rounded"
+                className="block mx-auto mt-2 bg-white/35 backdrop-blur-md border border-white/60 text-amber-950 px-4 py-2 rounded-xl hover:bg-white/50 transition-all duration-200 shadow-sm"
               >
                 Retry
               </button>
             </div>
           ) : wanteds.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-amber-900/70">
               No wanted persons reported
             </div>
           ) : (
             wanteds.map((wanted) => (
               <div
                 key={wanted.id}
-                className="bg-white text-black rounded-3xl py-2 px-4 my-2"
+                className="bg-white/25 backdrop-blur-xl border border-white/50 text-amber-950 rounded-3xl py-2 px-4 my-2 shadow-[0_4px_16px_rgba(120,72,10,0.12)]"
               >
                 <MissingListItem
                   name={wanted.name}
@@ -181,27 +150,28 @@ const Page = () => {
                   id={wanted.id}
                   alias={wanted.alias}
                   image={wanted.image}
+                  kind="wanted"
                 />
-                <div className="mt-2 p-2 bg-gray-50 rounded">
-                  <h4 className="font-semibold text-red-600">Wanted For:</h4>
-                  <p className="text-sm">{wanted.wanted_for}</p>
+                <div className="mt-2 p-2 bg-white/30 border border-white/50 rounded-xl">
+                  <h4 className="font-semibold text-red-700">Wanted For:</h4>
+                  <p className="text-sm text-amber-900/90">{wanted.wanted_for}</p>
                   {wanted.description && (
                     <>
-                      <h4 className="font-semibold mt-2">Description:</h4>
-                      <p className="text-sm">{wanted.description}</p>
+                      <h4 className="font-semibold mt-2 text-amber-800">Description:</h4>
+                      <p className="text-sm text-amber-900/90">{wanted.description}</p>
                     </>
                   )}
                   {wanted.last_known_address && (
                     <>
-                      <h4 className="font-semibold mt-2">Last Known Address:</h4>
-                      <p className="text-sm">{wanted.last_known_address}</p>
+                      <h4 className="font-semibold mt-2 text-amber-800">Last Known Address:</h4>
+                      <p className="text-sm text-amber-900/90">{wanted.last_known_address}</p>
                     </>
                   )}
                 </div>
                 <div className="flex justify-center">
                   <button
                     className="bg-red-600/90 my-4 font-bold backdrop-blur-sm hover:bg-red-500/90 text-white   hover:border-red-300/50 relative px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ease-out transform active:scale-95"
-                    onClick={() => deleteWantedPost(wanted.id, wanted.image)}
+                    onClick={() => deleteWantedPost(wanted.id, wanted.image, wanted.name)}
                   >
                     DELETE
                   </button>

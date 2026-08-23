@@ -1,36 +1,29 @@
 import app from "@/lib/firebase";
-import { getDatabase, ref, child, get, push, update } from "firebase/database";
+import { getDatabase, ref, child, get } from "firebase/database";
 
-export async function POST(req: Request) {
-  console.log("MISSING POST REQUEST RECEIVED : ==================================================", req)
-  const db = await getDatabase(app);
-  const body = await req.json();
-  const newKey = await push(child(ref(db), 'missings')).key;
-  try {
-    const updates:any = {};
-    updates['/missings/' + newKey] = body;
-    await update(ref(db), updates);
-    return Response.json({ data: newKey });
-  } catch (err) {
-    console.log(err);
-    return Response.json({ data: "request failure" });
-  }
-}
+// Always serve live data — without this, a GET-only route gets statically
+// pre-rendered at build time and would return a stale snapshot forever.
+export const dynamic = "force-dynamic";
+
+// Public read of missing persons (the data is public by design — it powers
+// the public gallery and the mobile app feed).
+//
+// The POST handler was removed: it duplicated the authed client-side write
+// the admin UI performs via MissingPersonService, and allowed anyone to
+// publish records. Admin writes go through the database rules directly.
 
 export async function GET(req: Request) {
-  // await dbConnect();
-
-  const db = await getDatabase(app);
-  const dbRef = await ref(db);
+  const db = getDatabase(app);
+  const dbRef = ref(db);
   try {
     const data = await get(child(dbRef, 'missings'))
     if(data.exists()){
-      const missings = await data.val()
+      const missings = data.val()
       return Response.json({data : missings})
     }
+    return Response.json({ data: {} })
   } catch (err) {
-    console.log(err)
-    return Response.json({data: "request failure"})
+    console.error("Missing persons fetch failed:", err);
+    return Response.json({data: "request failure"}, { status: 500 })
   }
-
 }

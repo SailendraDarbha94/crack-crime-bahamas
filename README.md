@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-cleanup
-## Getting Started
+# Crack Crime Bahamas
 
-First, run the development server:
+A community crime-fighting platform for the Bahamas. Citizens can view wanted
+and missing persons and submit **anonymous, encrypted tips**; administrators
+manage those listings and push notifications to the companion mobile app.
+
+This repo is the **Next.js web app** (public site + admin dashboard + API
+routes). There is a separate React Native / Expo mobile app published on Google
+Play (`com.anonymous.CrackCrimeBahamas`).
+
+## Tech stack
+
+- **Next.js 14** (App Router) · **React 18** · **TypeScript**
+- **Tailwind CSS** + **NextUI** — bright amber "liquid glass" theme
+- **Firebase** — Realtime Database, Auth, Storage
+- **Expo Server SDK** — push notifications to the mobile app
+- **crypto-es** — AES encryption of anonymous tips
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Copy `.env.example` to `.env` and fill in the values before running:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```bash
+cp .env.example .env
+```
 
-## Learn More
+- `NEXT_PUBLIC_*` — Firebase web config (safe to expose; protected by security rules)
+- `EXPO_ACCESS_TOKEN`, `GOOGLE_MAPS_API_KEY` — **server-only** secrets (no `NEXT_PUBLIC_` prefix)
+- `INVITE_CODE` — required to register a new admin at `/sign-up`
+- `TIP_ENCRYPTION_KEY` — AES key for tips; must match the mobile app
 
-To learn more about Next.js, take a look at the following resources:
+## Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the dev server |
+| `npm run build` | Production build |
+| `npm run start` | Serve the production build |
+| `npm run lint` | Run ESLint |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Routes
 
-## Deploy on Vercel
+**Public**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `/` — landing page
+- `/wanted`, `/missing` — searchable galleries of listed persons
+- `/submit-tip` — anonymous, server-encrypted tip form
+- `/contact` — hotline (**328-TIPS**), email, office
+- `/member` — sponsorship registration
+- `/more-about-us`, `/legal/privacy`, `/legal/terms`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+**Admin** (`/admin/*`, behind Firebase Auth + an `/admins` allowlist)
+
+- Dashboard, wanted, missing, tip messages, notifications, advertisements, profile
+
+**API** (`/api/*`) — tip intake (encrypts server-side), membership, device
+registration, geocoding, and admin-gated push notifications.
+
+## Architecture notes
+
+- **Anonymous tips** are AES-encrypted (server-side on web intake) and stored
+  in Realtime DB; the admin inbox decrypts them.
+- **Admin authority** comes from an allowlist at `/admins/{uid}` in the
+  database, not merely from having an account. The `/admin` layout guard is UX;
+  the deployed database/storage rules are the real boundary.
+- **Security rules** live in [`database.rules.json`](database.rules.json) and
+  [`storage.rules`](storage.rules). Deploying them is a manual, ordered
+  step — see [`FIREBASE_ROLLOUT.md`](FIREBASE_ROLLOUT.md).
+
+## Deployment
+
+Deployed on **Vercel**. Set the same environment variables in the Vercel
+project settings, and deploy the Firebase rules separately following
+[`FIREBASE_ROLLOUT.md`](FIREBASE_ROLLOUT.md).

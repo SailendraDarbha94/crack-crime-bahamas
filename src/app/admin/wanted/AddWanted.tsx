@@ -20,12 +20,12 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
   const [description, setDescription] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  
+
   const { toast } = useToast();
 
   const registerWantedPerson = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!name.trim()) {
       toast({ message: "Name is required", type: "error" });
       return;
@@ -48,31 +48,10 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
         description: description.trim(),
       };
 
-      // Use the new WantedPersonService
-      const id = await WantedPersonService.createWantedPerson(personData, selectedFile || undefined);
-      
-      // Also call your API endpoint to sync with your database
-      const res = await fetch("/api/wanted", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...personData,
-          created_at: Date.now(),
-          country_code: "BAH",
-          current_status: "",
-          image: selectedFile ? `wanteds/${selectedFile.name}` : "Image Not Available",
-        }),
-      });
+      // The service writes the full record (image, created_at, country_code,
+      // current_status) — no second API write needed.
+      await WantedPersonService.createWantedPerson(personData, selectedFile || undefined);
 
-      const data = await res.json();
-      if (data === "request failure") {
-        throw new Error("API request failed");
-      }
-
-      console.log("Wanted person registered successfully:", { id, apiResponse: data });
-      
       // Reset form
       setName("");
       setWantedFor("");
@@ -82,14 +61,14 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
       setLastKnownAddress("");
       setDescription("");
       setSelectedFile(null);
-      
+
       toast({ message: "Wanted person registered successfully!", type: "success" });
-      
+
       // Call the onSuccess callback to refresh the list
       if (onSuccess) {
         onSuccess();
       }
-      
+
     } catch (err) {
       const userFriendlyMessage = FirebaseErrorHandler.handleError(err);
       toast({ message: userFriendlyMessage, type: "error" });
@@ -108,14 +87,14 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
         toast({ message: 'Please select a valid image file (JPEG, PNG, or GIF)', type: "error" });
         return;
       }
-      
+
       // Validate file size (max 5MB)
       const maxSize = 5 * 1024 * 1024; // 5MB
       if (file.size > maxSize) {
         toast({ message: 'File size must be less than 5MB', type: "error" });
         return;
       }
-      
+
       setSelectedFile(file);
     }
   };
@@ -127,148 +106,37 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
     <div className="w-full">
       <section className="font-nunito mx-auto max-w-lg rounded-lg">
         <div className="flex flex-col items-center justify-center mx-auto lg:py-0">
-          <div className="w-full bg-white rounded-lg dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+          <div className="w-full bg-white rounded-lg md:mt-0 sm:max-w-md xl:p-0">
             <div className="p-4 md:p-6 space-y-4 md:space-y-6 sm:p-8 w-fu">
-              <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+              <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
                 Wanted Person Report
               </h1>
               <form className="space-y-2" onSubmit={registerWantedPerson}>
                 <div>
                   <Input label="Name" type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} isRequired />
-                  {/* <label
-                    htmlFor="name"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    id="name"
-                    value={name}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder=""
-                    required={true}
-                    onChange={(e) => setName(e.target.value)}
-                  /> */}
                 </div>
                 <div>
                   <Textarea className="max-w-full" value={wantedFor} id="wantedFor" isRequired onChange={(e) => setWantedFor(e.target.value)} label="Wanted For" placeholder="" />
-                  {/* <label
-                    htmlFor="wantedFor"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Wanted For
-                  </label>
-                  <textarea
-                    name="wantedFor"
-                    id="wantedFor"
-                    value={wantedFor}
-                    className="bg-gray-50 border h-24 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder=""
-                    required={true}
-                    onChange={(e) => setWantedFor(e.target.value)}
-                  /> */}
                 </div>
                 <div>
                   <Input label="Age" type="text" id="age" value={age} onChange={(e) => setAge(e.target.value)} />
-                  {/* <label
-                    htmlFor="age"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Age of the Suspect
-                  </label>
-                  <input
-                    type="age"
-                    name="age"
-                    id="age"
-                    value={age}
-                    onChange={(e) => setAge(e.target.value)}
-                    placeholder=""
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required={false}
-                  /> */}
                 </div>
                 <div>
                   <Input label="Visual Description" type="text" id="description" value={description} onChange={(e) => setDescription(e.target.value)} />
-                  {/* <label
-                    htmlFor="description"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Description
-                  </label>
-                  <input
-                    type="description"
-                    name="description"
-                    id="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder=""
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required={false}
-                  /> */}
                 </div>
                 <div>
                   <Input label="Gender" type="text" id="gender" value={gender} onChange={(e) => setGender(e.target.value)} />
-                  {/* <label
-                    htmlFor="gender"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Gender of the Suspect
-                  </label>
-                  <input
-                    type="text"
-                    name="gender"
-                    id="gender"
-                    value={gender}
-                    onChange={(e) => setGender(e.target.value)}
-                    placeholder=""
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required={false}
-                  /> */}
                 </div>
                 <div>
                   <Input label="Known Aliases" type="text" id="alias" value={alias} onChange={(e) => setAlias(e.target.value)} />
-                  {/* <label
-                    htmlFor="alias"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Known Aliases
-                  </label>
-                  <input
-                    type="text"
-                    name="alias"
-                    id="alias"
-                    value={alias}
-                    onChange={(e) => setAlias(e.target.value)}
-                    placeholder=""
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required={false}
-                  /> */}
                 </div>
                 <div>
                   <Input label="Last Known Address" type="text" id="address" value={last_known_address} onChange={(e) => setLastKnownAddress(e.target.value)} />
-                  {/* <label
-                    htmlFor="last_known_address"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Last Known Address
-                  </label>
-                  <input
-                    type="text"
-                    name="last_known_address"
-                    id="last_known_address"
-                    value={last_known_address}
-                    onChange={(e) => setLastKnownAddress(e.target.value)}
-                    placeholder=""
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required={false}
-                  /> */}
                 </div>
                 <div>
                   <label
                     htmlFor="imager"
-                    className="block mb-2 text-sm text-center pt-4 font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm text-center pt-4 font-medium text-gray-900"
                   >
                     Image
                   </label>
@@ -287,22 +155,14 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
                       </div>
                     </div>
                   ) : (
-                    <Input label="" type="file" id="imager" value={selectedFile ? selectedFile : undefined} onChange={handleFileChange} />
-                    // <input
-                    //   type="file"
-                    //   id="imager"
-                    //   accept="image/*"
-                    //   onChange={handleFileChange}
-                    //   placeholder="Upload Image"
-                    //   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    // />
+                    <Input label="" type="file" id="imager" accept="image/*" onChange={handleFileChange} />
                   )}
                 </div>
                 {loading ? (
                   <div role="status" className="flex justify-center">
                     <svg
                       aria-hidden="true"
-                      className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                      className="w-8 h-8 text-gray-200 animate-spin fill-amber-600"
                       viewBox="0 0 100 101"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
@@ -321,7 +181,7 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
                 ) : (
                   <button
                     type="submit"
-                    className="w-full rounded-lg bg-slate-200 hover:bg-slate-300 dark:hover:bg-blue-700 dark:text-white focus:ring-4 dark:bg-blue-600 focus:outline-none font-medium text-lg px-5 py-2.5 text-center"
+                    className="w-full rounded-lg bg-slate-200 hover:bg-slate-300 focus:ring-4 focus:outline-none font-medium text-lg px-5 py-2.5 text-center"
                   >
                     Submit
                   </button>

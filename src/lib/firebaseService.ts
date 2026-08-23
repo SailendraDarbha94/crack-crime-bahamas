@@ -74,23 +74,16 @@ export class DatabaseService {
   // Get all records from a path
   static async getAll(path: string): Promise<any[]> {
     try {
-      console.log(`🔍 Attempting to fetch data from path: ${path}`);
       const snapshot = await get(dbRef(database, path));
       const results: any[] = [];
-      
       if (snapshot.exists()) {
-        console.log(`✅ Data found at path: ${path}`);
         snapshot.forEach((child) => {
           results.push({ id: child.key, ...child.val() });
         });
-        console.log(`📊 Retrieved ${results.length} records from ${path}`);
-      } else {
-        console.log(`ℹ️ No data found at path: ${path}`);
       }
-      
       return results;
     } catch (error) {
-      console.error(`❌ Error fetching data from path: ${path}`, error);
+      console.error(`Error fetching data from path: ${path}`, error);
       throw error;
     }
   }
@@ -246,15 +239,7 @@ export class MissingPersonService {
   }
 
   static async getAllMissingPersons(): Promise<any[]> {
-    try {
-      console.log(`🔍 MissingPersonService: Fetching all missing persons from path: ${this.basePath}`);
-      const result = await DatabaseService.getAll(this.basePath);
-      console.log(`✅ MissingPersonService: Successfully retrieved ${result.length} missing persons`);
-      return result;
-    } catch (error) {
-      console.error(`❌ MissingPersonService: Error fetching missing persons:`, error);
-      throw error;
-    }
+    return DatabaseService.getAll(this.basePath);
   }
 
   static async deleteMissingPerson(id: string, imagePath: string): Promise<void> {
@@ -316,15 +301,7 @@ export class WantedPersonService {
   }
 
   static async getAllWantedPersons(): Promise<any[]> {
-    try {
-      console.log(`🔍 WantedPersonService: Fetching all wanted persons from path: ${this.basePath}`);
-      const result = await DatabaseService.getAll(this.basePath);
-      console.log(`✅ WantedPersonService: Successfully retrieved ${result.length} wanted persons`);
-      return result;
-    } catch (error) {
-      console.error(`❌ WantedPersonService: Error fetching wanted persons:`, error);
-      throw error;
-    }
+    return DatabaseService.getAll(this.basePath);
   }
 
   static async deleteWantedPerson(id: string, imagePath: string): Promise<void> {

@@ -1,44 +1,45 @@
 import app from "@/lib/firebase";
-import mongoClient from "@/lib/mongo";
-import { child, get, getDatabase, push, ref, update } from "firebase/database";
+import { child, push, ref, getDatabase, update } from "firebase/database";
 
-export async function GET() {
-    // const mongoDb = (await mongoClient).db("members");
-    // const members = await mongoDb.collection("dev").find({}).toArray();
-    // console.log("server hitted")
-    
-    // return Response.json({data : members})
-    const db = await getDatabase(app);
-    const dbRef = await ref(db);
+// Public membership-form intake. Reads of /members are admin-only via the
+// database rules — the GET handler that returned every member's PII to any
+// caller was removed; the admin page reads the database as an authed admin.
+
+export async function POST(req: Request) {
+    const db = getDatabase(app);
+
+    let body: any;
     try {
-      const data = await get(child(dbRef, 'members'))
-      if(data.exists()){
-        const members = await data.val()
-        return Response.json({data : members})
-      }
-    } catch (err) {
-      console.log(err)
-      return Response.json({data: "request failure"})
+      body = await req.json();
+    } catch {
+      return Response.json({ data: "request failure" }, { status: 400 });
     }
-}
 
-export async function POST(req:Request) {
-    // const body = await req.json()
-    // const mongoDb = (await mongoClient).db("members");
-    // const { acknowledged, insertedId } = await mongoDb.collection("dev").insertOne(body)
-    // if(acknowledged){
-    //     return Response.json({data: insertedId})
-    // }
-    const db = await getDatabase(app);
-    const body = await req.json();
-    const newKey = await push(child(ref(db), 'members')).key;
+    // Whitelist the exact fields the form collects; server-side timestamp.
+    const asTrimmedString = (v: unknown, max: number) =>
+      typeof v === "string" ? v.trim().slice(0, max) : "";
+
+    const member = {
+      name: asTrimmedString(body?.name, 200),
+      email: asTrimmedString(body?.email, 320),
+      address: asTrimmedString(body?.address, 500),
+      mobile: asTrimmedString(body?.mobile, 50),
+      support: asTrimmedString(body?.support, 40),
+      created_at: Date.now(),
+    };
+
+    if (!member.name || !member.email) {
+      return Response.json({ data: "request failure" }, { status: 400 });
+    }
+
+    const newKey = push(child(ref(db), 'members')).key;
     try {
-      const updates:any = {};
-      updates['/members/' + newKey] = body;
+      const updates: Record<string, unknown> = {};
+      updates['/members/' + newKey] = member;
       await update(ref(db), updates);
       return Response.json({ data: newKey });
     } catch (err) {
-      console.log(err);
-      return Response.json({ data: "request failure" });
+      console.error("Membership submission failed:", err);
+      return Response.json({ data: "request failure" }, { status: 500 });
     }
 }
