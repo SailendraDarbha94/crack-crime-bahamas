@@ -4,7 +4,14 @@ import { AdvertisementService } from "@/lib/firebaseService";
 import { useToast } from "@/lib/toastContext";
 import { Button } from "@nextui-org/react";
 
-const AdvertChanger = ({ group }: { group: string }) => {
+interface AdvertChangerProps {
+  group: string;
+  label?: string;
+  where?: string;
+  aspect?: string;
+}
+
+const AdvertChanger = ({ group, label, where, aspect }: AdvertChangerProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [uploading, setUploading] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -75,9 +82,19 @@ const AdvertChanger = ({ group }: { group: string }) => {
     fetchAdvertisement();
   }, [group]);
   return (
-    <main className="my-4 text-amber-950">
+    <main className="my-4 text-amber-950 w-full sm:w-auto">
       <div className="bg-white/25 backdrop-blur-xl border border-white/50 shadow-[0_8px_32px_rgba(120,72,10,0.12)] w-full h-full font-nunito p-4 rounded-2xl max-w-md mx-auto">
-        <p className="uppercase text-xl font-bold text-center text-amber-950">{group} screens</p>
+        <div className="text-center mb-2">
+          <p className="text-xl font-bold text-amber-950">
+            {label ?? group}
+            {aspect ? (
+              <span className="ml-2 align-middle text-xs font-semibold bg-white/40 border border-white/60 rounded-full px-2 py-0.5 text-amber-900">
+                {aspect}
+              </span>
+            ) : null}
+          </p>
+          {where ? <p className="text-sm text-amber-900/70">{where}</p> : null}
+        </div>
         {loading ? (
           <div
             role="status"

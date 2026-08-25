@@ -11,14 +11,15 @@ import {
   query, 
   equalTo 
 } from 'firebase/database';
-import { 
-  ref as storageRef, 
-  uploadBytes, 
-  getDownloadURL, 
-  deleteObject, 
-  getBytes, 
-  uploadBytesResumable 
+import {
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+  getBytes,
+  uploadBytesResumable
 } from 'firebase/storage';
+import { downscaleImage, sniffImageType } from './imageUtils';
 
 // Database service functions
 export class DatabaseService {
@@ -91,10 +92,12 @@ export class DatabaseService {
 
 // Storage service functions
 export class StorageService {
-  // Upload file
-  static async uploadFile(path: string, file: File): Promise<string> {
+  // Upload file (optionally forcing a content type — the object name and its
+  // actual encoding can differ, so callers set contentType explicitly).
+  static async uploadFile(path: string, file: File | Blob, contentType?: string): Promise<string> {
     const fileRef = storageRef(storage, path);
-    const snapshot = await uploadBytes(fileRef, file);
+    const metadata = contentType ? { contentType } : undefined;
+    const snapshot = await uploadBytes(fileRef, file, metadata);
     return await getDownloadURL(snapshot.ref);
   }
 
@@ -155,53 +158,64 @@ export class StorageService {
 }
 
 // Advertisement specific service
+//
+// The mobile app fetches each banner from a FIXED object path
+// `adverts/<group>/advertisement.png` (by path, rendered by content type),
+// so every upload must overwrite that exact object regardless of the source
+// file's type. See banner-management-handoff for the storage contract.
 export class AdvertisementService {
   private static basePath = 'adverts';
 
-  static async uploadAdvertisement(group: string, file: File): Promise<{path: string, url: string}> {
-    const extension = file.name.split('.').pop();
-    const storagePath = `${this.basePath}/${group}/advertisement.${extension}`;
-    
-    // Upload to storage
-    const downloadURL = await StorageService.uploadFile(storagePath, file);
-    
-    // Update database
-    await DatabaseService.update(`${this.basePath}/${group}`, {
-      path: storagePath,
-      url: downloadURL,
-      uploadedAt: new Date().toISOString()
-    });
-
-    return { path: storagePath, url: downloadURL };
+  private static objectPath(group: string): string {
+    return `${this.basePath}/${group}/advertisement.png`;
   }
 
+  static async uploadAdvertisement(group: string, file: File): Promise<{ path: string; url: string }> {
+    const objectPath = this.objectPath(group);
+
+    // 1. Downscale/re-encode client-side (<=1600px long edge, ~<=800KB)
+    const { blob, contentType } = await downscaleImage(file);
+
+    // 2. Best-effort timestamped backup of the image we're about to replace
+    try {
+      const existing = await StorageService.getFileBytes(objectPath);
+      const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+      await StorageService.uploadFile(
+        `${this.basePath}/${group}/history/${stamp}.png`,
+        new Blob([existing]),
+        sniffImageType(existing)
+      );
+    } catch {
+      // No current object (or it isn't readable) — nothing to back up
+    }
+
+    // 3. Overwrite the fixed object the app reads, with the true content type
+    const url = await StorageService.uploadFile(objectPath, blob, contentType);
+
+    // 4. Record for the admin UI's own bookkeeping
+    await DatabaseService.update(`${this.basePath}/${group}`, {
+      path: objectPath,
+      url,
+      contentType,
+      uploadedAt: new Date().toISOString(),
+    });
+
+    return { path: objectPath, url };
+  }
+
+  // Reads the fixed object the app actually shows (independent of the DB
+  // bookkeeping), so the admin preview always matches what mobile displays.
   static async getAdvertisement(group: string): Promise<string | null> {
     try {
-      const data = await DatabaseService.get(`${this.basePath}/${group}`);
-      if (data?.path) {
-        // Check if file exists before trying to create blob URL
-        try {
-          return await StorageService.createBlobURL(data.path);
-        } catch (storageError) {
-          console.warn(`File not found in storage for ${group}:`, data.path);
-          // Clean up database entry for non-existent file
-          await DatabaseService.delete(`${this.basePath}/${group}`);
-          return null;
-        }
-      }
-      return null;
-    } catch (error) {
-      console.error('Error fetching advertisement:', error);
+      return await StorageService.getDownloadURL(this.objectPath(group));
+    } catch {
       return null;
     }
   }
 
   static async deleteAdvertisement(group: string): Promise<void> {
-    const data = await DatabaseService.get(`${this.basePath}/${group}`);
-    if (data?.path) {
-      await StorageService.deleteFile(data.path);
-      await DatabaseService.delete(`${this.basePath}/${group}`);
-    }
+    await StorageService.deleteFile(this.objectPath(group));
+    await DatabaseService.delete(`${this.basePath}/${group}`);
   }
 }
 
