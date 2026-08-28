@@ -52,14 +52,31 @@ invite code.
      └─ <ADMIN_UID>: true
    ```
    (one child per admin, value exactly boolean `true`)
-3. Edit `storage.rules` in the repo: replace `REPLACE_WITH_ADMIN_UID` with the
-   same UID(s), e.g. `in ['abc123', 'def456']`. Commit.
 
-## 4. Deploy the rules (immediately after seeding)
+## 4. Deploy the DATABASE rules (immediately after seeding)
 
 ```bash
-firebase deploy --only database,storage
+firebase deploy --only database
 ```
+
+> **⚠️ Deploy `database` only — NOT `storage` (yet).** Two reasons:
+> 1. `storage.rules` still contains the literal `REPLACE_WITH_ADMIN_UID`
+>    placeholder; deploying as-is denies *all* storage writes (nobody could
+>    upload banners or person photos).
+> 2. The mobile team's banner-upload laptop script currently relies on the
+>    **open** storage rules. Locking storage before that pipeline is migrated
+>    stops banner updates entirely.
+>
+> **When you're ready to lock storage** (after the web banner-management page
+> is live and the mobile script either signs in as an allowlisted admin or is
+> retired): edit `storage.rules`, replace `REPLACE_WITH_ADMIN_UID` with the
+> same admin UID(s) from step 3 (e.g. `in ['abc123', 'def456']`), commit, then
+> `firebase deploy --only storage`. Coordinate with the mobile session first.
+>
+> Note: banner uploads stay **client-side** (admin signed in on the website),
+> so the storage rule is the uid-pinned `allow write: if isAdmin()` already in
+> the repo — **not** the `write: if false` + Admin-SDK model from the mobile
+> handoff doc.
 
 ## 5. Smoke test on locked rules
 
