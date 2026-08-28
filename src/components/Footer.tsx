@@ -22,19 +22,19 @@ export default function Footer() {
                 </h2>
                 <ul className="text-amber-800/80">
                   <li className="mb-4">
-                    <Link href="/wanted" className="hover:underline hover:text-amber-950 transition-colors duration-200">
-                      Wanted Persons
+                    <Link href="/member" className="hover:underline hover:text-amber-950 transition-colors duration-200">
+                      Become a Sponsor
                     </Link>
                   </li>
                   <li className="mb-4">
-                    <Link href="/missing" className="hover:underline hover:text-amber-950 transition-colors duration-200">
-                      Missing Persons
+                    <Link href="/more-about-us" className="hover:underline hover:text-amber-950 transition-colors duration-200">
+                      About Us
                     </Link>
                   </li>
                   <li>
-                    <Link href="/submit-tip" className="hover:underline hover:text-amber-950 transition-colors duration-200">
-                      Submit a Tip
-                    </Link>
+                    <a href="tel:+12423288477" className="hover:underline hover:text-amber-950 transition-colors duration-200">
+                      Tip Hotline: 328-TIPS
+                    </a>
                   </li>
                 </ul>
               </div>
@@ -49,9 +49,9 @@ export default function Footer() {
                     </Link>
                   </li>
                   <li className="mb-4">
-                    <Link href="/member" className="hover:underline hover:text-amber-950 transition-colors duration-200">
-                      Become a Sponsor
-                    </Link>
+                    <a href="https://play.google.com/store/apps/details?id=com.anonymous.CrackCrimeBahamas" target="_blank" rel="noopener" className="hover:underline hover:text-amber-950 transition-colors duration-200">
+                      Get the App
+                    </a>
                   </li>
                   <li>
                     <Link href="/login" className="hover:underline hover:text-amber-950 transition-colors duration-200">

@@ -118,9 +118,7 @@ const WebNavbar: React.FC = () => {
                             </div>
                         ) : (
                             <div className="hidden md:flex items-center space-x-2 lg:space-x-3">
-                                <NavLink href="/wanted"><span>Wanted</span></NavLink>
-                                <NavLink href="/missing"><span>Missing</span></NavLink>
-                                <NavLink href="/submit-tip"><span>Submit a Tip</span></NavLink>
+                                <NavLink href="/"><span>Home</span></NavLink>
                                 <NavLink href="/member"><span>Sponsor</span></NavLink>
                                 <NavLink href="/more-about-us"><span>About</span></NavLink>
                                 <NavLink href="/contact"><span>Contact</span></NavLink>
@@ -195,9 +193,6 @@ const WebNavbar: React.FC = () => {
                         ) : (
                             <div className="flex flex-col space-y-3 pt-4">
                                 <NavLink href="/"><div className="flex items-center gap-3">Home</div></NavLink>
-                                <NavLink href="/wanted"><div className="flex items-center gap-3">Wanted Persons</div></NavLink>
-                                <NavLink href="/missing"><div className="flex items-center gap-3">Missing Persons</div></NavLink>
-                                <NavLink href="/submit-tip"><div className="flex items-center gap-3">Submit a Tip</div></NavLink>
                                 <NavLink href="/member"><div className="flex items-center gap-3">Become a Sponsor</div></NavLink>
                                 <NavLink href="/more-about-us"><div className="flex items-center gap-3">About Us</div></NavLink>
                                 <NavLink href="/contact"><div className="flex items-center gap-3">Contact</div></NavLink>

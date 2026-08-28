@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 export const metadata = {
   title: "Contact",
   description:
@@ -46,15 +44,17 @@ const ContactPage = () => {
             <p className="text-amber-950 font-semibold">1-242-322-3320</p>
           </a>
 
-          <Link
-            href="/submit-tip"
+          <a
+            href="https://play.google.com/store/apps/details?id=com.anonymous.CrackCrimeBahamas"
+            target="_blank"
+            rel="noopener"
             className="bg-white/25 backdrop-blur-xl border border-white/50 rounded-3xl p-6 shadow-[0_8px_32px_rgba(120,72,10,0.12)] text-center hover:bg-white/35 transition-all duration-200"
           >
             <h2 className="text-lg font-bold text-amber-950 mb-1">Submit a Tip</h2>
             <p className="text-amber-900/80 text-sm">
-              Report online, anonymously and encrypted
+              Report anonymously and encrypted through our mobile app
             </p>
-          </Link>
+          </a>
         </div>
       </div>
     </main>
