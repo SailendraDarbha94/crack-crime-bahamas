@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { AdvertisementService } from "@/lib/firebaseService";
+import { advertImages, heroImages } from "@/lib/firebaseService";
 import { useToast } from "@/lib/toastContext";
 import { Button } from "@nextui-org/react";
 
@@ -9,9 +9,12 @@ interface AdvertChangerProps {
   label?: string;
   where?: string;
   aspect?: string;
+  /** Which fixed-path image store this slot manages (default: advert slots). */
+  variant?: "advert" | "hero";
 }
 
-const AdvertChanger = ({ group, label, where, aspect }: AdvertChangerProps) => {
+const AdvertChanger = ({ group, label, where, aspect, variant = "advert" }: AdvertChangerProps) => {
+  const store = variant === "hero" ? heroImages : advertImages;
   const [loading, setLoading] = useState<boolean>(false);
   const [uploading, setUploading] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -49,10 +52,10 @@ const AdvertChanger = ({ group, label, where, aspect }: AdvertChangerProps) => {
     setUploading(true);
 
     try {
-      await AdvertisementService.uploadAdvertisement(group, selectedFile);
+      await store.upload(group, selectedFile);
       setSelectedFile(null);
       await fetchAdvertisement();
-      toast({ message: `${group} advertisement uploaded successfully`, type: "success" });
+      toast({ message: `${label ?? group} image uploaded successfully`, type: "success" });
     } catch (error) {
       console.error('Upload failed:', error);
       toast({ message: 'Upload failed. Please try again.', type: "error" });
@@ -64,7 +67,7 @@ const AdvertChanger = ({ group, label, where, aspect }: AdvertChangerProps) => {
   const fetchAdvertisement = async () => {
     setLoading(true);
     try {
-      const url = await AdvertisementService.getAdvertisement(group);
+      const url = await store.get(group);
       setAdvertisement(url || "");
     } catch (error) {
       console.error('Error fetching advertisement:', error);

@@ -23,6 +23,12 @@ service firebase.storage {
       allow read: if true;
       allow write: if isAdmin() && isValidImage();
     }
+    // Hub-screen hero images (heroes/<screen>/hero.png) — read by the app,
+    // managed from the website admin
+    match /heroes/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidImage();
+    }
     match /missings/{allPaths=**} {
       allow read: if true;
       allow write: if isAdmin() && isValidImage();

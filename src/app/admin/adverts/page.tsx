@@ -22,16 +22,33 @@ const PORTRAIT_SLOTS: { group: string; label: string; where: string }[] = [
   { group: "fullpageSecond", label: "Full-page (Who We Are)", where: "Full-screen interstitial, Who We Are flows" },
 ];
 
+// Hub-screen hero images — the artwork at the very top of the app's main
+// screens. Not advert slots: they live under heroes/<group>/hero.png and the
+// app falls back to its bundled artwork until an upload exists.
+const HERO_SLOTS: { group: string; label: string; where: string }[] = [
+  { group: "home", label: "Home screen hero", where: "Top of the app's main home screen" },
+  { group: "whoWeAre", label: "Who We Are hero", where: "Top of the Who We Are hub screen" },
+];
+
 const Page = () => {
   return (
     <div className="w-full font-nunito p-2 md:p-4">
       <h1 className="text-2xl font-bold rounded-3xl border border-white/50 bg-white/25 backdrop-blur-sm py-2 text-center text-amber-950">
-        Manage Advertisements
+        Manage App Images
       </h1>
       <p className="text-lg text-center text-amber-900/80 mt-2">
         Supported formats: <span className="px-1 font-extrabold text-amber-950">JPEG, PNG or GIF</span> (max 5MB).
-        Images are downscaled to 1600px on upload; the previous banner is kept as a timestamped backup.
+        Images are downscaled to 1600px on upload; the previous image is kept as a timestamped backup.
       </p>
+
+      <h2 className="text-xl font-bold text-amber-950 mt-8 mb-2 px-2">
+        App screen headers <span className="font-normal text-amber-900/70 text-base">— hero images on the hub screens (landscape, shown &lsquo;contain&rsquo; on black; if nothing is uploaded the app shows its built-in artwork)</span>
+      </h2>
+      <div className="flex flex-wrap w-full justify-evenly">
+        {HERO_SLOTS.map((slot) => (
+          <AdvertChanger key={`hero-${slot.group}`} group={slot.group} label={slot.label} where={slot.where} aspect="3:2" variant="hero" />
+        ))}
+      </div>
 
       <h2 className="text-xl font-bold text-amber-950 mt-8 mb-2 px-2">
         Screen banners <span className="font-normal text-amber-900/70 text-base">— landscape 3:2 (≈1536×1024), dark-edged art works best</span>
