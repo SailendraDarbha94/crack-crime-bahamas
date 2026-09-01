@@ -157,20 +157,24 @@ export class StorageService {
   }
 }
 
-// Advertisement specific service
+// Admin-managed fixed-path images.
 //
-// The mobile app fetches each banner from a FIXED object path
-// `adverts/<group>/advertisement.png` (by path, rendered by content type),
-// so every upload must overwrite that exact object regardless of the source
-// file's type. See banner-management-handoff for the storage contract.
-export class AdvertisementService {
-  private static basePath = 'adverts';
+// The mobile app fetches these objects by FIXED path (rendered by content
+// type, not extension), so every upload must overwrite that exact object
+// regardless of the source file's type:
+//   adverts/<group>/advertisement.png  — banner/interstitial advert slots
+//   heroes/<group>/hero.png           — hub-screen hero images
+class ManagedImageStore {
+  constructor(
+    private basePath: string,
+    private objectName: string
+  ) {}
 
-  private static objectPath(group: string): string {
-    return `${this.basePath}/${group}/advertisement.png`;
+  objectPath(group: string): string {
+    return `${this.basePath}/${group}/${this.objectName}`;
   }
 
-  static async uploadAdvertisement(group: string, file: File): Promise<{ path: string; url: string }> {
+  async upload(group: string, file: File): Promise<{ path: string; url: string }> {
     const objectPath = this.objectPath(group);
 
     // 1. Downscale/re-encode client-side (<=1600px long edge, ~<=800KB)
@@ -192,20 +196,25 @@ export class AdvertisementService {
     // 3. Overwrite the fixed object the app reads, with the true content type
     const url = await StorageService.uploadFile(objectPath, blob, contentType);
 
-    // 4. Record for the admin UI's own bookkeeping
-    await DatabaseService.update(`${this.basePath}/${group}`, {
-      path: objectPath,
-      url,
-      contentType,
-      uploadedAt: new Date().toISOString(),
-    });
+    // 4. Best-effort bookkeeping — the app reads Storage directly, so a
+    // failed database write must never fail the upload itself
+    try {
+      await DatabaseService.update(`${this.basePath}/${group}`, {
+        path: objectPath,
+        url,
+        contentType,
+        uploadedAt: new Date().toISOString(),
+      });
+    } catch (err) {
+      console.warn(`Bookkeeping write failed for ${objectPath}:`, err);
+    }
 
     return { path: objectPath, url };
   }
 
   // Reads the fixed object the app actually shows (independent of the DB
   // bookkeeping), so the admin preview always matches what mobile displays.
-  static async getAdvertisement(group: string): Promise<string | null> {
+  async get(group: string): Promise<string | null> {
     try {
       return await StorageService.getDownloadURL(this.objectPath(group));
     } catch {
@@ -213,11 +222,16 @@ export class AdvertisementService {
     }
   }
 
-  static async deleteAdvertisement(group: string): Promise<void> {
+  async delete(group: string): Promise<void> {
     await StorageService.deleteFile(this.objectPath(group));
     await DatabaseService.delete(`${this.basePath}/${group}`);
   }
 }
+
+// Banner/interstitial advert slots (the 12 slots the mobile app reads)
+export const advertImages = new ManagedImageStore('adverts', 'advertisement.png');
+// Hub-screen hero images (home, whoWeAre) — brand artwork, not ad campaigns
+export const heroImages = new ManagedImageStore('heroes', 'hero.png');
 
 // Missing Person specific service
 export class MissingPersonService {
