@@ -6,14 +6,18 @@ import AdvertChanger from "./AdvertChanger";
 // contract; changing a `group` key would break the app's fixed paths.
 const LANDSCAPE_SLOTS: { group: string; label: string; where: string }[] = [
   { group: "home", label: "Home", where: "Text a Tip, Crime Stoppers caller" },
-  { group: "whoWeAre", label: "Who We Are", where: "About Us, Mission & Vision" },
+  { group: "whoWeAre", label: "Who We Are", where: "About Us screen" },
   { group: "supportAndSafety", label: "Support & Safety", where: "Support Us, donation forms" },
   { group: "missing", label: "Missing", where: "Missing list screen" },
   { group: "wanted", label: "Wanted", where: "Wanted list screen" },
   { group: "events", label: "Events", where: "Events screen" },
   { group: "howitworks", label: "How It Works", where: "How It Works screen" },
   { group: "safety", label: "Safety", where: "Safety Tips screen" },
-  { group: "emergency", label: "Emergency", where: "Hotline / Ambulance sub-screens" },
+  {
+    group: "emergency",
+    label: "Emergency",
+    where: "No longer shown: Emergency screens ship the chairman's bundled banners (Sep 2026)",
+  },
   { group: "police", label: "Police", where: "Police station sub-screens" },
 ];
 
