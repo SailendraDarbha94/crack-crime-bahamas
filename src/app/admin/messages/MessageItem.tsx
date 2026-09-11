@@ -2,7 +2,7 @@
 import app from "@/lib/firebase";
 import { dateReader } from "@/lib/utils";
 import { useToast } from "@/lib/toastContext";
-import { getDatabase, ref, update } from "firebase/database";
+import { getDatabase, ref, remove } from "firebase/database";
 import { useState } from "react";
 
 const MessageItem = ({ item, refreshFunc }: any) => {
@@ -27,11 +27,22 @@ const MessageItem = ({ item, refreshFunc }: any) => {
     setLoading(true);
     try {
       const db = getDatabase(app);
-      // Drop the PIN index with the tip, so a deleted tip leaves no PIN
-      // pointing at nothing. One update, so they cannot part company.
-      const updates: Record<string, null> = { [`messages/${id}`]: null };
-      if (item.pin) updates[`tipPins/${item.pin}`] = null;
-      await update(ref(db), updates);
+      // The tip goes first, on its own: that is what was asked for, and it
+      // must not depend on anything else succeeding.
+      await remove(ref(db, `messages/${id}`));
+
+      // Clearing the PIN index is then a courtesy. Its rules may not be
+      // deployed yet (see FIREBASE_ROLLOUT.md), and a leftover entry only
+      // points at a tip that no longer exists — harmless, and nothing reads
+      // it. Bundling it with the delete above is what broke deletion before.
+      if (item.pin) {
+        try {
+          await remove(ref(db, `tipPins/${item.pin}`));
+        } catch (err) {
+          console.warn("Tip deleted, but its PIN index could not be cleared:", err);
+        }
+      }
+
       toast({ message: "Tip deleted", type: "success" });
       await refreshFunc();
     } catch (err) {
