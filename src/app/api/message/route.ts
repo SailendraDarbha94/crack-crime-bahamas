@@ -49,18 +49,22 @@ export async function POST(req: Request) {
       return Response.json({ data: "request failure" }, { status: 500 });
     }
 
-    // The tip and its PIN index go in one multi-path update, so a tip can
-    // never exist without its PIN or vice versa. The create-only rule on
-    // /tipPins/$pin is what ultimately keeps PINs unique: a duplicate is
-    // rejected by the database and we simply draw another one.
-    for (let attempt = 0; attempt < MAX_PIN_ATTEMPTS; attempt += 1) {
+    // Preferred path: the tip and its PIN index in one multi-path update, so a
+    // tip can never exist without its PIN or vice versa. The create-only rule
+    // on /tipPins/$pin is what keeps PINs unique — a duplicate is rejected by
+    // the database and we simply draw another PIN.
+    let indexUnavailable = false;
+
+    for (let attempt = 0; attempt < MAX_PIN_ATTEMPTS && !indexUnavailable; attempt += 1) {
       const pin = generateTipPin();
 
+      // Whether we can see the index at all decides how to read a failed write
+      // below: a lost race is worth retrying, missing rules are not.
+      let indexReachable = true;
       try {
         if ((await get(child(ref(db), `tipPins/${pin}`))).exists()) continue;
       } catch {
-        // Probe unavailable (rules in flux, transient network) — fall through
-        // and let the write itself reject a duplicate.
+        indexReachable = false;
       }
 
       try {
@@ -70,9 +74,27 @@ export async function POST(req: Request) {
         await update(ref(db), updates);
         return Response.json({ data: pin });
       } catch (err) {
-        // Expected when the PIN was taken between the probe and the write;
-        // any other cause exhausts the attempts and falls through below.
-        console.error(`Tip write failed (attempt ${attempt + 1}):`, err);
+        if (indexReachable) continue; // someone took that PIN first — draw another
+        console.error("Tip PIN index unavailable; storing the tip without it:", err);
+        indexUnavailable = true;
+      }
+    }
+
+    // Fallback for a database whose `tipPins` rules have not been deployed yet
+    // (see FIREBASE_ROLLOUT.md). Losing the index must never cost us a tip —
+    // taking tips is the entire point of this endpoint. The tipster still gets
+    // a PIN, it is still stored on the tip and still shown in the admin inbox;
+    // only the PIN→tip lookup is missing, and nothing reads it yet. Once the
+    // rules are deployed the branch above starts succeeding on its own.
+    if (indexUnavailable) {
+      const pin = generateTipPin();
+      try {
+        const updates: Record<string, unknown> = {};
+        updates['/messages/' + newKey] = { ...tip, pin };
+        await update(ref(db), updates);
+        return Response.json({ data: pin });
+      } catch (err) {
+        console.error("Tip intake failed:", err);
       }
     }
 
