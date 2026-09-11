@@ -2,12 +2,23 @@
 import app from "@/lib/firebase";
 import { dateReader } from "@/lib/utils";
 import { useToast } from "@/lib/toastContext";
-import { getDatabase, ref, remove } from "firebase/database";
+import { getDatabase, ref, update } from "firebase/database";
 import { useState } from "react";
 
 const MessageItem = ({ item, refreshFunc }: any) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [copied, setCopied] = useState<boolean>(false);
   const { toast } = useToast();
+
+  const copyPin = async () => {
+    try {
+      await navigator.clipboard.writeText(item.pin);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      toast({ message: "Could not copy the PIN", type: "error" });
+    }
+  };
 
   const deleteMessage = async (id: string) => {
     if (!confirm("Delete this tip permanently?")) {
@@ -16,8 +27,11 @@ const MessageItem = ({ item, refreshFunc }: any) => {
     setLoading(true);
     try {
       const db = getDatabase(app);
-      const postRef = ref(db, `messages/${id}`);
-      await remove(postRef);
+      // Drop the PIN index with the tip, so a deleted tip leaves no PIN
+      // pointing at nothing. One update, so they cannot part company.
+      const updates: Record<string, null> = { [`messages/${id}`]: null };
+      if (item.pin) updates[`tipPins/${item.pin}`] = null;
+      await update(ref(db), updates);
       toast({ message: "Tip deleted", type: "success" });
       await refreshFunc();
     } catch (err) {
@@ -39,7 +53,31 @@ const MessageItem = ({ item, refreshFunc }: any) => {
     <div className="bg-white/25 backdrop-blur-xl border border-white/50 text-amber-950 max-w-md mx-auto rounded-2xl shadow-[0_8px_32px_rgba(120,72,10,0.12)] my-2 p-4 flex flex-col min-h-40 justify-between">
       <p className="font-bold font-nunito text-xl">{item.message}</p>
 
-      <p className="font-nunito font-semibold text-sm text-amber-900/80">
+      <div className="pt-3">
+        {item.pin ? (
+          <button
+            onClick={copyPin}
+            title="Copy this tip's PIN"
+            className="inline-flex items-center gap-2 bg-white/40 border border-white/60 hover:bg-white/55 rounded-lg px-3 py-1.5 transition-colors duration-200"
+          >
+            <span className="font-nunito text-xs uppercase tracking-wide text-amber-900/70">
+              PIN
+            </span>
+            <span className="font-mono font-extrabold tracking-[0.2em] text-lg">
+              {item.pin}
+            </span>
+            <span className="font-nunito text-xs text-amber-900/70">
+              {copied ? "copied" : "copy"}
+            </span>
+          </button>
+        ) : (
+          <span className="font-nunito text-xs text-amber-900/60 italic">
+            No PIN — submitted before PINs were introduced
+          </span>
+        )}
+      </div>
+
+      <p className="font-nunito font-semibold text-sm text-amber-900/80 pt-2">
         Sent : {dateReader(item.created_at)}
       </p>
       <div className="flex justify-center pt-8">

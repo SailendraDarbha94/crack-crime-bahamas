@@ -1,6 +1,7 @@
 import app from "@/lib/firebase";
-import { child, push, ref, getDatabase, update } from "firebase/database";
+import { child, get, push, ref, getDatabase, update } from "firebase/database";
 import CryptoES from "crypto-es";
+import { generateTipPin } from "@/lib/tipPin";
 
 // Public tip intake. Reads of /messages are admin-only (database rules);
 // this endpoint only CREATES tips, and the create-only rule on
@@ -13,6 +14,10 @@ import CryptoES from "crypto-es";
 // app until a coordinated key rotation. Overridable via server env.
 const TIP_ENCRYPTION_KEY = process.env.TIP_ENCRYPTION_KEY ?? "ebiz242";
 const MAX_TIP_LENGTH = 10000;
+
+// A collision is vanishingly unlikely across 31^6 PINs, so a handful of
+// attempts covers both a genuine clash and a lost race with another tip.
+const MAX_PIN_ATTEMPTS = 5;
 
 export async function POST(req: Request) {
     const db = getDatabase(app);
@@ -31,21 +36,45 @@ export async function POST(req: Request) {
     }
 
     const ciphertext = CryptoES.AES.encrypt(message.trim(), TIP_ENCRYPTION_KEY).toString();
+    const created_at = Date.now();
     const tip = {
       message: ciphertext,
       encrypted: true,
-      created_at: Date.now(),
+      created_at,
     };
 
     const newKey = push(child(ref(db), 'messages')).key;
-
-    try {
-      const updates: Record<string, unknown> = {};
-      updates['/messages/' + newKey] = tip;
-      await update(ref(db), updates);
-      return Response.json({ data: newKey });
-    } catch (err) {
-      console.error("Tip intake failed:", err);
+    if (!newKey) {
+      console.error("Tip intake failed: could not allocate a key");
       return Response.json({ data: "request failure" }, { status: 500 });
     }
+
+    // The tip and its PIN index go in one multi-path update, so a tip can
+    // never exist without its PIN or vice versa. The create-only rule on
+    // /tipPins/$pin is what ultimately keeps PINs unique: a duplicate is
+    // rejected by the database and we simply draw another one.
+    for (let attempt = 0; attempt < MAX_PIN_ATTEMPTS; attempt += 1) {
+      const pin = generateTipPin();
+
+      try {
+        if ((await get(child(ref(db), `tipPins/${pin}`))).exists()) continue;
+      } catch {
+        // Probe unavailable (rules in flux, transient network) — fall through
+        // and let the write itself reject a duplicate.
+      }
+
+      try {
+        const updates: Record<string, unknown> = {};
+        updates['/messages/' + newKey] = { ...tip, pin };
+        updates['/tipPins/' + pin] = { tipId: newKey, created_at };
+        await update(ref(db), updates);
+        return Response.json({ data: pin });
+      } catch (err) {
+        // Expected when the PIN was taken between the probe and the write;
+        // any other cause exhausts the attempts and falls through below.
+        console.error(`Tip write failed (attempt ${attempt + 1}):`, err);
+      }
+    }
+
+    return Response.json({ data: "request failure" }, { status: 500 });
 }

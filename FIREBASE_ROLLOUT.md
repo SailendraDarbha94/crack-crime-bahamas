@@ -91,11 +91,15 @@ As **anonymous** (incognito):
 curl "https://<db-url>/messages.json"           # → permission denied
 # device register must be DENIED:
 curl "https://<db-url>/notifications_register.json"   # → permission denied
+# PINs must not be enumerable:
+curl "https://<db-url>/tipPins.json"            # → permission denied
 # wanted list must still be PUBLIC:
 curl "https://<db-url>/wanteds.json"            # → data
-# web tip intake must still WORK:
+# web tip intake must still WORK, and now returns a 6-character PIN:
 curl -X POST https://<site>/api/message -H 'content-type: application/json' \
-  -d '{"message":"rules smoke test"}'           # → {"data":"-N..."}
+  -d '{"message":"rules smoke test"}'           # → {"data":"K7M2QX"}
+# that PIN resolves on its own, and reveals nothing but the tip's key:
+curl "https://<db-url>/tipPins/K7M2QX.json"     # → {"tipId":"-N...","created_at":...}
 ```
 
 Also: member form submits; `/admin` redirects to login; a signed-in but
@@ -125,3 +129,25 @@ firebase deploy --only database    # with rules-backup.json as database.rules.js
 - Confirm the app's transport (direct RTDB vs /api) → tighten `.validate`
 - Firebase App Check for real anti-abuse on the public create paths
 - Custom claims via firebase-admin (replaces uid-pinned storage rules)
+
+## Tip PINs
+
+`/tipPins/$pin → { tipId, created_at }` maps a tipster's 6-character PIN to
+their tip. Deliberately shaped so the PIN is a **capability token, not a key
+to the tip**:
+
+- `.read` sits on `$pin`, never on `tipPins` itself — you can resolve a PIN
+  you already hold, but you cannot list them. Guessing is the only way in,
+  across 31^6 ≈ 887 million PINs.
+- Resolving one yields a tip *key*, which is useless on its own: `/messages`
+  stays admin-read-only.
+- Writes are create-only, so a PIN can never be reassigned. That rule is also
+  what keeps PINs unique: `/api/message` writes the tip and its PIN in one
+  multi-path update, so a collision rejects **both** and the route retries
+  with a fresh PIN rather than leaving a tip no PIN points at.
+- Deleting a tip in the admin inbox drops its PIN in the same update.
+
+Rules and atomicity are covered by emulator tests — see the PR that added
+them. When follow-up messages and reward status land, they hang off the same
+PIN (`/tipFollowUps/$pin`, `/tipStatus/$pin`) and must keep this shape: a
+guessed PIN may add to a tip or read a status word, never read tip content.
