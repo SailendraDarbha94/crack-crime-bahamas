@@ -41,6 +41,8 @@ const Page = () => {
               id: index,
               message: decrypted ?? "[Could not decrypt this tip]",
               created_at: messages[index].created_at,
+              // Tips submitted before PINs existed have none.
+              pin: messages[index].pin ?? null,
             });
           } else {
             // Legacy plaintext tips
@@ -48,6 +50,7 @@ const Page = () => {
               id: index,
               message: messages[index].message,
               created_at: messages[index].created_at,
+              pin: messages[index].pin ?? null,
             });
           }
         }

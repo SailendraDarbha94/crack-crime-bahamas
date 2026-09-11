@@ -6,7 +6,7 @@ import { useState } from "react";
 const SubmitTipPage = () => {
   const [tip, setTip] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [submitted, setSubmitted] = useState<boolean>(false);
+  const [pin, setPin] = useState<string | null>(null);
   const { toast } = useToast();
 
   const submitTip = async (e: React.FormEvent) => {
@@ -27,7 +27,7 @@ const SubmitTipPage = () => {
       const { data } = await res.json();
       if (data && data !== "request failure") {
         setTip("");
-        setSubmitted(true);
+        setPin(data);
       } else {
         toast({ message: "Could not submit your tip. Please try again.", type: "error" });
       }
@@ -55,15 +55,30 @@ const SubmitTipPage = () => {
         </p>
 
         <div className="bg-white/25 backdrop-blur-xl border border-white/50 rounded-3xl p-6 md:p-8 shadow-[0_8px_32px_rgba(120,72,10,0.12)]">
-          {submitted ? (
+          {pin ? (
             <div className="text-center py-8">
               <h2 className="text-2xl font-bold text-amber-950 mb-2">Thank you.</h2>
               <p className="text-amber-900/80 mb-6">
                 Your tip has been received anonymously and securely. You are
                 helping keep the community safe.
               </p>
+
+              <div className="mx-auto max-w-sm bg-white/40 border border-white/60 rounded-2xl px-6 py-5 mb-6">
+                <p className="font-semibold text-sm uppercase tracking-wide text-amber-900/70 mb-1">
+                  Your tip PIN
+                </p>
+                <p className="font-mono font-extrabold text-3xl tracking-[0.3em] text-amber-950">
+                  {pin}
+                </p>
+                <p className="text-sm text-amber-900/80 mt-3">
+                  Write this down before you close this page. It is the only
+                  way to refer back to this tip, and we cannot look it up for
+                  you &mdash; we have no idea who sent it.
+                </p>
+              </div>
+
               <button
-                onClick={() => setSubmitted(false)}
+                onClick={() => setPin(null)}
                 className="bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 font-bold px-5 py-2.5 rounded-xl transition-all duration-200 active:scale-95"
               >
                 Submit another tip
