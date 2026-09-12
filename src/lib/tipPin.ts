@@ -37,3 +37,30 @@ export function generateTipPin(): string {
 export function isValidTipPin(value: unknown): value is string {
   return typeof value === "string" && TIP_PIN_PATTERN.test(value);
 }
+
+/** At most this many candidates are looked up, so a long message cannot fan out. */
+export const TIP_PIN_MAX_CANDIDATES = 10;
+
+const CANDIDATE_PATTERN = /\b[2-9A-HJKMNP-Z]{6}\b/g;
+
+/**
+ * PIN-shaped tokens in a message, in the order they appear, uppercased and
+ * de-duplicated.
+ *
+ * Tipsters are told to start a follow-up with their PIN, but they write things
+ * like "Hi, my pin is 623KUK" — so this scans the whole message rather than
+ * only the first word.
+ *
+ * Being PIN-shaped means nothing on its own: the alphabet is ordinary letters
+ * and digits, so a genuine new tip opening "PARKED outside the store" yields
+ * the candidate "PARKED". Only a lookup against the issued PINs can tell the
+ * two apart, which is why callers must check each candidate before threading.
+ */
+export function findTipPinCandidates(message: string): string[] {
+  const seen = new Set<string>();
+  for (const match of message.toUpperCase().matchAll(CANDIDATE_PATTERN)) {
+    seen.add(match[0]);
+    if (seen.size >= TIP_PIN_MAX_CANDIDATES) break;
+  }
+  return [...seen];
+}

@@ -37,6 +37,24 @@
         },
         "pin": {
           ".validate": "newData.isString() && newData.val().matches(/^[2-9A-HJKMNP-Z]{6}$/)"
+        },
+        "followUps": {
+          "$followUpId": {
+            ".write": "!data.exists() && newData.exists()",
+            ".validate": "newData.hasChildren(['message', 'created_at'])",
+            "message": {
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 10000"
+            },
+            "created_at": {
+              ".validate": "newData.isNumber()"
+            },
+            "encrypted": {
+              ".validate": "newData.isBoolean()"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
         }
       }
     },

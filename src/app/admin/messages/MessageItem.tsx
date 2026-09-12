@@ -62,7 +62,25 @@ const MessageItem = ({ item, refreshFunc }: any) => {
     </div>
   ) : (
     <div className="bg-white/25 backdrop-blur-xl border border-white/50 text-amber-950 max-w-md mx-auto rounded-2xl shadow-[0_8px_32px_rgba(120,72,10,0.12)] my-2 p-4 flex flex-col min-h-40 justify-between">
-      <p className="font-bold font-nunito text-xl">{item.message}</p>
+      <p className="font-bold font-nunito text-xl whitespace-pre-wrap">{item.message}</p>
+
+      {item.followUps?.length ? (
+        <div className="mt-4 border-l-2 border-amber-900/25 pl-3 flex flex-col gap-3">
+          <p className="font-nunito text-xs uppercase tracking-wide text-amber-900/70">
+            {item.followUps.length === 1
+              ? "1 later message"
+              : `${item.followUps.length} later messages`}
+          </p>
+          {item.followUps.map((followUp: any) => (
+            <div key={followUp.id}>
+              <p className="font-nunito whitespace-pre-wrap">{followUp.message}</p>
+              <p className="font-nunito text-xs text-amber-900/70 pt-0.5">
+                {dateReader(followUp.created_at)}
+              </p>
+            </div>
+          ))}
+        </div>
+      ) : null}
 
       <div className="pt-3">
         {item.pin ? (

@@ -33,30 +33,46 @@ const Page = () => {
       if (data.exists()) {
         const messages = data.val();
         for (const index of Object.keys(messages)) {
-          if (messages[index].encrypted === true || typeof messages[index].message !== "string") {
-            // Server-encrypted string tips (encrypted flag) and mobile-app
-            // cipher objects both go through AES decryption
-            const decrypted = decryptMessage(messages[index]);
-            list.push({
-              id: index,
-              message: decrypted ?? "[Could not decrypt this tip]",
-              created_at: messages[index].created_at,
-              // Tips submitted before PINs existed have none.
-              pin: messages[index].pin ?? null,
-            });
-          } else {
-            // Legacy plaintext tips
-            list.push({
-              id: index,
-              message: messages[index].message,
-              created_at: messages[index].created_at,
-              pin: messages[index].pin ?? null,
-            });
-          }
+          const raw = messages[index];
+          // Server-encrypted string tips (encrypted flag) and mobile-app
+          // cipher objects both go through AES decryption; anything else is a
+          // legacy plaintext tip.
+          const isCipher = raw.encrypted === true || typeof raw.message !== "string";
+          const body = isCipher
+            ? decryptMessage(raw) ?? "[Could not decrypt this tip]"
+            : raw.message;
+
+          // Later messages the tipster sent by quoting their PIN, oldest first
+          // so the card reads top to bottom as a conversation.
+          const followUps = Object.entries(raw.followUps ?? {})
+            .map(([followUpId, entry]: [string, any]) => ({
+              id: followUpId,
+              message:
+                entry.encrypted === true || typeof entry.message !== "string"
+                  ? decryptMessage(entry) ?? "[Could not decrypt this message]"
+                  : entry.message,
+              created_at: entry.created_at,
+            }))
+            .sort((a, b) => (a.created_at ?? 0) - (b.created_at ?? 0));
+
+          list.push({
+            id: index,
+            message: body,
+            created_at: raw.created_at,
+            // Tips submitted before PINs existed have none.
+            pin: raw.pin ?? null,
+            followUps,
+            // A thread someone added to should surface like an email thread,
+            // not sink to wherever it first arrived.
+            lastActivity: Math.max(
+              raw.created_at ?? 0,
+              ...followUps.map((f) => f.created_at ?? 0)
+            ),
+          });
         }
       }
-      // Newest tips first
-      list.sort((a, b) => (b.created_at ?? 0) - (a.created_at ?? 0));
+      // Most recently active threads first
+      list.sort((a, b) => (b.lastActivity ?? 0) - (a.lastActivity ?? 0));
       setDecryptedMessages(list);
     } catch (err) {
       console.error("Error fetching tips:", err);

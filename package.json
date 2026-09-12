@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:rules": "npx --yes firebase-tools@13 emulators:exec --only database --project demo-ccb \"node test/rules/tip-pins.test.mjs && node test/rules/notifications-register.test.mjs\""
+    "test:rules": "npx --yes firebase-tools@13 emulators:exec --only database --project demo-ccb \"node test/rules/tip-pins.test.mjs && node test/rules/notifications-register.test.mjs\"",
+    "test:unit": "node --experimental-strip-types --no-warnings test/unit/tip-pin.test.mts",
+    "test": "npm run test:unit && npm run test:rules"
   },
   "dependencies": {
     "@nextui-org/react": "^2.4.6",

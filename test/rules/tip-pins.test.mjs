@@ -112,5 +112,21 @@ check("the retry succeeds, proving no orphaned tip was left behind", (await mult
 check("the two tips hold distinct PINs",
   (await read(`tipPins/${pinB}`)).json?.tipId === idB);
 
+// --- follow-ups: a later message threaded onto an existing tip ---------------
+// They hang off the tip itself, so deleting the tip takes them with it and the
+// admin inbox gets the whole conversation in the read it already does.
+check("anonymous can append a follow-up to an existing tip",
+  (await put(`messages/${tipId}/followUps/fu1`, { ...cipher, created_at: now + 1 })).ok);
+check("a follow-up cannot be overwritten once written",
+  (await put(`messages/${tipId}/followUps/fu1`, { ...cipher, created_at: now + 2 })).status === 401);
+check("appending a follow-up does not let the original tip be rewritten",
+  (await put(`messages/${tipId}`, { ...cipher, created_at: now, pin })).status === 401);
+check("follow-ups cannot be read anonymously",
+  (await read(`messages/${tipId}/followUps`)).status === 401);
+check("a follow-up without a message is rejected",
+  (await put(`messages/${tipId}/followUps/fu2`, { created_at: now })).status === 401);
+check("an unexpected field on a follow-up is rejected",
+  (await put(`messages/${tipId}/followUps/fu3`, { ...cipher, created_at: now, pin: "K7M2QX" })).status === 401);
+
 console.log(failures ? `\n${failures} CHECK(S) FAILED` : "\nall tip-PIN rules checks passed");
 process.exit(failures ? 1 : 0);

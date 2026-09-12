@@ -1,7 +1,7 @@
 import app from "@/lib/firebase";
 import { child, get, push, ref, getDatabase, update } from "firebase/database";
 import CryptoES from "crypto-es";
-import { generateTipPin } from "@/lib/tipPin";
+import { findTipPinCandidates, generateTipPin } from "@/lib/tipPin";
 
 // Public tip intake. Reads of /messages are admin-only (database rules);
 // this endpoint only CREATES tips, and the create-only rule on
@@ -42,6 +42,41 @@ export async function POST(req: Request) {
       encrypted: true,
       created_at,
     };
+
+    // A tipster continuing an existing tip is told to quote their PIN. Any
+    // PIN-shaped token counts, wherever it appears — but being PIN-shaped
+    // proves nothing ("PARKED outside the store" looks exactly like one), so
+    // a candidate only threads if it resolves to a real tip.
+    for (const candidate of findTipPinCandidates(message.trim())) {
+      let tipId: string | null = null;
+      try {
+        const claim = (await get(child(ref(db), `tipPins/${candidate}`))).val();
+        if (claim && typeof claim.tipId === "string") tipId = claim.tipId;
+      } catch {
+        break; // index unreachable — fall through and store this as a new tip
+      }
+      if (!tipId) continue;
+
+      const followUpKey = push(child(ref(db), `messages/${tipId}/followUps`)).key;
+      if (!followUpKey) break;
+
+      try {
+        const updates: Record<string, unknown> = {};
+        updates[`/messages/${tipId}/followUps/${followUpKey}`] = {
+          message: ciphertext,
+          encrypted: true,
+          created_at,
+        };
+        await update(ref(db), updates);
+        // The same PIN comes back, not a new one: the tipster has one PIN for
+        // the whole conversation. Older app builds show it unchanged, which
+        // stays correct without needing a release.
+        return Response.json({ data: candidate, threaded: true });
+      } catch (err) {
+        console.error("Could not append the follow-up; storing it as a new tip:", err);
+        break;
+      }
+    }
 
     const newKey = push(child(ref(db), 'messages')).key;
     if (!newKey) {
