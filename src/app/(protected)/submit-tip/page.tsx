@@ -71,9 +71,8 @@ const SubmitTipPage = () => {
                   {pin}
                 </p>
                 <p className="text-sm text-amber-900/80 mt-3">
-                  Write this down before you close this page. It is the only
-                  way to refer back to this tip, and we cannot look it up for
-                  you &mdash; we have no idea who sent it.
+                  For all further communication on this tip please start your
+                  message with the pin <span className="font-bold text-amber-950">{pin}</span>
                 </p>
               </div>
 
