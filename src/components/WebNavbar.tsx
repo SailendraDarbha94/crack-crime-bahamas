@@ -12,6 +12,10 @@ const WebNavbar: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
     const pathname = usePathname();
+    // Which menu to show. Signed-in areas get account controls; the database
+    // rules, not this, decide what each role can actually read.
+    const section: "admin" | "police" | "public" =
+        pathname.startsWith("/admin") ? "admin" : pathname.startsWith("/police") ? "police" : "public";
     const logoutUser = async () => {
         setLoading(true);
         const auth = await getAuth(app);
@@ -97,9 +101,9 @@ const WebNavbar: React.FC = () => {
                             </div>
                         </div>
                         {/* Desktop Navigation */}
-                        {pathname.includes("admin") ? (
+                        {section !== "public" ? (
                             <div className="hidden md:flex items-center space-x-3">
-                                <NavLink href="/admin/profile">
+                                <NavLink href={`/${section}/profile`}>
                                     <div className="flex items-center gap-3">
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -144,7 +148,7 @@ const WebNavbar: React.FC = () => {
                 {/* Mobile Navigation Menu */}
                 <div className={`md:hidden overflow-hidden transition-all duration-300 ease-out ${isMobileMenuOpen ? 'max-h-[36rem] opacity-100' : 'max-h-0 opacity-0'}`}>
                     <div className="px-6 pb-4 border-t border-amber-900/15">
-                        {pathname.includes("admin") ? (
+                        {section === "admin" ? (
                             <div className="flex flex-col space-y-3 pt-4">
                                 <NavLink href="/admin">
                                     <div className="flex items-center gap-3">
@@ -181,6 +185,7 @@ const WebNavbar: React.FC = () => {
                                 <NavLink href="/admin/messages"><div className="flex items-center gap-3">Tip Messages</div></NavLink>
                                 <NavLink href="/admin/notifications"><div className="flex items-center gap-3">Notifications</div></NavLink>
                                 <NavLink href="/admin/adverts"><div className="flex items-center gap-3">Advertisements</div></NavLink>
+                                <NavLink href="/admin/team"><div className="flex items-center gap-3">Police Team</div></NavLink>
                                 <NavLink onClick={logoutUser} variant="danger">
                                     <div className="flex items-center gap-3">
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -189,6 +194,14 @@ const WebNavbar: React.FC = () => {
                                         Logout
                                     </div>
                                 </NavLink>
+                            </div>
+                        ) : section === "police" ? (
+                            <div className="flex flex-col space-y-3 pt-4">
+                                <NavLink href="/police"><div className="flex items-center gap-3">Home</div></NavLink>
+                                <NavLink href="/police/missing"><div className="flex items-center gap-3">Missing Persons</div></NavLink>
+                                <NavLink href="/police/wanted"><div className="flex items-center gap-3">Wanted Persons</div></NavLink>
+                                <NavLink href="/police/profile"><div className="flex items-center gap-3">Profile</div></NavLink>
+                                <NavLink onClick={logoutUser} variant="danger"><div className="flex items-center gap-3">Logout</div></NavLink>
                             </div>
                         ) : (
                             <div className="flex flex-col space-y-3 pt-4">

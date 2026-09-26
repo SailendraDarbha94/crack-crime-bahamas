@@ -1,6 +1,29 @@
 "use client";
+import Link from "next/link";
 
-const Sidebar = () => {
+type NavItem = { href: string; label: string };
+
+// What each role can reach. The database rules enforce this; the sidebar only
+// avoids showing links that would lead to a permission error.
+const NAV: Record<"admin" | "police", NavItem[]> = {
+  admin: [
+    { href: "/admin", label: "Home" },
+    { href: "/admin/messages", label: "Manage Messages" },
+    { href: "/admin/missing", label: "Manage Missings" },
+    { href: "/admin/wanted", label: "Manage Wanteds" },
+    { href: "/admin/adverts", label: "Advertisements" },
+    { href: "/admin/notifications", label: "Notifications" },
+    { href: "/admin/team", label: "Police Team" },
+    { href: "#", label: "Annual Contributors" },
+  ],
+  police: [
+    { href: "/police", label: "Home" },
+    { href: "/police/missing", label: "Missing Persons" },
+    { href: "/police/wanted", label: "Wanted Persons" },
+  ],
+};
+
+const Sidebar = ({ variant = "admin" }: { variant?: "admin" | "police" }) => {
   return (
     <div className="w-full h-full flex flex-col mx-2 py-2 px-3 rounded-3xl bg-white/20 backdrop-blur-xl border border-white/50 shadow-[0_8px_32px_rgba(120,72,10,0.15)]">
       <a
@@ -9,49 +32,20 @@ const Sidebar = () => {
       >
         <img className="w-10 h-10 mr-2" src="/newfavicon.png" alt="logo" />
       </a>
-      
-      <a
-        href="/admin"
-        className="bg-white/30 backdrop-blur-md border border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70 shadow-sm transition-all duration-200 active:scale-[0.98] my-2 text-center py-2 w-full font-nunito font-bold text-lg mt-2 rounded-3xl"
-      >
-        Home
-      </a>
-      <a
-        href="/admin/messages"
-        className="bg-white/30 backdrop-blur-md border border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70 shadow-sm transition-all duration-200 active:scale-[0.98] px-2 my-2 text-center py-2 w-full font-nunito font-bold text-lg mt-2 rounded-3xl"
-      >
-        Manage Messages
-      </a>
-      <a
-        href="/admin/missing"
-        className="bg-white/30 backdrop-blur-md border border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70 shadow-sm transition-all duration-200 active:scale-[0.98] px-2 my-2 mt-2 text-center py-2 rounded-3xl w-full font-nunito font-bold text-lg"
-      >
-        Manage Missings
-      </a>
-      <a
-        href="/admin/wanted"
-        className="bg-white/30 backdrop-blur-md border border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70 shadow-sm transition-all duration-200 active:scale-[0.98] px-2 my-2 mt-2 text-center py-2 rounded-3xl w-full font-nunito font-bold text-lg"
-      >
-        Manage Wanteds
-      </a>
-      <a
-        href="/admin/adverts"
-        className="bg-white/30 backdrop-blur-md border border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70 shadow-sm transition-all duration-200 active:scale-[0.98] px-2 my-2 mt-2 text-center py-2 rounded-3xl w-full font-nunito font-bold text-lg"
-      >
-        Advertisements
-      </a>
-      <a
-        href="/admin/notifications"
-        className="bg-white/30 backdrop-blur-md border border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70 shadow-sm transition-all duration-200 active:scale-[0.98] px-2 my-2 mt-2 text-center py-2 rounded-3xl w-full font-nunito font-bold text-lg"
-      >
-        Notifications
-      </a>
-      <a
-        href="#"
-        className="bg-white/30 backdrop-blur-md border border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70 shadow-sm transition-all duration-200 active:scale-[0.98] px-2 my-2 mt-2 text-center py-2 rounded-3xl w-full font-nunito font-bold text-lg"
-      >
-        Annual Contributors
-      </a>
+      {variant === "police" ? (
+        <p className="text-center font-nunito text-xs uppercase tracking-wide text-amber-900/70 mb-1">
+          Police portal
+        </p>
+      ) : null}
+      {NAV[variant].map((item) => (
+        <Link
+          key={item.label}
+          href={item.href}
+          className="bg-white/30 backdrop-blur-md border border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70 shadow-sm transition-all duration-200 active:scale-[0.98] px-2 my-2 text-center py-2 w-full font-nunito font-bold text-lg rounded-3xl"
+        >
+          {item.label}
+        </Link>
+      ))}
     </div>
   );
 };

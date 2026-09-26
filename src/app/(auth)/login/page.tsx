@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
+import { getRole, HOME_FOR_ROLE } from "@/lib/roles";
 
 const Page = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -26,16 +27,25 @@ const Page = () => {
     const auth = getAuth(app);
     setPersistence(auth, browserLocalPersistence).then(() => {
       signInWithEmailAndPassword(auth, email, password)
-        .then((cb) => {
-          setLoading(false);
+        .then(async (cb) => {
           if (cb.user) {
+            // Each role has its own section. If the role can't be read here,
+            // /admin's guard reads it again and fails closed — so the fallback
+            // never grants anything.
+            let home = "/admin";
+            try {
+              home = HOME_FOR_ROLE[await getRole(cb.user.uid)];
+            } catch {
+              // leave it to the guard
+            }
+            setLoading(false);
             toast({
               type: "success",
-              message: "User Logged In! Redirecting",
+              message: "Signed in! Redirecting",
             });
-            setTimeout(() => {
-              router.push("/admin");
-            }, 500);
+            router.push(home);
+          } else {
+            setLoading(false);
           }
         })
         .catch((err) => {
@@ -62,7 +72,7 @@ const Page = () => {
           <div className="w-full bg-white/25 backdrop-blur-xl border border-white/50 rounded-2xl shadow-[0_8px_32px_rgba(120,72,10,0.12)] md:mt-0 sm:max-w-md xl:p-0">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-amber-950 md:text-2xl">
-                Login to Admin Account
+                Sign in
               </h1>
               <form className="space-y-4 md:space-y-6" onSubmit={loginUser}>
                 <div>
