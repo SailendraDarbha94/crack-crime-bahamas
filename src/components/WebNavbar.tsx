@@ -199,6 +199,7 @@ const WebNavbar: React.FC = () => {
                         ) : section === "police" ? (
                             <div className="flex flex-col space-y-3 pt-4">
                                 <NavLink href="/police"><div className="flex items-center gap-3">Home</div></NavLink>
+                                <NavLink href="/police/tips"><div className="flex items-center gap-3">Forwarded Tips</div></NavLink>
                                 <NavLink href="/police/missing"><div className="flex items-center gap-3">Missing Persons</div></NavLink>
                                 <NavLink href="/police/wanted"><div className="flex items-center gap-3">Wanted Persons</div></NavLink>
                                 <NavLink href="/police/profile"><div className="flex items-center gap-3">Profile</div></NavLink>

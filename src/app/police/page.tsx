@@ -6,9 +6,10 @@ import { useEffect, useState } from "react";
 
 // Police portal home: what officers can open, with live counts.
 const PolicePage = () => {
-  const [counts, setCounts] = useState<{ missing: number | null; wanted: number | null }>({
+  const [counts, setCounts] = useState<{ missing: number | null; wanted: number | null; tips: number | null }>({
     missing: null,
     wanted: null,
+    tips: null,
   });
 
   useEffect(() => {
@@ -23,8 +24,8 @@ const PolicePage = () => {
           return null;
         }
       };
-      const [missing, wanted] = await Promise.all([count("missings"), count("wanteds")]);
-      setCounts({ missing, wanted });
+      const [missing, wanted, tips] = await Promise.all([count("missings"), count("wanteds"), count("policeTips")]);
+      setCounts({ missing, wanted, tips });
     };
     load();
   }, []);
@@ -53,6 +54,7 @@ const PolicePage = () => {
           Read-only access to the cases Crack Crime Bahamas shares with you.
         </p>
         <div className="flex flex-wrap w-full p-4 rounded-2xl gap-4 bg-white/20 backdrop-blur-xl border border-white/50">
+          <Card href="/police/tips" label="Tips" count={counts.tips} thumb="/thumbnails/tips.png" alt="Forwarded tips" />
           <Card href="/police/missing" label="Missing" count={counts.missing} thumb="/thumbnails/missingThumbnail.png" alt="Missing persons" />
           <Card href="/police/wanted" label="Wanted" count={counts.wanted} thumb="/thumbnails/wantedThumbnail3.png" alt="Wanted persons" />
         </div>

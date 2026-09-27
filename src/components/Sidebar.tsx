@@ -18,6 +18,7 @@ const NAV: Record<"admin" | "police", NavItem[]> = {
   ],
   police: [
     { href: "/police", label: "Home" },
+    { href: "/police/tips", label: "Forwarded Tips" },
     { href: "/police/missing", label: "Missing Persons" },
     { href: "/police/wanted", label: "Wanted Persons" },
   ],

@@ -151,3 +151,19 @@ Rules and atomicity are covered by emulator tests — see the PR that added
 them. When follow-up messages and reward status land, they hang off the same
 PIN (`/tipFollowUps/$pin`, `/tipStatus/$pin`) and must keep this shape: a
 guessed PIN may add to a tip or read a status word, never read tip content.
+
+## Police tips
+
+`/policeTips/$tipId` is an admin-curated **copy** of a forwarded tip: its
+ciphertext verbatim, the PIN, an optional encrypted note to officers, and only
+the follow-ups an admin has shared. Officers read this node and nothing else —
+never `/messages`. A Realtime Database read covers everything beneath a node,
+so granting police a read on the original tip would also hand them every
+follow-up the tipster sends afterwards, reviewed or not. Forwarding copies
+what exists at that moment; later follow-ups stay admin-only until shared one
+by one. Withdrawing deletes the copy, and deleting a tip removes its copy too.
+`forwarded_by` must equal the writer's uid, so a forward is always attributable.
+A copy is create-or-delete only — it cannot be overwritten, and a follow-up can
+be shared once — so one admin can never silently replace another's forward; to
+change a copy, withdraw it and forward again. The inbox lists any copy whose
+original tip is gone as a leftover to withdraw.
