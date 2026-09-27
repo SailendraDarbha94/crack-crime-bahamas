@@ -18,11 +18,49 @@
 
     "wanteds": {
       ".read": true,
-      ".write": "auth != null && root.child('admins').child(auth.uid).val() === true"
+      ".write": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      "$id": {
+        "archived": { ".validate": false },
+        "archiveLog": { ".validate": false }
+      }
     },
     "missings": {
       ".read": true,
-      ".write": "auth != null && root.child('admins').child(auth.uid).val() === true"
+      ".write": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      "$id": {
+        "archived": { ".validate": false },
+        "archiveLog": { ".validate": false }
+      }
+    },
+
+    "archive": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      "wanteds": {
+        "$id": {
+          ".write": "auth != null && root.child('admins').child(auth.uid).val() === true && (!data.exists() || !newData.exists())",
+          ".validate": "newData.hasChildren(['name', 'archived'])",
+          "archived": {
+            ".validate": "newData.hasChildren(['at', 'by', 'remarks']) && newData.child('by').val() === auth.uid",
+            "at": { ".validate": "newData.isNumber()" },
+            "by": { ".validate": "newData.val() === auth.uid" },
+            "remarks": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 12000" },
+            "$other": { ".validate": false }
+          }
+        }
+      },
+      "missings": {
+        "$id": {
+          ".write": "auth != null && root.child('admins').child(auth.uid).val() === true && (!data.exists() || !newData.exists())",
+          ".validate": "newData.hasChildren(['name', 'archived'])",
+          "archived": {
+            ".validate": "newData.hasChildren(['at', 'by', 'remarks']) && newData.child('by').val() === auth.uid",
+            "at": { ".validate": "newData.isNumber()" },
+            "by": { ".validate": "newData.val() === auth.uid" },
+            "remarks": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 12000" },
+            "$other": { ".validate": false }
+          }
+        }
+      }
     },
     "adverts": {
       ".read": true,
@@ -47,6 +85,24 @@
         "pin": {
           ".validate": "newData.isString() && newData.val().matches(/^[2-9A-HJKMNP-Z]{6}$/)"
         },
+        "archive": {
+          ".validate": "auth != null && root.child('admins').child(auth.uid).val() === true && newData.hasChildren(['at', 'by', 'remarks']) && newData.child('by').val() === auth.uid",
+          "at": { ".validate": "newData.isNumber()" },
+          "by": { ".validate": "newData.val() === auth.uid" },
+          "remarks": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 12000" },
+          "$other": { ".validate": false }
+        },
+        "archiveLog": {
+          ".validate": "newData.hasChildren()",
+          "$entryId": {
+            ".validate": "auth != null && root.child('admins').child(auth.uid).val() === true && !data.exists() && newData.hasChildren(['action', 'at', 'by'])",
+            "action": { ".validate": "newData.val() === 'archived' || newData.val() === 'restored'" },
+            "at": { ".validate": "newData.isNumber()" },
+            "by": { ".validate": "newData.val() === auth.uid" },
+            "remarks": { ".validate": "newData.isString() && newData.val().length <= 12000" },
+            "$other": { ".validate": false }
+          }
+        },
         "followUps": {
           "$followUpId": {
             ".write": "!data.exists() && newData.exists()",
@@ -55,7 +111,7 @@
               ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 10000"
             },
             "created_at": {
-              ".validate": "newData.isNumber()"
+              ".validate": "newData.isNumber() && newData.val() <= now + 300000 && newData.val() >= now - 300000"
             },
             "encrypted": {
               ".validate": "newData.isBoolean()"

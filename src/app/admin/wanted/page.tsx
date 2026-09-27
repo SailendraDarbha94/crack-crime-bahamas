@@ -1,6 +1,9 @@
 "use client";
 
-import { WantedPersonService } from "@/lib/firebaseService";
+import { PersonArchiveService, WantedPersonService } from "@/lib/firebaseService";
+import ArchivePrompt from "@/components/ArchivePrompt";
+import app from "@/lib/firebase";
+import { getAuth } from "firebase/auth";
 import { FirebaseErrorHandler } from "@/lib/firebaseErrorHandler";
 import { useToast } from "@/lib/toastContext";
 import { useEffect, useState } from "react";
@@ -35,6 +38,8 @@ const Page = () => {
   const [wanteds, setWanteds] = useState<WantedPerson[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [archivingId, setArchivingId] = useState<string | null>(null);
+  const [busy, setBusy] = useState<boolean>(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { toast } = useToast();
 
@@ -78,6 +83,38 @@ const Page = () => {
       const errorMessage = FirebaseErrorHandler.handleError(err);
       toast({ message: `Could not delete: ${errorMessage}`, type: "error" });
       console.error("Could not delete:", err);
+      // Someone else archived or deleted this person since the list loaded.
+      if (/no longer listed/.test(errorMessage)) await fetchWantedPersons();
+    }
+  };
+
+  // Archiving moves the record to the admin-only archive with the remarks,
+  // which takes the person off the website, the police portal and the app
+  // at once. The picture stays, so a restore brings them back unchanged.
+  const archivePost = async (id: string, remarks: string) => {
+    const admin = getAuth(app).currentUser;
+    if (!admin) {
+      toast({ message: "Your session has expired — please sign in again.", type: "error" });
+      return;
+    }
+    setBusy(true);
+    try {
+      await PersonArchiveService.archive("wanteds", id, admin.uid, remarks);
+      setArchivingId(null);
+      await fetchWantedPersons();
+      toast({ message: "Archived and removed from the public list. Find them under Archive.", type: "success" });
+    } catch (err) {
+      const errorMessage = FirebaseErrorHandler.handleError(err);
+      toast({ message: `Could not archive: ${errorMessage}`, type: "error" });
+      console.error("Could not archive:", err);
+      // A card that has gone stale (another admin archived or deleted this
+      // person) is the one failure a retry cannot fix: refresh the list.
+      if (/no longer listed/.test(errorMessage)) {
+        setArchivingId(null);
+        await fetchWantedPersons();
+      }
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -168,14 +205,35 @@ const Page = () => {
                     </>
                   )}
                 </div>
-                <div className="flex justify-center">
-                  <button
-                    className="bg-red-600/90 my-4 font-bold backdrop-blur-sm hover:bg-red-500/90 text-white   hover:border-red-300/50 relative px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ease-out transform active:scale-95"
-                    onClick={() => deleteWantedPost(wanted.id, wanted.image, wanted.name)}
-                  >
-                    DELETE
-                  </button>
-                </div>
+                {archivingId === wanted.id ? (
+                  <div className="my-4">
+                    <ArchivePrompt
+                      id={wanted.id}
+                      title={`Archive ${wanted.name}`}
+                      hint="They come off the website, the police portal and the app straight away. Restoring from the Archive page brings them back unchanged."
+                      busy={busy}
+                      onConfirm={(remarks) => archivePost(wanted.id, remarks)}
+                      onCancel={() => setArchivingId(null)}
+                    />
+                  </div>
+                ) : (
+                  <div className="flex justify-center gap-3">
+                    <button
+                      className="bg-white/40 border border-white/60 hover:bg-white/55 text-amber-950 my-4 font-bold px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ease-out transform active:scale-95 disabled:opacity-50"
+                      onClick={() => setArchivingId(wanted.id)}
+                      disabled={busy}
+                    >
+                      ARCHIVE
+                    </button>
+                    <button
+                      className="bg-red-600/90 my-4 font-bold backdrop-blur-sm hover:bg-red-500/90 text-white hover:border-red-300/50 relative px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ease-out transform active:scale-95 disabled:opacity-50"
+                      onClick={() => deleteWantedPost(wanted.id, wanted.image, wanted.name)}
+                      disabled={busy}
+                    >
+                      DELETE
+                    </button>
+                  </div>
+                )}
               </div>
             ))
           )}

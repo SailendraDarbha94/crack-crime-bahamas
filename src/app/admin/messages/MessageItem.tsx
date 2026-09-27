@@ -1,5 +1,7 @@
 "use client";
+import ArchivePrompt from "@/components/ArchivePrompt";
 import app from "@/lib/firebase";
+import { archiveTip, deleteTipRecords, StaleTipError } from "@/lib/tipAdmin";
 import { dateReader } from "@/lib/utils";
 import { useToast } from "@/lib/toastContext";
 import { encryptText } from "@/lib/tipCrypto";
@@ -17,10 +19,20 @@ const MessageItem = ({ item, refreshFunc }: any) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
   const [forwardOpen, setForwardOpen] = useState<boolean>(false);
+  const [archiveOpen, setArchiveOpen] = useState<boolean>(false);
   const [note, setNote] = useState<string>("");
   const [busy, setBusy] = useState<boolean>(false);
   const { toast } = useToast();
   const police: PoliceState = item.police ?? null;
+  const reopened = item.status === "reopened";
+
+  // Every action here is attributed to the signed-in admin; if the session
+  // has lapsed, say so instead of doing nothing.
+  const requireAdmin = () => {
+    const admin = getAuth(app).currentUser;
+    if (!admin) toast({ message: "Your session has expired — please sign in again.", type: "error" });
+    return admin;
+  };
 
   const copyPin = async () => {
     try {
@@ -37,7 +49,7 @@ const MessageItem = ({ item, refreshFunc }: any) => {
   // would also hand them every follow-up that arrives afterwards, reviewed or
   // not, because Realtime Database reads cover everything beneath a node.
   const forwardToPolice = async () => {
-    const admin = getAuth(app).currentUser;
+    const admin = requireAdmin();
     if (!admin) return;
     setBusy(true);
     try {
@@ -105,39 +117,51 @@ const MessageItem = ({ item, refreshFunc }: any) => {
     }
   };
 
+  // Archiving keeps the tip where it is, marked with the remarks, and takes it
+  // off this page. The tipster's PIN keeps working; if they write again the
+  // tip comes back here as "reopened".
+  const archiveThisTip = async (remarks: string) => {
+    const admin = requireAdmin();
+    if (!admin) return;
+    setBusy(true);
+    try {
+      // The newest message this card showed; anything newer in the database
+      // arrived after the page loaded and must be seen before archiving.
+      const lastSeen = Math.max(0, ...(item.followUps ?? []).map((f: FollowUp) => f.created_at ?? 0));
+      const { copyLeftBehind } = await archiveTip(getDatabase(app), item.id, admin.uid, remarks, lastSeen);
+      setArchiveOpen(false);
+      toast(
+        copyLeftBehind
+          ? { message: "Archived, but the police copy could not be withdrawn. Withdraw it from the Archive page.", type: "warning" }
+          : { message: police ? "Archived and withdrawn from police" : "Archived", type: "success" }
+      );
+      await refreshFunc();
+    } catch (err) {
+      console.error("Could not archive the tip:", err);
+      if (err instanceof StaleTipError) {
+        // The card had gone stale: say what changed, then show the truth.
+        setArchiveOpen(false);
+        toast(
+          err.reason === "gone"
+            ? { message: "This tip was deleted by another admin — refreshing", type: "warning" }
+            : { message: "The tipster wrote again since this page loaded — read the new message before archiving", type: "warning" }
+        );
+        await refreshFunc();
+      } else {
+        toast({ message: "Could not archive this tip. Please try again.", type: "error" });
+      }
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const deleteMessage = async (id: string) => {
-    if (!confirm("Delete this tip permanently?")) {
+    if (!confirm("Delete this tip permanently? Archive it instead if you want to keep a record.")) {
       return;
     }
     setLoading(true);
     try {
-      const db = getDatabase(app);
-      // The tip goes first, on its own: that is what was asked for, and it
-      // must not depend on anything else succeeding.
-      await remove(ref(db, `messages/${id}`));
-
-      // Clearing the PIN index and the police copy is then a courtesy. Their
-      // rules may not be deployed yet (see FIREBASE_ROLLOUT.md), and a leftover
-      // only points at a tip that no longer exists. Bundling these with the
-      // delete above is what broke deletion before.
-      if (item.pin) {
-        try {
-          await remove(ref(db, `tipPins/${item.pin}`));
-        } catch (err) {
-          console.warn("Tip deleted, but its PIN index could not be cleared:", err);
-        }
-      }
-      // Always attempted, never gated on what this page happened to know:
-      // another admin may have forwarded the tip after this inbox loaded.
-      // Removing a copy that does not exist is a permitted no-op.
-      let copyLeftBehind = false;
-      try {
-        await remove(ref(db, `policeTips/${id}`));
-      } catch (err) {
-        copyLeftBehind = true;
-        console.warn("Tip deleted, but its police copy could not be removed:", err);
-      }
-
+      const { copyLeftBehind } = await deleteTipRecords(getDatabase(app), id, item.pin);
       toast(
         copyLeftBehind
           ? { message: "Tip deleted, but its police copy could not be removed. It will show here as a leftover copy — withdraw it.", type: "warning" }
@@ -182,7 +206,20 @@ const MessageItem = ({ item, refreshFunc }: any) => {
       </div>
     </div>
   ) : (
-    <div className="bg-white/25 backdrop-blur-xl border border-white/50 text-amber-950 max-w-md mx-auto rounded-2xl shadow-[0_8px_32px_rgba(120,72,10,0.12)] my-2 p-4 flex flex-col min-h-40 justify-between">
+    <div className={`bg-white/25 backdrop-blur-xl border ${reopened ? "border-amber-500/70" : "border-white/50"} text-amber-950 max-w-md mx-auto rounded-2xl shadow-[0_8px_32px_rgba(120,72,10,0.12)] my-2 p-4 flex flex-col min-h-40 justify-between`}>
+      {reopened && item.archive ? (
+        <div className="rounded-xl bg-amber-100/60 border border-amber-300/60 px-3 py-2 mb-3 font-nunito">
+          <p className="text-xs uppercase tracking-wide text-amber-900/70">Reopened by the tipster</p>
+          <p className="text-sm">
+            This tip was archived {dateReader(item.archive.at)} with the remarks{" "}
+            <span className="italic whitespace-pre-wrap">“{item.archive.remarks}”</span>, and the tipster has written since.
+            {police
+              ? " The police still hold a copy of this tip."
+              : " If officers should see the new message, forward the tip to them."}
+          </p>
+        </div>
+      ) : null}
+
       <p className="font-bold font-nunito text-xl whitespace-pre-wrap">{item.message}</p>
 
       {item.followUps?.length ? (
@@ -197,6 +234,7 @@ const MessageItem = ({ item, refreshFunc }: any) => {
               <p className="font-nunito whitespace-pre-wrap">{followUp.message}</p>
               <p className="font-nunito text-xs text-amber-900/70 pt-0.5">
                 {dateReader(followUp.created_at as number)}
+                {reopened && item.archive && (followUp.created_at ?? 0) > item.archive.at ? " · after archiving" : ""}
               </p>
               {police ? (
                 police.sharedFollowUps.includes(followUp.id) ? (
@@ -290,10 +328,33 @@ const MessageItem = ({ item, refreshFunc }: any) => {
       <p className="font-nunito font-semibold text-sm text-amber-900/80 pt-2">
         Sent : {dateReader(item.created_at)}
       </p>
-      <div className="flex justify-center pt-8">
+
+      <div className="pt-6 font-nunito">
+        {archiveOpen ? (
+          <ArchivePrompt
+            id={item.id}
+            title={reopened ? "Archive this tip again" : "Archive this tip"}
+            hint={`The tip leaves the inbox and keeps your remarks.${police ? " Officers lose access to it." : ""} If the tipster writes again it comes back here as reopened.`}
+            confirmLabel={reopened ? "Archive again" : "Archive"}
+            busy={busy}
+            onConfirm={archiveThisTip}
+            onCancel={() => setArchiveOpen(false)}
+          />
+        ) : (
+          <button
+            onClick={() => setArchiveOpen(true)}
+            disabled={busy}
+            className="bg-white/40 border border-white/60 hover:bg-white/55 text-amber-950 w-full p-2 min-w-40 rounded-md font-mono tracking-wider font-extrabold disabled:opacity-50"
+          >
+            {reopened ? "ARCHIVE AGAIN" : "ARCHIVE"}
+          </button>
+        )}
+      </div>
+      <div className="flex justify-center pt-2">
         <button
           onClick={() => deleteMessage(item.id)}
-          className="bg-red-700 hover:bg-red-600 text-white w-full p-2 min-w-40 rounded-md font-mono tracking-wider font-extrabold"
+          disabled={busy}
+          className="bg-red-700 hover:bg-red-600 text-white w-full p-2 min-w-40 rounded-md font-mono tracking-wider font-extrabold disabled:opacity-50"
         >
           DELETE
         </button>

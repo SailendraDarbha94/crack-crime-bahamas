@@ -6,6 +6,7 @@ import {
   get, 
   update, 
   remove, 
+  serverTimestamp,
   child, 
   orderByChild, 
   query, 
@@ -20,6 +21,8 @@ import {
   uploadBytesResumable
 } from 'firebase/storage';
 import { downscaleImage, sniffImageType } from './imageUtils';
+import { normaliseRemarks, publicRecordOf, type PeopleKind } from './archive';
+import { encryptText } from './tipCrypto';
 
 // Database service functions
 export class DatabaseService {
@@ -271,7 +274,17 @@ export class MissingPersonService {
   }
 
   static async deleteMissingPerson(id: string, imagePath: string): Promise<void> {
-    // Delete image from storage if it exists and is not the default message
+    // Make sure the record is still here before touching anything. A stale
+    // page could otherwise delete the picture of a person who was archived
+    // meanwhile — the archive keeps the same image path.
+    const snapshot = await get(dbRef(database, `${this.basePath}/${id}`));
+    if (!snapshot.exists()) {
+      throw new Error("This person is no longer listed — they may already be archived or deleted.");
+    }
+
+    // The record goes first: it is what was asked for. The picture is then
+    // removed only for a person who was really deleted.
+    await DatabaseService.delete(`${this.basePath}/${id}`);
     if (imagePath !== "Image Not Available") {
       try {
         await StorageService.deleteFile(imagePath);
@@ -279,9 +292,6 @@ export class MissingPersonService {
         console.warn(`Could not delete image: ${imagePath}`, error);
       }
     }
-
-    // Delete database entry
-    await DatabaseService.delete(`${this.basePath}/${id}`);
   }
 
   private static async checkFileExists(fileName: string): Promise<boolean> {
@@ -333,7 +343,17 @@ export class WantedPersonService {
   }
 
   static async deleteWantedPerson(id: string, imagePath: string): Promise<void> {
-    // Delete image from storage if it exists and is not the default message
+    // Make sure the record is still here before touching anything. A stale
+    // page could otherwise delete the picture of a person who was archived
+    // meanwhile — the archive keeps the same image path.
+    const snapshot = await get(dbRef(database, `${this.basePath}/${id}`));
+    if (!snapshot.exists()) {
+      throw new Error("This person is no longer listed — they may already be archived or deleted.");
+    }
+
+    // The record goes first: it is what was asked for. The picture is then
+    // removed only for a person who was really deleted.
+    await DatabaseService.delete(`${this.basePath}/${id}`);
     if (imagePath !== "Image Not Available") {
       try {
         await StorageService.deleteFile(imagePath);
@@ -341,9 +361,6 @@ export class WantedPersonService {
         console.warn(`Could not delete image: ${imagePath}`, error);
       }
     }
-
-    // Delete database entry
-    await DatabaseService.delete(`${this.basePath}/${id}`);
   }
 
   private static async checkFileExists(fileName: string): Promise<boolean> {
@@ -353,6 +370,75 @@ export class WantedPersonService {
       return true;
     } catch (error) {
       return false;
+    }
+  }
+}
+
+// Archived wanted and missing persons.
+//
+// Archiving MOVES the record to the admin-only /archive node in one atomic
+// update, which is what takes the person off the public site, the police
+// portal and every installed app at once (the app lists people through
+// /api/wanted and /api/missing, which read the public nodes only). The
+// picture stays in Storage so a restore brings the person back whole.
+export class PersonArchiveService {
+  static path(kind: PeopleKind, id?: string): string {
+    return id ? `archive/${kind}/${id}` : `archive/${kind}`;
+  }
+
+  /** Move a listed person into the archive with the admin's remarks. Whole or not at all. */
+  static async archive(kind: PeopleKind, id: string, adminUid: string, remarks: string): Promise<void> {
+    const clean = normaliseRemarks(remarks);
+    if (!clean) throw new Error("Remarks are required to archive.");
+    // Read fresh rather than trusting the page's copy: another admin may have
+    // edited, archived or deleted this person since the list loaded.
+    const snapshot = await get(dbRef(database, `${kind}/${id}`));
+    if (!snapshot.exists()) {
+      throw new Error("This person is no longer listed — they may already be archived or deleted.");
+    }
+    const updates: Record<string, unknown> = {};
+    updates[this.path(kind, id)] = {
+      ...publicRecordOf(snapshot.val()),
+      archived: { at: serverTimestamp(), by: adminUid, remarks: encryptText(clean) },
+    };
+    updates[`${kind}/${id}`] = null;
+    await update(dbRef(database), updates);
+  }
+
+  /** Put an archived person back on the public list under the same id. */
+  static async restore(kind: PeopleKind, id: string): Promise<void> {
+    const snapshot = await get(dbRef(database, this.path(kind, id)));
+    if (!snapshot.exists()) {
+      throw new Error("This person is not in the archive any more.");
+    }
+    const updates: Record<string, unknown> = {};
+    // The rules refuse archive fields on the public node; strip them here so
+    // a correct client never trips that, and remarks never go public.
+    updates[`${kind}/${id}`] = publicRecordOf(snapshot.val());
+    updates[this.path(kind, id)] = null;
+    await update(dbRef(database), updates);
+  }
+
+  static async getAll(kind: PeopleKind): Promise<any[]> {
+    return DatabaseService.getAll(this.path(kind));
+  }
+
+  /** Delete an archived person for good, picture included. */
+  static async deleteArchived(kind: PeopleKind, id: string, imagePath?: string): Promise<void> {
+    // As with a listed person: confirm the record is still here (it may have
+    // been restored meanwhile, in which case its picture is live again), and
+    // remove the record before the picture.
+    const snapshot = await get(dbRef(database, this.path(kind, id)));
+    if (!snapshot.exists()) {
+      throw new Error("This person is not in the archive any more.");
+    }
+    await DatabaseService.delete(this.path(kind, id));
+    if (imagePath && imagePath !== "Image Not Available") {
+      try {
+        await StorageService.deleteFile(imagePath);
+      } catch (error) {
+        console.warn(`Could not delete image: ${imagePath}`, error);
+      }
     }
   }
 }

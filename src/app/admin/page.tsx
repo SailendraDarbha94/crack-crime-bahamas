@@ -1,4 +1,5 @@
 "use client";
+import { tipArchiveStatus } from "@/lib/archive";
 import { database } from "@/lib/firebase";
 import { ref, get } from "firebase/database";
 import Link from "next/link";
@@ -10,6 +11,7 @@ const Page = () => {
   const [numberOfMissings, setNumberOfMissings] = useState<number>(0);
   const [numberOfWanteds, setNumberOfWanteds] = useState<number>(0);
   const [numberOfMessages, setNumberOfMessages] = useState<number>(0);
+  const [numberOfArchived, setNumberOfArchived] = useState<number>(0);
 
   const gettingNumbers = async () => {
     setLoading(true);
@@ -20,10 +22,37 @@ const Page = () => {
       const [missingsSnapshot, wantedsSnapshot, messagesSnapshot] =
         await Promise.all([get(missingsRef), get(wantedsRef), get(messagesRef)]);
 
-      // An empty node is a valid count of 0 — never abort the other counts
+      // An empty node is a valid count of 0 — never abort the other counts.
+      // Archived people are no longer under these nodes, so they fall out of
+      // the counts on their own.
       setNumberOfMissings(missingsSnapshot.exists() ? missingsSnapshot.size : 0);
       setNumberOfWanteds(wantedsSnapshot.exists() ? wantedsSnapshot.size : 0);
-      setNumberOfMessages(messagesSnapshot.exists() ? messagesSnapshot.size : 0);
+
+      // Tips are archived in place, so split them: open and reopened tips
+      // count as tips, archived ones count under Archive.
+      let openTips = 0;
+      let archivedTips = 0;
+      if (messagesSnapshot.exists()) {
+        messagesSnapshot.forEach((tip) => {
+          if (tipArchiveStatus(tip.val()) === "archived") archivedTips += 1;
+          else openTips += 1;
+        });
+      }
+      setNumberOfMessages(openTips);
+
+      // Read on its own so a problem with the archive never blanks the rest.
+      let archivedPeople = 0;
+      try {
+        const archiveSnapshot = await get(ref(database, "archive"));
+        if (archiveSnapshot.exists()) {
+          const archive = archiveSnapshot.val();
+          archivedPeople =
+            Object.keys(archive?.wanteds ?? {}).length + Object.keys(archive?.missings ?? {}).length;
+        }
+      } catch (error) {
+        console.error("Error fetching archive count:", error);
+      }
+      setNumberOfArchived(archivedTips + archivedPeople);
     } catch (error) {
       console.error("Error fetching dashboard counts:", error);
     } finally {
@@ -76,6 +105,15 @@ const Page = () => {
             <Link href="/admin/messages" className="w-full md:w-1/3 lg:w-1/4 min-h-80 hover:cursor-pointer bg-white/30 backdrop-blur-md border border-white/50 rounded-3xl p-3 hover:bg-white/40 transition-all duration-200">
               <p className="text-center text-3xl font-bold text-amber-950">Tips : {numberOfMessages}</p>
               <img src="/thumbnails/tips.png" alt="Messages Thumbnail" className="rounded-xl" loading="lazy" />
+            </Link>
+            <Link href="/admin/archive" className="w-full md:w-1/3 lg:w-1/4 min-h-80 hover:cursor-pointer bg-white/30 backdrop-blur-md border border-white/50 rounded-3xl p-3 hover:bg-white/40 transition-all duration-200 flex flex-col">
+              <p className="text-center text-3xl font-bold text-amber-950">Archive : {numberOfArchived}</p>
+              <div className="flex-1 flex items-center justify-center">
+                <svg aria-hidden="true" className="w-28 h-28 text-amber-900/60" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                </svg>
+              </div>
+              <p className="text-center text-sm text-amber-900/70 pb-2">Closed tips and people taken off the lists</p>
             </Link>
           </div>
         </div>

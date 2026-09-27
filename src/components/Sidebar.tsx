@@ -11,6 +11,7 @@ const NAV: Record<"admin" | "police", NavItem[]> = {
     { href: "/admin/messages", label: "Manage Messages" },
     { href: "/admin/missing", label: "Manage Missings" },
     { href: "/admin/wanted", label: "Manage Wanteds" },
+    { href: "/admin/archive", label: "Archive" },
     { href: "/admin/adverts", label: "Advertisements" },
     { href: "/admin/notifications", label: "Notifications" },
     { href: "/admin/team", label: "Police Team" },

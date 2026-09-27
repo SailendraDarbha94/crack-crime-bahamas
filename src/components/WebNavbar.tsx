@@ -183,6 +183,7 @@ const WebNavbar: React.FC = () => {
                                     </div>
                                 </NavLink>
                                 <NavLink href="/admin/messages"><div className="flex items-center gap-3">Tip Messages</div></NavLink>
+                                <NavLink href="/admin/archive"><div className="flex items-center gap-3">Archive</div></NavLink>
                                 <NavLink href="/admin/notifications"><div className="flex items-center gap-3">Notifications</div></NavLink>
                                 <NavLink href="/admin/adverts"><div className="flex items-center gap-3">Advertisements</div></NavLink>
                                 <NavLink href="/admin/team"><div className="flex items-center gap-3">Police Team</div></NavLink>

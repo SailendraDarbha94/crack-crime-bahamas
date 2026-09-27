@@ -167,3 +167,45 @@ A copy is create-or-delete only — it cannot be overwritten, and a follow-up ca
 be shared once — so one admin can never silently replace another's forward; to
 change a copy, withdraw it and forward again. The inbox lists any copy whose
 original tip is gone as a leftover to withdraw.
+
+## Archive
+
+Two different mechanics, on purpose.
+
+**Tips are archived in place.** `/messages/$tipId/archive → { at, by, remarks }`
+marks a tip archived (remarks encrypted like a police note; `by` must be the
+writer's uid), and `/messages/$tipId/archiveLog/$id` keeps every archive and
+restore as append-only history. The tip is never moved because the public
+intake must still be able to append a follow-up to it by PIN. The intake
+cannot touch the archive mark (the validators require an admin), so
+**"reopened" is derived, not stored**: a follow-up newer than `archive.at`
+puts the tip back in the inbox, flagged, until an admin archives it again.
+Archiving also withdraws the police copy; the Archive page flags any copy that
+is somehow still there. Restore clears the mark and logs it.
+
+**Wanted and missing persons are moved.** Archiving is one multi-path update
+that writes `/archive/wanteds|missings/$id → { …record, archived: { at, by,
+remarks } }` and removes the public record — whole or not at all. `/archive`
+is admin-only, which is what takes the person off the public site, the police
+portal and every installed app at once (the app lists people through
+`/api/wanted` and `/api/missing`, which read the public nodes). The picture
+stays in Storage; restore writes the stripped record back under the same id.
+The public nodes refuse `archived` and `archiveLog` outright, so remarks can
+never leak onto them even from a buggy client.
+
+Rules for both are covered by `test/rules/archive.test.mjs`; the derived
+status by `test/unit/archive.test.mts`. Deploy the rules before the code that
+uses them. Against the old rules a *person* archive fails cleanly (no
+`/archive` node, and the move is atomic); a *tip* archive would still write
+(the tip node never had `$other: false`) but without the new validators —
+and until they land, an anonymous submitter could hide a new tip from the
+inbox by including an `archive` node in it. Timestamps in the archive mark
+are the database server's (`serverTimestamp()`), never the browser's, since
+"reopened" is decided by comparing them with intake times — and for the same
+reason a follow-up's `created_at` must sit within five minutes of the
+database clock (`now` in the rules), so a PIN holder writing to the database
+directly cannot forge a stamp that holds a tip open or buries a message.
+Archiving re-reads the tip and refuses if a follow-up arrived after the
+admin's page loaded, so nothing is archived unread. The history under
+`archiveLog` is append-only against the app's own writes; an admin acting on
+the raw database can still rewrite it, as with everything else under a tip.
