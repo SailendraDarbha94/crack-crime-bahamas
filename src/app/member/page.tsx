@@ -1,250 +1,38 @@
 "use client";
 
-import { useToast } from "@/lib/toastContext";
-import { useState } from "react";
+import Link from "next/link";
 
+// Placeholder while donations and sponsorship are rebuilt on a real payment
+// flow. The route stays so the navbar, footer, About page and sitemap links
+// keep resolving.
 const Page = () => {
-  const [name, setName] = useState<string>("");
-  const [address, setAddress] = useState<string>("");
-  const [mobile, setMobile] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [support, setSupport] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const { toast } = useToast();
-
-  const registerMember = async (e: React.FormEvent) => {
-    // Never let the browser do a native GET submit — it would put the
-    // submitter's personal details into the URL and abort the save.
-    e.preventDefault();
-
-    if (!support) {
-      toast({ message: "Please select a membership tier", type: "warning" });
-      return;
-    }
-
-    setLoading(true);
-    const currentTime = Date.now();
-    try {
-      const res = await fetch("/api/member", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: name,
-          address: address,
-          mobile: mobile,
-          email: email,
-          support: support,
-          created_at: currentTime
-        }),
-      });
-      const { data } = await res.json();
-      if (data !== "request failure") {
-        setName("");
-        setAddress("");
-        setEmail("");
-        setMobile("");
-        setSupport("");
-        toast({ message: "Thank you! Your membership request has been submitted.", type: "success" });
-      } else {
-        toast({ message: "Submission failed. Please try again later.", type: "error" });
-      }
-    } catch (err) {
-      console.error(err);
-      toast({ message: "Submission failed. Please try again later.", type: "error" });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="min-h-screen p-4">
       <section className="font-nunito mb-10 mx-auto max-w-lg rounded-lg">
         <div className="flex flex-col items-center justify-center px-3 md:px-8 py-4 mx-auto md:h-screen lg:py-0">
-          <a
+          <Link
             href="/"
             className="flex items-center mb-6 text-2xl font-semibold text-amber-950"
           >
             <img className="w-8 h-8 mr-2" src="/newfavicon.png" alt="Crack Crime Bahamas logo" />
             Crack Crime Bahamas
-          </a>
+          </Link>
           <div className="w-full bg-white/25 backdrop-blur-xl border border-white/50 rounded-2xl shadow-[0_8px_32px_rgba(120,72,10,0.12)] md:mt-0 sm:max-w-md xl:p-0">
-            <div className="p-4 md:p-6 space-y-4 md:space-y-6 sm:p-8 w-fu">
-              <h1 className="text-xl font-bold leading-tight tracking-tight text-amber-950 md:text-2xl">
-                Membership Form
+            <div className="p-6 sm:p-8 text-center space-y-4">
+              <p className="text-sm uppercase tracking-wide text-amber-900/70">Sponsorship &amp; Donations</p>
+              <h1 className="text-3xl font-extrabold leading-tight tracking-tight text-amber-950 md:text-4xl">
+                Coming Soon
               </h1>
-              <form className="space-y-4 md:space-y-6" onSubmit={registerMember}>
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="block mb-2 text-sm font-medium text-amber-950"
-                  >
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    id="name"
-                    value={name}
-                    className="bg-white/40 backdrop-blur-md border border-white/60 focus:outline-none focus:ring-2 focus:ring-amber-400/60 text-amber-950 placeholder-amber-900/50 sm:text-sm rounded-xl block w-full p-2.5"
-                    placeholder=""
-                    required={true}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block mb-2 text-sm font-medium text-amber-950"
-                  >
-                    E-Mail
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="abc@example.com"
-                    className="bg-white/40 backdrop-blur-md border border-white/60 focus:outline-none focus:ring-2 focus:ring-amber-400/60 text-amber-950 placeholder-amber-900/50 sm:text-sm rounded-xl block w-full p-2.5"
-                    required={true}
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="address"
-                    className="block mb-2 text-sm font-medium text-amber-950"
-                  >
-                    Address
-                  </label>
-                  <input
-                    type="text"
-                    name="address"
-                    id="address"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    placeholder=""
-                    className="bg-white/40 backdrop-blur-md border border-white/60 focus:outline-none focus:ring-2 focus:ring-amber-400/60 text-amber-950 placeholder-amber-900/50 sm:text-sm rounded-xl block w-full p-2.5"
-                    required={true}
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="mobile"
-                    className="block mb-2 text-sm font-medium text-amber-950"
-                  >
-                    Mobile
-                  </label>
-                  <input
-                    type="text"
-                    name="mobile"
-                    id="mobile"
-                    value={mobile}
-                    onChange={(e) => setMobile(e.target.value)}
-                    placeholder=""
-                    className="bg-white/40 backdrop-blur-md border border-white/60 focus:outline-none focus:ring-2 focus:ring-amber-400/60 text-amber-950 placeholder-amber-900/50 sm:text-sm rounded-xl block w-full p-2.5"
-                    required={true}
-                  />
-                </div>
-                <fieldset>
-                  <legend>Select Your Annual Membership Fees</legend>
-                  <div className="m-2 inline-block text-green-600">
-                    <input
-                      type="radio"
-                      id="friend"
-                      name="support"
-                      value="friend"
-                      checked={support === "friend"}
-                      onChange={(e) => setSupport(e.target.value)}
-                    />
-                    <label htmlFor="friend">$25(Friend)</label>
-                  </div>
-                  <div className="m-2 inline-block text-blue-500">
-                    <input
-                      type="radio"
-                      id="supporter"
-                      name="support"
-                      value="supporter"
-                      checked={support === "supporter"}
-                      onChange={(e) => setSupport(e.target.value)}
-                    />
-                    <label htmlFor="supporter">$100(Supporter)</label>
-                  </div>
-                  <div className="m-2 inline-block text-amber-900">
-                    <input
-                      type="radio"
-                      id="bronze"
-                      name="support"
-                      value="bronze"
-                      checked={support === "bronze"}
-                      onChange={(e) => setSupport(e.target.value)}
-                    />
-                    <label htmlFor="bronze">$250(Bronze)</label>
-                  </div>
-                  <div className="m-2 inline-block text-gray-400">
-                    <input
-                      type="radio"
-                      id="silver"
-                      name="support"
-                      value="silver"
-                      checked={support === "silver"}
-                      onChange={(e) => setSupport(e.target.value)}
-                    />
-                    <label htmlFor="silver">$500(Silver)</label>
-                  </div>
-                  <div className="m-2 inline-block text-amber-400">
-                    <input
-                      type="radio"
-                      id="gold"
-                      name="support"
-                      value="gold"
-                      checked={support === "gold"}
-                      onChange={(e) => setSupport(e.target.value)}
-                    />
-                    <label htmlFor="gold">$1000(Gold)</label>
-                  </div>
-                  <div className="m-2 inline-block text-fuchsia-500">
-                    <input
-                      type="radio"
-                      id="platinum"
-                      name="support"
-                      value="platinum"
-                      checked={support === "platinum"}
-                      onChange={(e) => setSupport(e.target.value)}
-                    />
-                    <label htmlFor="platinum">$2500(Platinum)</label>
-                  </div>
-                </fieldset>
-                {loading ? (
-                  <div role="status" className="flex justify-center">
-                    <svg
-                      aria-hidden="true"
-                      className="w-8 h-8 text-amber-900/30 animate-spin fill-amber-700"
-                      viewBox="0 0 100 101"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                        fill="currentColor"
-                      />
-                      <path
-                        d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                        fill="currentFill"
-                      />
-                    </svg>
-                    <span className="sr-only">Loading...</span>
-                  </div>
-                ) : (
-                  <button
-                    type="submit"
-                    className="w-full rounded-xl bg-white/40 backdrop-blur-md border border-white/60 hover:bg-white/55 text-amber-950 focus:ring-4 focus:ring-amber-300/50 focus:outline-none font-bold text-lg px-5 py-2.5 text-center transition-all duration-200 active:scale-95"
-                  >
-                    Submit
-                  </button>
-                )}
-              </form>
+              <p className="text-amber-900/80">
+                We are rebuilding how you can support Crime Stoppers Bahamas.
+                Please check back shortly.
+              </p>
+              <Link
+                href="/"
+                className="inline-block rounded-xl bg-white/40 backdrop-blur-md border border-white/60 hover:bg-white/55 text-amber-950 font-bold px-5 py-2.5 transition-all duration-200 active:scale-95"
+              >
+                Back to home
+              </Link>
             </div>
           </div>
         </div>

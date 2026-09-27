@@ -7,7 +7,7 @@ import AdvertChanger from "./AdvertChanger";
 const LANDSCAPE_SLOTS: { group: string; label: string; where: string }[] = [
   { group: "home", label: "Home", where: "Text a Tip, Crime Stoppers caller" },
   { group: "whoWeAre", label: "Who We Are", where: "About Us screen" },
-  { group: "supportAndSafety", label: "Support & Safety", where: "Support Us, donation forms" },
+  { group: "supportAndSafety", label: "Support & Safety", where: "Support Us screen" },
   { group: "missing", label: "Missing", where: "Missing list screen" },
   { group: "wanted", label: "Wanted", where: "Wanted list screen" },
   { group: "events", label: "Events", where: "Events screen" },

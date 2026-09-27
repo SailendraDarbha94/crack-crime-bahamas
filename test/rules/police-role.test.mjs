@@ -66,6 +66,8 @@ await expect("officer can read missing persons", read("missings", OFFICER), 200)
 await expect("officer cannot read the tip inbox", read("messages", OFFICER), 401);
 await expect("officer cannot read a single tip", read("messages/t1", OFFICER), 401);
 await expect("officer cannot read members", read("members", OFFICER), 401);
+await expect("anonymous cannot create a member (pledge intake is closed)", put("members/anon1", "anon", { name: "x", email: "y@z", created_at: 1 }), 401);
+await expect("officer cannot create a member", put("members/cop1m", OFFICER, { name: "x", email: "y@z", created_at: 1 }), 401);
 await expect("officer cannot read user profiles", read("users", OFFICER), 401);
 await expect("officer cannot list device tokens", read("notifications_register", OFFICER), 401);
 await expect("officer cannot read notifications", read("notifications", OFFICER), 401);

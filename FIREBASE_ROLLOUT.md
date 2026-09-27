@@ -32,7 +32,7 @@ the local `.env` changes:
 
 Smoke test on the live site (rules still open — nothing can break):
 admin login → dashboard counts → tips list → add/delete a test wanted
-record (verify only ONE record is created) → member form → sign-up with the
+record (verify only ONE record is created) → sign-up with the
 invite code.
 
 ## 2. Back up before touching rules
@@ -102,7 +102,7 @@ curl -X POST https://<site>/api/message -H 'content-type: application/json' \
 curl "https://<db-url>/tipPins/K7M2QX.json"     # → {"tipId":"-N...","created_at":...}
 ```
 
-Also: member form submits; `/admin` redirects to login; a signed-in but
+Also: `/admin` redirects to login; a signed-in but
 non-allowlisted account sees the "awaiting approval" screen.
 
 ## 6. Mobile canary (same day)
