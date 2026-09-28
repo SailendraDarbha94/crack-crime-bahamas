@@ -187,7 +187,6 @@ const WebNavbar: React.FC = () => {
                                 <NavLink href="/admin/notifications"><div className="flex items-center gap-3">Notifications</div></NavLink>
                                 <NavLink href="/admin/adverts"><div className="flex items-center gap-3">Advertisements</div></NavLink>
                                 <NavLink href="/admin/team"><div className="flex items-center gap-3">Police Team</div></NavLink>
-                                <NavLink href="/admin/member"><div className="flex items-center gap-3">Members</div></NavLink>
                                 <NavLink onClick={logoutUser} variant="danger">
                                     <div className="flex items-center gap-3">
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

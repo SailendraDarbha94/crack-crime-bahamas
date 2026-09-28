@@ -68,6 +68,9 @@ await expect("officer cannot read a single tip", read("messages/t1", OFFICER), 4
 await expect("officer cannot read members", read("members", OFFICER), 401);
 await expect("anonymous cannot create a member (pledge intake is closed)", put("members/anon1", "anon", { name: "x", email: "y@z", created_at: 1 }), 401);
 await expect("officer cannot create a member", put("members/cop1m", OFFICER, { name: "x", email: "y@z", created_at: 1 }), 401);
+// The pledge records were retired on 2026-09-28: nobody reads or writes them now.
+await expect("admin can no longer read members (node retired)", read("members", ADMIN), 401);
+await expect("admin can no longer write members (node retired)", put("members/adm1", ADMIN, { name: "x", email: "y@z", created_at: 1 }), 401);
 await expect("officer cannot read user profiles", read("users", OFFICER), 401);
 await expect("officer cannot list device tokens", read("notifications_register", OFFICER), 401);
 await expect("officer cannot read notifications", read("notifications", OFFICER), 401);

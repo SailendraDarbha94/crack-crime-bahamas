@@ -207,23 +207,6 @@
       }
     },
 
-    "members": {
-      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
-      "$memberId": {
-        ".write": "auth != null && root.child('admins').child(auth.uid).val() === true",
-        ".validate": "newData.hasChildren(['name', 'email', 'created_at'])",
-        "name": {
-          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 200"
-        },
-        "email": {
-          ".validate": "newData.isString() && newData.val().length <= 320"
-        },
-        "created_at": {
-          ".validate": "newData.isNumber()"
-        }
-      }
-    },
-
     "users": {
       ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
       "$uid": {
