@@ -27,6 +27,17 @@ const Page = () => {
                 We are rebuilding how you can support Crime Stoppers Bahamas.
                 Please check back shortly.
               </p>
+              {/* Until online payments return, supporters can give by cheque. */}
+              <div className="border-t border-amber-900/15 pt-4 space-y-3">
+                <p className="font-semibold text-amber-950 text-balance">
+                  In the interim, please send a cheque to:
+                </p>
+                <address className="not-italic rounded-xl bg-white/40 border border-white/60 px-4 py-3 text-amber-950 leading-relaxed">
+                  <span className="block font-bold">Crime Stoppers Bahamas</span>
+                  <span className="block">P.O. Box N 665</span>
+                  <span className="block">Nassau, Bahamas</span>
+                </address>
+              </div>
               <Link
                 href="/"
                 className="inline-block rounded-xl bg-white/40 backdrop-blur-md border border-white/60 hover:bg-white/55 text-amber-950 font-bold px-5 py-2.5 transition-all duration-200 active:scale-95"
