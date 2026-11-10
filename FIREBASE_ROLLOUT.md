@@ -138,19 +138,110 @@ to the tip**:
 
 - `.read` sits on `$pin`, never on `tipPins` itself — you can resolve a PIN
   you already hold, but you cannot list them. Guessing is the only way in,
-  across 31^6 ≈ 887 million PINs.
+  across some 739 million PINs.
 - Resolving one yields a tip *key*, which is useless on its own: `/messages`
   stays admin-read-only.
 - Writes are create-only, so a PIN can never be reassigned. That rule is also
   what keeps PINs unique: `/api/message` writes the tip and its PIN in one
   multi-path update, so a collision rejects **both** and the route retries
   with a fresh PIN rather than leaving a tip no PIN points at.
-- Deleting a tip in the admin inbox drops its PIN in the same update.
+- Deleting a tip in the admin inbox drops its PIN too.
 
-Rules and atomicity are covered by emulator tests — see the PR that added
-them. When follow-up messages and reward status land, they hang off the same
-PIN (`/tipFollowUps/$pin`, `/tipStatus/$pin`) and must keep this shape: a
-guessed PIN may add to a tip or read a status word, never read tip content.
+**Who may add to the index.** The intake has no identity of its own (there is
+no firebase-admin SDK), so whatever it may write, anyone may write. And a
+message that merely *contains* a registered PIN is filed under that PIN's tip
+as a follow-up. Left open, that lets someone register "NASSAU" or "STREET" and
+collect every tip that uses the word. Two rules on `/tipPins/$pin` close it:
+
+- **A new PIN must mix letters and digits.** No ordinary word and no ordinary
+  number can be registered. `generateTipPin()` only draws mixed PINs, so the
+  intake never asks for one the rules would refuse. PINs issued before this
+  (about one in six was letters only) are already in the index and keep
+  working; the rules judge new entries only, and the intake still looks up
+  letters-only tokens for their sake.
+- **A new entry must come with its own tip.** It is accepted only in a write
+  that also creates the tip it names, with that tip carrying the same PIN: the
+  one multi-path update the intake makes. An entry on its own, a second PIN for
+  a tip, or an entry naming a tip that already exists or does not exist is
+  refused, for admins as much as for anyone. So every PIN added to the index
+  belongs to a tip stored under `/messages` and carrying that PIN, which the
+  inbox lists and an admin can read and delete (which removes the PIN). The
+  index itself can no longer hold anything a tip does not account for.
+
+"Which the inbox lists" depends on the staff pages showing what a record
+really holds, and the key `__proto__` breaks that. The SDK builds `snapshot.val()` by plain
+assignment, so a child of that name is not an entry: it becomes the object's
+prototype. A tip stored *under* that key drops out of every listing; a tip
+stored *with* a child of that name is read with fields the rules never saw (a
+forged archive mark hides it from the inbox, a forged follow-up can stop the
+page loading). Both are shut twice over:
+
+- The rules refuse the key as a tip's id, as a child of a tip, as a follow-up's
+  id, and as the tip an index entry names; the intake will not follow an entry
+  that names it.
+- Every staff page reads tips through `ownData()` (`src/lib/ownData.ts`), which
+  keeps only what each record itself holds, and looks records up by id with
+  `ownEntry()` so an id such as `constructor` does not find what every object
+  inherits.
+
+For the same reason `readTipText()` will not hand the cipher an object-form
+message whose sizes do not add up. The rules accept any object as a tip's
+message, because the 2024 app stored cipher objects (ten of them are still in
+the database), and one claiming an impossible size made the decryption loop
+for ever, freezing the inbox for whoever opened it.
+
+What is left: someone can still file real, visible tips under mixed codes they
+chose (licence plates, say), any number of them, and a later tip quoting such a
+code joins that tip as a follow-up. An admin sees both. Read a junk tip's later
+messages before deleting it, because they go with it. Closing this for good
+needs the intake to hold a secret or an identity of its own, which this project
+does not have yet.
+
+Deleting a tip removes only the index entry that names that tip. A tip's `pin`
+field alone proves nothing: anyone can file a tip carrying a PIN that belongs
+to another tip, and deleting that decoy must leave the real tip's PIN alone.
+
+These rules judge new entries only. Whatever was in the index before they went
+live stays: audit it once afterwards (every entry should name an existing tip
+that carries the same PIN).
+
+**Known gaps: hostile records.** Anyone can write a new tip straight to the
+database, and `/messages/$id` accepts loosely shaped records (any object as the
+message, any extra fields, any number of follow-ups). The staff pages were
+written for the records the intake makes. Reviews of this change found ways,
+all older than it and none seen in the live data, for one crafted record to
+stop the inbox loading for every admin until it is removed in the Firebase
+console. They are not fixed yet:
+
+- a key named `hasOwnProperty` anywhere in a tip makes the SDK's `get()` of
+  `/messages` reject, so no page can read any tip;
+- a tip with more than about 100,000 follow-ups, or with `followUps` stored as
+  a long string, overflows a `Math.max(...)` in the inbox and blanks the list;
+- a `created_at` that is not a number scrambles the inbox order;
+- deleting a tip from a page opened earlier also deletes follow-ups that
+  arrived since, unseen (archiving re-reads first; deleting does not);
+- a follow-up whose write landed but whose reply was lost is stored a second
+  time as a new tip.
+
+The cure is structural rather than one key at a time: strict shapes for what
+an anonymous writer may store (scalar extra fields, a fixed shape for
+object-form messages, `followUps` an object), each tip rendered inside its own
+try/catch so one bad record is one bad card, and the staff pages reading over
+REST with the admin's token instead of through `snapshot.val()`. Before
+tightening the message shape, confirm how the oldest app versions send tips
+(see Deferred).
+
+If the index ever refuses an entry the intake believes is valid (rules and code
+out of step), the intake stores the tip anyway, without the entry: the tipster
+gets a PIN, the admin sees the tip, and only threading by that PIN is lost.
+Deploy the code before these rules: the generator that only draws mixed PINs
+has to be live first, or about one tip in six would need a retry.
+
+Rules and atomicity are covered by emulator tests
+(`test/rules/tip-pins.test.mjs`). Follow-ups hang off the tip itself
+(`/messages/$tipId/followUps`), reached through the PIN. When reward status
+lands it must keep this shape: a guessed PIN may add to a tip or read a status
+word, never read tip content.
 
 ## Police tips
 
@@ -244,7 +335,7 @@ then writes the **new tip** through the database's REST API **as that admin**
 rules accept `source: 'call'` only from an admin, so nobody can mark a tip as a
 call by writing to the database directly. Because that write is an admin's, the
 create-only rule on `/tipPins/$pin` does not protect it; the route's own check
-that a PIN is unused does, and a clash is one in 887 million.
+that a PIN is unused does, and a clash is one in some 739 million.
 
 The admin's token is used for nothing else. **Follow-ups are always written
 anonymously**, whoever typed them, because the path of a follow-up comes from
@@ -253,10 +344,9 @@ data could land anywhere under `/messages`. Written anonymously, the rules
 confine it to creating one follow-up. For the same reason the route only
 follows a `/tipPins` entry whose `tipId` is shaped like a database key, and the
 rules now refuse any other shape (an id with a dot once made the route throw
-before storing the tip; one with a slash could aim a write elsewhere). What is
-left, and predates all this, is that someone can register an ordinary
-six-letter word as a PIN for a tip of their own, and tips that use the word are
-then filed under it as follow-ups: visible to admins, not lost, but misfiled.
+before storing the tip; one with a slash could aim a write elsewhere). Ordinary
+words can no longer be registered as PINs at all: see "Who may add to the
+index" under Tip PINs.
 
 **Length.** The route accepts 10,000 characters of tip; what is stored is the
 ciphertext, which is up to four times longer for non-Latin text (40,044

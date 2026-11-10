@@ -4,7 +4,7 @@ import CryptoES from "crypto-es";
 import { findTipPinCandidates, generateTipPin } from "@/lib/tipPin";
 import { normaliseCategory, wellFormedText, type TipSource } from "@/lib/tipCategories";
 import { bearerToken, verifyAdmin } from "@/lib/serverAuth";
-import { rtdbRestUpdate } from "@/lib/rtdbRest";
+import { RtdbRestError, rtdbRestUpdate } from "@/lib/rtdbRest";
 
 // Public tip intake. Reads of /messages are admin-only (database rules);
 // this endpoint only CREATES tips, and the create-only rule on
@@ -18,15 +18,38 @@ import { rtdbRestUpdate } from "@/lib/rtdbRest";
 const TIP_ENCRYPTION_KEY = process.env.TIP_ENCRYPTION_KEY ?? "ebiz242";
 const MAX_TIP_LENGTH = 10000;
 
-// A collision is vanishingly unlikely across 31^6 PINs, so a handful of
-// attempts covers both a genuine clash and a lost race with another tip.
+// A collision is vanishingly unlikely across some 739 million PINs, so a
+// handful of attempts covers both a genuine clash and a lost race with another
+// tip.
 const MAX_PIN_ATTEMPTS = 5;
+
+// A write that is refused although its PIN was just seen to be free is almost
+// never a lost race (that needs two tips to draw the same PIN in the same
+// instant): the database is turning the tip down for some other reason, and a
+// third identical try will not change its mind. Stop early and let the caller
+// try a different shape of write instead.
+const MAX_REFUSALS = 2;
 
 // What a tip's database key looks like (a push id). /tipPins can be written
 // by anyone, so the tip id it names is untrusted input: one holding a slash or
 // a character the SDK refuses would otherwise aim a write somewhere else, or
 // throw before the tip is stored. Kept in step with the `tipPins` rules.
 const TIP_ID_PATTERN = /^[-_A-Za-z0-9]{1,128}$/;
+
+// "__proto__" has the shape of a key but must never be used as one. The admin
+// pages read /messages into a plain object, where a child of that name
+// becomes the object's prototype instead of an entry and drops out of every
+// listing: a tip filed under it, and every message added to it, would be
+// invisible to staff. The rules refuse it too.
+const isTipKey = (id: unknown): id is string =>
+  typeof id === "string" && TIP_ID_PATTERN.test(id) && id !== "__proto__";
+
+// True when the database itself turned a write down (its rules said no), as
+// opposed to the write failing some other way, such as getting no answer.
+const isRefusal = (err: unknown): boolean => {
+  if (err instanceof RtdbRestError) return err.denied;
+  return String((err as { code?: unknown } | null)?.code ?? "").toUpperCase() === "PERMISSION_DENIED";
+};
 
 type Updates = Record<string, unknown>;
 
@@ -111,9 +134,7 @@ export async function POST(req: Request) {
       let tipId: string | null = null;
       try {
         const claim = (await get(child(ref(db), `tipPins/${candidate}`))).val();
-        if (claim && typeof claim.tipId === "string" && TIP_ID_PATTERN.test(claim.tipId)) {
-          tipId = claim.tipId;
-        }
+        if (claim && isTipKey(claim.tipId)) tipId = claim.tipId;
       } catch {
         break; // index unreachable — fall through and store this as a new tip
       }
@@ -151,19 +172,52 @@ export async function POST(req: Request) {
       return Response.json({ data: "request failure" }, { status: 500 });
     }
 
-    // Stores `fields` as a new tip and returns its PIN. `refused` reports the
-    // one failure worth a second try with fewer fields: the database could be
-    // reached but turned the tip down every time.
-    const storeNewTip = async (
-      fields: Updates
-    ): Promise<{ pin: string | null; refused: boolean }> => {
+    type Stored = { pin: string | null; refused: boolean };
+
+    // Last resort: the tip alone, with a PIN but without its entry in the PIN
+    // index. Losing the index must never cost us a tip — taking tips is the
+    // entire point of this endpoint. The tipster still gets a PIN, it is still
+    // stored on the tip and still shown in the admin inbox; only the PIN→tip
+    // lookup is missing, so a later message quoting the PIN arrives as a new
+    // tip instead of joining this one.
+    const storeWithoutIndex = async (fields: Updates): Promise<Stored> => {
+      const pin = generateTipPin();
+      try {
+        const updates: Updates = {};
+        updates['/messages/' + newKey] = { ...fields, pin };
+        await writeNewTip(updates);
+        return { pin, refused: false };
+      } catch (err) {
+        console.error("Could not store the tip even without its PIN index:", err);
+        return { pin: null, refused: true };
+      }
+    };
+
+    // Whether the write that paired `pin` with this tip is in the database.
+    // The index is public to read, and `newKey` is known to this request
+    // alone, so an entry naming it under this PIN can only be our own write.
+    const landed = async (pin: string): Promise<boolean> => {
+      try {
+        const entry = (await get(child(ref(db), `tipPins/${pin}`))).val();
+        return Boolean(entry) && entry.tipId === newKey;
+      } catch {
+        return false;
+      }
+    };
+
+    // Stores `fields` as a new tip and returns its PIN. `refused` means the
+    // tip could not be stored in this shape, so a different shape is worth
+    // trying.
+    const storeNewTip = async (fields: Updates): Promise<Stored> => {
       // Preferred path: the tip and its PIN index in one multi-path update, so a
       // tip can never exist without its PIN or vice versa. The create-only rule
       // on /tipPins/$pin is what keeps PINs unique — a duplicate is rejected by
-      // the database and we simply draw another PIN.
-      let indexUnavailable = false;
+      // the database and we simply draw another PIN. That the two are written
+      // together is also what the rules require of an index entry: it must
+      // name a tip created in the same write and carrying the same PIN.
+      let refusals = 0;
 
-      for (let attempt = 0; attempt < MAX_PIN_ATTEMPTS && !indexUnavailable; attempt += 1) {
+      for (let attempt = 0; attempt < MAX_PIN_ATTEMPTS && refusals < MAX_REFUSALS; attempt += 1) {
         const pin = generateTipPin();
 
         // Whether we can see the index at all decides how to read a failed write
@@ -182,42 +236,49 @@ export async function POST(req: Request) {
           await writeNewTip(updates);
           return { pin, refused: false };
         } catch (err) {
-          if (indexReachable) continue; // someone took that PIN first — draw another
-          console.error("Tip PIN index unavailable; storing the tip without it:", err);
-          indexUnavailable = true;
+          // Told the write failed — but a reply can be lost after the write
+          // has gone through. Check before trying anything else: storing the
+          // tip a second way on top of one that landed would leave it under a
+          // PIN the index does not know.
+          if (await landed(pin)) return { pin, refused: false };
+          if (!indexReachable) {
+            // The index cannot even be read: a database whose `tipPins` rules
+            // are missing (see FIREBASE_ROLLOUT.md). Store the tip without it.
+            console.error("Tip PIN index unavailable; storing the tip without it:", err);
+            return storeWithoutIndex(fields);
+          }
+          // That PIN was free a moment ago, so a refusal is the database's
+          // verdict on this shape of tip (see MAX_REFUSALS). Anything else
+          // (no answer, a database error) is worth simply trying again.
+          if (isRefusal(err)) refusals += 1;
+          else console.error("Tip write failed without being refused; trying again:", err);
+          continue;
         }
-      }
-
-      // Fallback for a database whose `tipPins` rules have not been deployed yet
-      // (see FIREBASE_ROLLOUT.md). Losing the index must never cost us a tip —
-      // taking tips is the entire point of this endpoint. The tipster still gets
-      // a PIN, it is still stored on the tip and still shown in the admin inbox;
-      // only the PIN→tip lookup is missing, and nothing reads it yet. Once the
-      // rules are deployed the branch above starts succeeding on its own.
-      if (indexUnavailable) {
-        const pin = generateTipPin();
-        try {
-          const updates: Updates = {};
-          updates['/messages/' + newKey] = { ...fields, pin };
-          await writeNewTip(updates);
-          return { pin, refused: false };
-        } catch (err) {
-          console.error("Tip intake failed:", err);
-        }
-        return { pin: null, refused: false };
       }
 
       return { pin: null, refused: true };
     };
 
-    let stored = await storeNewTip(tip);
-    if (!stored.pin && stored.refused) {
-      // The same rule as the index fallback above, one step further: if the
-      // database will not take the tip with its category and source (rules out
-      // of step with this code, say), take the tip without them. A tip with no
-      // label is worth infinitely more than a label with no tip.
-      console.error("Tip refused with its category and source; storing it without them");
-      stored = await storeNewTip(bareTip);
+    // Each step gives up something less important than the tip itself, and is
+    // only reached when the database has refused every step before it:
+    //   1. the tip, its labels and its PIN index entry;
+    //   2. the same without the index entry (the rules will not take the entry);
+    //   3. the tip without its category and source, with the index entry (the
+    //      rules will not take the labels: rules out of step with this code);
+    //   4. the tip alone.
+    // A tip with no label, or one whose PIN cannot be looked up, is worth
+    // infinitely more than no tip.
+    const attempts: [string, () => Promise<Stored>][] = [
+      ["with its labels and PIN index", () => storeNewTip(tip)],
+      ["with its labels, without the PIN index", () => storeWithoutIndex(tip)],
+      ["without its labels, with the PIN index", () => storeNewTip(bareTip)],
+      ["without its labels or the PIN index", () => storeWithoutIndex(bareTip)],
+    ];
+    let stored: Stored = { pin: null, refused: true };
+    for (const [shape, attempt] of attempts) {
+      stored = await attempt();
+      if (stored.pin) break;
+      console.error(`Tip refused ${shape}; trying the next way of storing it`);
     }
 
     if (stored.pin) {

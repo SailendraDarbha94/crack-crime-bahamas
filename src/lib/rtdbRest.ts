@@ -22,9 +22,23 @@ export function rtdbRestUrl(path: string, idToken?: string): string | null {
   return url.toString();
 }
 
+/** The database answered a REST write with an error status. */
+export class RtdbRestError extends Error {
+  constructor(public readonly status: number) {
+    super(`Database refused the update (HTTP ${status})`);
+    this.name = "RtdbRestError";
+  }
+  /** True when the rules (or the token) turned the write down, as opposed to the database being unwell. */
+  get denied(): boolean {
+    return this.status === 401 || this.status === 403;
+  }
+}
+
 /**
  * Atomic multi-path update performed as the user who owns `idToken`. Throws
- * if the database refuses it, exactly as the client SDK's update() would.
+ * an RtdbRestError if the database answers with an error, exactly as the
+ * client SDK's update() would reject; a request that gets no answer at all
+ * throws whatever fetch throws.
  */
 export async function rtdbRestUpdate(
   updates: Record<string, unknown>,
@@ -42,5 +56,5 @@ export async function rtdbRestUpdate(
     body: JSON.stringify(body),
     cache: "no-store",
   });
-  if (!res.ok) throw new Error(`Database refused the update (HTTP ${res.status})`);
+  if (!res.ok) throw new RtdbRestError(res.status);
 }

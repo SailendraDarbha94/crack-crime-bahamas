@@ -1,6 +1,7 @@
 "use client";
 import TipLabels from "@/components/TipLabels";
 import { database } from "@/lib/firebase";
+import { ownData } from "@/lib/ownData";
 import { readTipText } from "@/lib/tipCrypto";
 import { readTipLabels, type TipLabelData } from "@/lib/tipLabels";
 import { dateReader } from "@/lib/utils";
@@ -30,7 +31,7 @@ const PoliceTipsPage = () => {
     const load = async () => {
       try {
         const snap = await get(ref(database, "policeTips"));
-        const raw = snap.exists() ? snap.val() : {};
+        const raw: Record<string, any> = snap.exists() ? ownData(snap.val()) : {};
         const list: ForwardedTip[] = Object.entries(raw).map(([id, entry]: [string, any]) => {
           const followUps: FollowUp[] = Object.entries(entry.followUps ?? {})
             .map(([followUpId, f]: [string, any]) => ({

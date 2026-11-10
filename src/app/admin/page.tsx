@@ -1,5 +1,6 @@
 "use client";
 import { tipArchiveStatus } from "@/lib/archive";
+import { ownData } from "@/lib/ownData";
 import { database } from "@/lib/firebase";
 import { ref, get } from "firebase/database";
 import Link from "next/link";
@@ -34,7 +35,7 @@ const Page = () => {
       let archivedTips = 0;
       if (messagesSnapshot.exists()) {
         messagesSnapshot.forEach((tip) => {
-          if (tipArchiveStatus(tip.val()) === "archived") archivedTips += 1;
+          if (tipArchiveStatus(ownData(tip.val())) === "archived") archivedTips += 1;
           else openTips += 1;
         });
       }

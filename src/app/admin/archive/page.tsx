@@ -4,6 +4,7 @@ import TipLabels from "@/components/TipLabels";
 import { archiveHistory, tipArchiveStatus, type ArchiveLogEntry, type PeopleKind } from "@/lib/archive";
 import app from "@/lib/firebase";
 import { FirebaseErrorHandler } from "@/lib/firebaseErrorHandler";
+import { ownData, ownEntry } from "@/lib/ownData";
 import { PersonArchiveService } from "@/lib/firebaseService";
 import { deleteTipRecords, removePoliceCopy, restoreTip } from "@/lib/tipAdmin";
 import { readTipText } from "@/lib/tipCrypto";
@@ -72,7 +73,9 @@ const ArchivePage = () => {
     const readNode = async (path: string): Promise<Record<string, any>> => {
       try {
         const snap = await get(child(root, path));
-        return snap.exists() ? snap.val() : {};
+        // ownData: see lib/ownData.ts. Nothing shown here may come from a
+        // "__proto__" child planted in a record.
+        return snap.exists() ? ownData(snap.val()) : {};
       } catch (err) {
         console.error(`Could not read ${path}:`, err);
         problems.push(path);
@@ -128,7 +131,7 @@ const ArchivePage = () => {
         // Archiving withdraws the police copy; if that step failed, the copy
         // is still readable by officers and must be dealt with from here,
         // since the inbox no longer lists this tip.
-        stillWithPolice: Boolean(policeCopies[id]),
+        stillWithPolice: Boolean(ownEntry(policeCopies, id)),
       });
     }
     tipList.sort((a, b) => b.archive.at - a.archive.at);

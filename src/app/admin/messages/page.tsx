@@ -1,5 +1,6 @@
 "use client";
 import app from "@/lib/firebase";
+import { ownData, ownEntry } from "@/lib/ownData";
 import { tipArchiveStatus } from "@/lib/archive";
 import { storedLabelFields } from "@/lib/tipCategories";
 import { readTipLabels } from "@/lib/tipLabels";
@@ -42,7 +43,7 @@ const Page = () => {
       let policeCopies: Record<string, any> = {};
       try {
         const snap = await get(child(dbRef, "policeTips"));
-        policeCopies = snap.exists() ? snap.val() : {};
+        policeCopies = snap.exists() ? ownData(snap.val()) : {};
       } catch (err) {
         console.error("Could not read which tips are forwarded to police:", err);
       }
@@ -50,7 +51,9 @@ const Page = () => {
       // Rebuild the list from scratch so refreshes never duplicate entries
       const list: any[] = [];
       let archived = 0;
-      const messages = data.exists() ? data.val() : {};
+      // ownData: what is shown must come from what each record really holds
+      // (see lib/ownData.ts), never from a "__proto__" child someone planted.
+      const messages: Record<string, any> = data.exists() ? ownData(data.val()) : {};
       {
         for (const index of Object.keys(messages)) {
           const raw = messages[index];
@@ -76,7 +79,7 @@ const Page = () => {
             }))
             .sort((a, b) => (a.created_at ?? 0) - (b.created_at ?? 0));
 
-          const copy = policeCopies[index];
+          const copy = ownEntry(policeCopies, index);
           const police = copy
             ? {
                 forwarded_at: copy.forwarded_at,
@@ -118,7 +121,7 @@ const Page = () => {
       // cleanup failed. Officers can still read them, so they must stay
       // visible here until withdrawn.
       for (const [copyId, copy] of Object.entries(policeCopies) as [string, any][]) {
-        if (messages[copyId]) continue;
+        if (ownEntry(messages, copyId)) continue;
         list.push({
           id: copyId,
           orphanPoliceCopy: true,

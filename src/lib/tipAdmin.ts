@@ -4,6 +4,7 @@
  */
 import { child, get, push, ref, remove, serverTimestamp, update, type Database } from "firebase/database";
 import { normaliseRemarks } from "./archive";
+import { ownData } from "./ownData";
 import { encryptText } from "./tipCrypto";
 
 export type CleanupResult = { copyLeftBehind: boolean };
@@ -44,7 +45,7 @@ export const archiveTip = async (
   const current = await get(ref(db, `messages/${tipId}`));
   if (!current.exists()) throw new StaleTipError("gone");
   let newest = 0;
-  for (const entry of Object.values(current.val().followUps ?? {}) as { created_at?: unknown }[]) {
+  for (const entry of Object.values(ownData(current.val()).followUps ?? {}) as { created_at?: unknown }[]) {
     if (typeof entry?.created_at === "number" && entry.created_at > newest) newest = entry.created_at;
   }
   if (newest > lastSeenFollowUpAt) throw new StaleTipError("newer-follow-up");
@@ -81,7 +82,12 @@ export const deleteTipRecords = async (db: Database, tipId: string, pin: string 
   await remove(ref(db, `messages/${tipId}`));
   if (pin) {
     try {
-      await remove(ref(db, `tipPins/${pin}`));
+      // Only this tip's own entry. The `pin` on a tip is not proof that the
+      // tip owns that PIN: anyone can file a tip carrying a PIN that belongs
+      // to someone else's tip, and deleting such a decoy must not take the
+      // real tip's PIN with it (its tipster could then no longer follow up).
+      const entry = (await get(ref(db, `tipPins/${pin}`))).val();
+      if (entry && entry.tipId === tipId) await remove(ref(db, `tipPins/${pin}`));
     } catch (err) {
       console.warn("Tip deleted, but its PIN index could not be cleared:", err);
     }
