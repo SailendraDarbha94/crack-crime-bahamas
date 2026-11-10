@@ -1,11 +1,14 @@
 "use client";
 import app from "@/lib/firebase";
 import { tipArchiveStatus } from "@/lib/archive";
+import { storedLabelFields } from "@/lib/tipCategories";
+import { readTipLabels } from "@/lib/tipLabels";
 import { useToast } from "@/lib/toastContext";
 import { readTipText } from "@/lib/tipCrypto";
 import { child, get, getDatabase, ref } from "firebase/database";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import CallInTipForm from "./CallInTipForm";
 import MessageItem from "./MessageItem";
 
 // The exact stored fields, kept verbatim so forwarding to police copies the
@@ -16,6 +19,10 @@ const rawOf = (entry: any) => {
   if (typeof entry.encrypted === "boolean") raw.encrypted = entry.encrypted;
   return raw;
 };
+
+// A tip also carries its type of crime and how it reached us, and officers
+// get both with the copy. Follow-ups have neither: they belong to their tip.
+const tipRawOf = (tip: any) => ({ ...rawOf(tip), ...storedLabelFields(tip) });
 
 const Page = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -84,8 +91,9 @@ const Page = () => {
             created_at: raw.created_at,
             // Tips submitted before PINs existed have none.
             pin: raw.pin ?? null,
+            labels: readTipLabels(raw),
             followUps,
-            raw: rawOf(raw),
+            raw: tipRawOf(raw),
             police,
             status,
             // Present only when reopened: the remarks from the archive that
@@ -116,6 +124,7 @@ const Page = () => {
           orphanPoliceCopy: true,
           message: readTipText(copy, "[Could not decrypt this tip]"),
           pin: copy.pin ?? null,
+          labels: readTipLabels(copy),
           forwarded_at: copy.forwarded_at,
           lastActivity: copy.forwarded_at ?? 0,
         });
@@ -162,6 +171,7 @@ const Page = () => {
           ) : null}
         </p>
       ) : null}
+      <CallInTipForm onSaved={fetchMessages} />
       {loading ? (
         <div className="w-full min-h-96 flex justify-center items-center">
           <div role="status" className="flex justify-center items-center">

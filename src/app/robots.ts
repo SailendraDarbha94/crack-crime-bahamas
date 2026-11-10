@@ -7,8 +7,9 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      // Keep the admin area, API, auth, and the now admin-only pages out of indexes
-      disallow: ["/admin", "/api", "/login", "/sign-up", "/wanted", "/missing", "/submit-tip"],
+      // Keep the admin area, API, auth, and the admin-only pages out of indexes.
+      // The tip form (/submit-tip) is public and meant to be found.
+      disallow: ["/admin", "/api", "/login", "/sign-up", "/wanted", "/missing"],
     },
     sitemap: `${siteUrl}/sitemap.xml`,
   };

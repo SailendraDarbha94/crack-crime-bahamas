@@ -74,6 +74,30 @@ for (const [bad, why] of Object.entries({
 }
 check("a PIN entry without tipId is rejected",
   (await put("tipPins/AAAAAA", { created_at: now })).status === 401);
+// The intake builds a database path from the tip id an entry names, and anyone
+// can create an entry: only key-shaped ids, or a planted one could aim a write
+// elsewhere in the tree or make the route throw before storing a tip.
+for (const [bad, why] of Object.entries({
+  "-OaRulesTest0000001/zz": "a slash (a deeper path)",
+  "-OaRulesTest0000001/message": "a path into the tip's text",
+  "a.b": "a dot",
+  ".": "only a dot",
+  "a#b": "a hash",
+  "a$b": "a dollar sign",
+  "a[b]": "brackets",
+  "a b": "a space",
+  "": "nothing",
+})) {
+  check(`a PIN entry naming a tip id with ${why} is rejected`,
+    (await put("tipPins/CCCCCC", { tipId: bad, created_at: now })).status === 401);
+}
+// The intake relies on this: when a PIN entry names a tip that is not there
+// (deleted since, or never real), the follow-up is refused, and the intake
+// then tries the next candidate or stores the message as a new tip.
+check("a follow-up to a tip that does not exist is refused",
+  (await put("messages/-OaNoSuchTip00000001/followUps/fu1", { ...cipher, created_at: Date.now() })).status === 401);
+check("a PIN entry naming an ordinary push id is accepted",
+  (await put("tipPins/CCCCCC", { tipId: "-Oa_Rules-Test0000009", created_at: now })).ok);
 check("an unexpected field on a PIN entry is rejected",
   (await put("tipPins/BBBBBB", { tipId, created_at: now, note: "smuggled" })).status === 401);
 check("a tip carrying a malformed pin is rejected",

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import TipFormLink from "./TipFormLink";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -21,6 +22,11 @@ export default function Footer() {
                   Get Involved
                 </h2>
                 <ul className="text-amber-800/80">
+                  <li className="mb-4">
+                    <TipFormLink className="hover:underline hover:text-amber-950 transition-colors duration-200">
+                      Submit a Tip
+                    </TipFormLink>
+                  </li>
                   <li className="mb-4">
                     <Link href="/member" className="hover:underline hover:text-amber-950 transition-colors duration-200">
                       Become a Sponsor

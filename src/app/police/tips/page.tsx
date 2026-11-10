@@ -1,6 +1,8 @@
 "use client";
+import TipLabels from "@/components/TipLabels";
 import { database } from "@/lib/firebase";
 import { readTipText } from "@/lib/tipCrypto";
+import { readTipLabels, type TipLabelData } from "@/lib/tipLabels";
 import { dateReader } from "@/lib/utils";
 import { get, ref } from "firebase/database";
 import { useEffect, useState } from "react";
@@ -9,6 +11,7 @@ type FollowUp = { id: string; message: string; created_at?: number };
 type ForwardedTip = {
   id: string;
   pin: string | null;
+  labels: TipLabelData;
   message: string;
   note: string;
   created_at?: number;
@@ -39,6 +42,7 @@ const PoliceTipsPage = () => {
           return {
             id,
             pin: entry.pin ?? null,
+            labels: readTipLabels(entry),
             message: readTipText(entry, "[Could not read this tip]"),
             note: entry.note ? readTipText({ message: entry.note, encrypted: true }, "") : "",
             created_at: typeof entry.created_at === "number" ? entry.created_at : undefined,
@@ -103,6 +107,8 @@ const PoliceTipsPage = () => {
                     <p className="text-sm whitespace-pre-wrap">{tip.note}</p>
                   </div>
                 ) : null}
+
+                <TipLabels labels={tip.labels} className="mb-3" />
 
                 <p className="text-xs uppercase tracking-wide text-amber-900/70">
                   Tip{tip.created_at ? ` · received ${dateReader(tip.created_at)}` : ""}

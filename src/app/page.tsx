@@ -1,4 +1,5 @@
 "use client";
+import TipFormLink from "@/components/TipFormLink";
 import { Button } from "@nextui-org/react";
 import Image from "next/image";
 
@@ -27,6 +28,10 @@ export default function Home() {
               The worst amongst us have no chance of perpetrating any criminal
               acts if the the rest of us come together.
             </p>
+            <div className="flex flex-wrap items-center gap-3">
+            <TipFormLink className="inline-flex items-center justify-center h-10 px-4 rounded-xl bg-white/60 backdrop-blur-md border border-white/80 text-amber-950 hover:bg-white/75 font-bold text-lg shadow-md transition-colors duration-200">
+              Submit a Tip
+            </TipFormLink>
             <Button
               onPress={appDownloader}
               radius="md"
@@ -47,6 +52,7 @@ export default function Home() {
                 </g>
               </svg>
             </Button>
+            </div>
           </div>
           <div className="hidden lg:mt-0 lg:col-span-5 lg:flex relative">
             <img

@@ -5,6 +5,7 @@ import { getAuth, signOut } from 'firebase/auth';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react';
+import TipFormLink from './TipFormLink';
 
 const WebNavbar: React.FC = () => {
     const { toast } = useContext(ToastContext);
@@ -46,6 +47,10 @@ const WebNavbar: React.FC = () => {
     useEffect(() => {
         setIsMobileMenuOpen(false);
     }, [pathname]);
+
+    // The look of a menu entry, for the one entry that is not a NavLink: the
+    // tip form link, which must be a full page load (see TipFormLink).
+    const navLinkClasses = "relative px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 ease-out transform active:scale-95 bg-white/30 backdrop-blur-md border border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70 shadow-sm inline-block";
 
     const NavLink = ({ href, children, onClick, variant = "primary" }: {
         href?: string;
@@ -123,6 +128,7 @@ const WebNavbar: React.FC = () => {
                         ) : (
                             <div className="hidden md:flex items-center space-x-2 lg:space-x-3">
                                 <NavLink href="/"><span>Home</span></NavLink>
+                                <TipFormLink className={navLinkClasses}><span>Submit a Tip</span></TipFormLink>
                                 <NavLink href="/member"><span>Sponsor</span></NavLink>
                                 <NavLink href="/more-about-us"><span>About</span></NavLink>
                                 <NavLink href="/contact"><span>Contact</span></NavLink>
@@ -208,6 +214,7 @@ const WebNavbar: React.FC = () => {
                         ) : (
                             <div className="flex flex-col space-y-3 pt-4">
                                 <NavLink href="/"><div className="flex items-center gap-3">Home</div></NavLink>
+                                <TipFormLink className={navLinkClasses}><div className="flex items-center gap-3">Submit a Tip</div></TipFormLink>
                                 <NavLink href="/member"><div className="flex items-center gap-3">Become a Sponsor</div></NavLink>
                                 <NavLink href="/more-about-us"><div className="flex items-center gap-3">About Us</div></NavLink>
                                 <NavLink href="/contact"><div className="flex items-center gap-3">Contact</div></NavLink>

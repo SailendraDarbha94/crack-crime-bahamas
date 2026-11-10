@@ -5,6 +5,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://crackcrimebahamas.c
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes = [
     "",
+    "/submit-tip",
     "/contact",
     "/member",
     "/more-about-us",

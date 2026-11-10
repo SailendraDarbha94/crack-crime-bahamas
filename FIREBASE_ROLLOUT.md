@@ -209,3 +209,84 @@ Archiving re-reads the tip and refuses if a follow-up arrived after the
 admin's page loaded, so nothing is archived unread. The history under
 `archiveLog` is append-only against the app's own writes; an admin acting on
 the raw database can still rewrite it, as with everything else under a tip.
+
+## Tip type and source
+
+Every tip can carry three more fields beside its ciphertext:
+
+- `category`: the type of crime, an id from `src/lib/tipCategories.ts`
+  (`auto_theft`, `homicide`, `other`, ...). Stored **in the clear** on purpose,
+  so tips can be counted by type without decrypting any of them.
+- `category_other`: what the tipster typed when the type is `other`. Their own
+  words, so it is **encrypted** like the tip.
+- `source`: how the tip reached us. `text` is the app's "Text a Tip", `web` is
+  the public form at `/submit-tip`, `call` is a tip phoned in and typed up by
+  an admin on the Tip Messages page.
+
+`created_at` (milliseconds, the server's clock) is the date and time of every
+tip and every follow-up; it is set by the intake route, never by the client.
+
+All three go through the one intake route, `/api/message`. The route is
+deliberately forgiving about the label: a missing or unrecognised category is
+dropped rather than refused, because app versions released before the list
+existed send none, and a tip must never be lost over its label. The forms are
+what make the choice compulsory. A post with no `source` comes from such an app
+version and is stored as `text`. Tips stored before this change have no
+`source` at all and are shown as "not recorded" rather than guessed at (the
+website has had a tip form before). If the database turns a tip down with its
+labels, the route stores it again without them. Follow-ups keep their bare
+shape and join the tip they quote; they do not change its type or source.
+
+`call` is the one value that means something about who wrote the tip, so it is
+held at both layers. The route accepts it only with an admin's ID token, and
+then writes the **new tip** through the database's REST API **as that admin**
+(`src/lib/rtdbRest.ts`), because the server has no identity of its own. The
+rules accept `source: 'call'` only from an admin, so nobody can mark a tip as a
+call by writing to the database directly. Because that write is an admin's, the
+create-only rule on `/tipPins/$pin` does not protect it; the route's own check
+that a PIN is unused does, and a clash is one in 887 million.
+
+The admin's token is used for nothing else. **Follow-ups are always written
+anonymously**, whoever typed them, because the path of a follow-up comes from
+`/tipPins`, which anyone can add to: an admin-privileged write aimed by public
+data could land anywhere under `/messages`. Written anonymously, the rules
+confine it to creating one follow-up. For the same reason the route only
+follows a `/tipPins` entry whose `tipId` is shaped like a database key, and the
+rules now refuse any other shape (an id with a dot once made the route throw
+before storing the tip; one with a slash could aim a write elsewhere). What is
+left, and predates all this, is that someone can register an ordinary
+six-letter word as a PIN for a tip of their own, and tips that use the word are
+then filed under it as follow-ups: visible to admins, not lost, but misfiled.
+
+**Length.** The route accepts 10,000 characters of tip; what is stored is the
+ciphertext, which is up to four times longer for non-Latin text (40,044
+characters at worst). The four message limits in the rules (tip, follow-up, and
+both on the police copy) are 41,000 and must stay equal, or a tip could be
+stored that cannot be forwarded. They were 10,000, which silently refused any
+tip over about 7,470 characters.
+
+The police copy (`/policeTips/$tipId`) may carry the same three fields, copied
+verbatim when an admin forwards a tip, so officers see the type and the source.
+That node refuses unknown fields, so **deploy the rules before the code**:
+against the old rules a forward of a labelled tip would be refused. The reverse
+order is safe for tips themselves (the tip node never refused extra fields).
+
+The app loads the list from `/api/tip-categories` and falls back to a copy
+bundled in the app, so the list can change with a website deploy alone. Never
+change or reuse an id: counts are kept by id. Rename by changing the label;
+retire by removing the entry (tips already filed under it still show).
+
+The tip form never runs Google Analytics (`src/lib/analyticsPolicy.ts`).
+Analytics is started once per document and then follows client-side
+navigation, so three things keep the form out of any document where it runs:
+every link to the form is a full page load (a unit test fails if a client-side
+one is added), every same-site link on the form leaves by a full page load, and
+a tab that has shown the form is marked in sessionStorage so nothing loaded in
+it later starts Analytics (reload, then Back, would otherwise defeat the first
+two). Auth is initialised without Firebase's popup/redirect support
+(`src/lib/firebase.ts`): with it, phones and Safari load a script from
+apis.google.com and a hidden iframe on every page, for every visitor. Sign-in
+is by email and password only; if a Google or other popup sign-in is ever
+added, it must not bring that back onto the tip form. Rules are covered by
+`test/rules/tip-categories.test.mjs`, the helpers by
+`test/unit/tip-categories.test.mts`.

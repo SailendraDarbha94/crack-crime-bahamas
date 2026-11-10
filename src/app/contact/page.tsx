@@ -1,7 +1,9 @@
+import TipFormLink from "@/components/TipFormLink";
+
 export const metadata = {
   title: "Contact",
   description:
-    "Get in touch with Crack Crime Bahamas, or report a crime anonymously via the 328-TIPS hotline.",
+    "Get in touch with Crack Crime Bahamas, or report a crime anonymously through our online tip form or the 328-TIPS hotline.",
 };
 
 const ContactPage = () => {
@@ -17,6 +19,13 @@ const ContactPage = () => {
         </p>
 
         <div className="grid gap-4 sm:grid-cols-2">
+          <TipFormLink className="sm:col-span-2 bg-white/35 backdrop-blur-xl border border-white/60 rounded-3xl p-6 shadow-[0_8px_32px_rgba(120,72,10,0.12)] text-center hover:bg-white/45 transition-all duration-200">
+            <h2 className="text-lg font-bold text-amber-950 mb-1">Submit a Tip</h2>
+            <p className="text-amber-900/80 text-sm">
+              Report anonymously through our secure online form. No name, no account.
+            </p>
+          </TipFormLink>
+
           <a
             href="tel:+12423288477"
             className="bg-white/25 backdrop-blur-xl border border-white/50 rounded-3xl p-6 shadow-[0_8px_32px_rgba(120,72,10,0.12)] text-center hover:bg-white/35 transition-all duration-200"
@@ -50,9 +59,9 @@ const ContactPage = () => {
             rel="noopener"
             className="bg-white/25 backdrop-blur-xl border border-white/50 rounded-3xl p-6 shadow-[0_8px_32px_rgba(120,72,10,0.12)] text-center hover:bg-white/35 transition-all duration-200"
           >
-            <h2 className="text-lg font-bold text-amber-950 mb-1">Submit a Tip</h2>
+            <h2 className="text-lg font-bold text-amber-950 mb-1">Mobile App</h2>
             <p className="text-amber-900/80 text-sm">
-              Report anonymously and encrypted through our mobile app
+              Text a tip, see alerts and more with the Crack Crime Bahamas app
             </p>
           </a>
         </div>

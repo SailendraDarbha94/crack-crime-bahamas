@@ -2,7 +2,7 @@
 
 import PublicPersonCard, { PublicPerson } from "@/components/PublicPersonCard";
 import { MissingPersonService, WantedPersonService } from "@/lib/firebaseService";
-import Link from "next/link";
+import TipFormLink from "@/components/TipFormLink";
 import { useEffect, useState } from "react";
 
 type Kind = "wanted" | "missing";
@@ -93,12 +93,9 @@ const PersonGallery = ({ kind, audience = "public" }: { kind: Kind; audience?: "
             className="w-full sm:w-96 rounded-xl bg-white/40 backdrop-blur-md border border-white/60 px-4 py-2.5 text-amber-950 placeholder-amber-900/50 focus:outline-none focus:ring-2 focus:ring-amber-400/60"
           />
           {audience === "public" ? (
-            <Link
-              href="/submit-tip"
-              className="whitespace-nowrap bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 font-bold px-5 py-2.5 rounded-xl transition-all duration-200 active:scale-95"
-            >
+            <TipFormLink className="whitespace-nowrap bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 font-bold px-5 py-2.5 rounded-xl transition-all duration-200 active:scale-95">
               Submit a Tip
-            </Link>
+            </TipFormLink>
           ) : null}
         </div>
 

@@ -1,5 +1,6 @@
 "use client";
 import ArchivePrompt from "@/components/ArchivePrompt";
+import TipLabels from "@/components/TipLabels";
 import app from "@/lib/firebase";
 import { archiveTip, deleteTipRecords, StaleTipError } from "@/lib/tipAdmin";
 import { dateReader } from "@/lib/utils";
@@ -185,6 +186,7 @@ const MessageItem = ({ item, refreshFunc }: any) => {
         <p className="text-sm text-amber-900/80">
           The original tip is gone, but officers can still read this copy. Withdraw it to remove their access.
         </p>
+        {item.labels ? <TipLabels labels={item.labels} /> : null}
         <p className="font-bold whitespace-pre-wrap">{item.message}</p>
         <p className="text-xs text-amber-900/70">
           {item.pin ? `PIN ${item.pin} · ` : ""}Forwarded {dateReader(item.forwarded_at)}
@@ -219,6 +221,8 @@ const MessageItem = ({ item, refreshFunc }: any) => {
           </p>
         </div>
       ) : null}
+
+      {item.labels ? <TipLabels labels={item.labels} className="mb-3" /> : null}
 
       <p className="font-bold font-nunito text-xl whitespace-pre-wrap">{item.message}</p>
 
@@ -305,7 +309,7 @@ const MessageItem = ({ item, refreshFunc }: any) => {
               className="w-full rounded-lg bg-white/50 border border-white/60 px-3 py-2 text-sm text-amber-950 placeholder-amber-900/50 focus:outline-none focus:ring-2 focus:ring-amber-400/60"
             />
             <p className="text-xs text-amber-900/70">
-              Officers will see this tip,{item.pin ? " its PIN," : ""}
+              Officers will see this tip, its type and source,{item.pin ? " its PIN," : ""}
               {item.followUps?.length ? " the messages so far," : ""} and your note. Anything the
               tipster sends later stays with you until you share it.
             </p>

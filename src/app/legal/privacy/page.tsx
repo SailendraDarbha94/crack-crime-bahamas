@@ -1,3 +1,4 @@
+import TipFormLink from "@/components/TipFormLink";
 import type { ReactNode } from "react";
 
 export const metadata = {
@@ -10,7 +11,7 @@ export const metadata = {
 // the data they collect changes, change this page and its date in the same
 // commit. It is linked from the app's About Us screen and the site footer, and
 // is the privacy policy URL given to the App Store and Google Play.
-const LAST_UPDATED = "29 September 2026";
+const LAST_UPDATED = "10 November 2026";
 
 const Section = ({ title, children }: { title: string; children: ReactNode }) => (
   <section className="my-10">
@@ -60,10 +61,21 @@ const Page = () => {
               tip.
             </li>
             <li>
-              A tip is stored as the text you write, the time it was sent, and a 6-character PIN. If
-              you later send a message that contains that PIN, it is added to the same tip instead of
+              You can send a tip from the app, from the tip form on this website, or by phone. A
+              tip is stored as the text you write, the type of crime you choose, the date and time
+              it was sent, which of those three ways it reached us, and a 6-character PIN. If you
+              later send a message that contains that PIN, it is added to the same tip instead of
               starting a new one. Keep your PIN private: anyone who has it can add messages to your
               tip, although they cannot read it.
+            </li>
+            <li>
+              You choose the type of crime from a list so that we can count tips by type. If you
+              choose Other, we also store the short description you type.
+            </li>
+            <li>
+              If you phone in a tip, an administrator may type what you said into the same system.
+              It is stored like any other tip, marked as a call, and given a PIN that the
+              administrator can pass on to you.
             </li>
             <li>
               Tips travel over an encrypted connection. They are kept in a database that our provider
@@ -72,13 +84,13 @@ const Page = () => {
             </li>
             <li>
               Our hosting provider&apos;s servers briefly log technical details of every request,
-              including tips sent from the app, such as the IP address. We do not use these logs to
-              identify people who send tips.
+              including tips sent from the app or this website, such as the IP address. We do not use
+              these logs to identify people who send tips.
             </li>
             <li>
               Please don&apos;t put your own name or anything that could identify you in the tip
-              itself. If you email us instead, we will see your email address, so use the app or the
-              328-TIPS hotline to stay anonymous.
+              itself. If you email us instead, we will see your email address, so use the app, the
+              tip form on this website or the 328-TIPS hotline to stay anonymous.
             </li>
           </List>
         </Section>
@@ -125,7 +137,8 @@ const Page = () => {
               Firebase, to count visits. It sets cookies in your browser and sends Google the pages
               you view, your browser and device type, and an approximate location that Google works
               out from your IP address. The mobile app does not use Google Analytics, but pages from
-              this website that the app opens, such as this policy, do. We do not use advertising
+              this website that the app opens, such as this policy, do. The tip form page is the
+              exception: it does not load Google Analytics. We do not use advertising
               cookies. Our hosting provider&apos;s servers also record technical details of each
               request, such as the IP address and browser or app type, in logs kept for a limited
               period for security and troubleshooting.
@@ -141,6 +154,10 @@ const Page = () => {
           <List>
             <li>To receive, review and act on tips, including passing them to the police.</li>
             <li>To link follow-up messages to the right tip using its PIN.</li>
+            <li>
+              To count tips by type of crime and by how they reached us, so that we can see what is
+              being reported.
+            </li>
             <li>
               To send safety alerts and news by push notification, to all phones or, using stored
               locations, to phones in a particular area.
@@ -165,9 +182,10 @@ const Page = () => {
             <li>
               <Term>The Royal Bahamas Police Force</Term>: administrators forward tips to the police
               through a secure police portal on this website. Every officer with a police portal
-              account can see all tips forwarded to the police, and no others: the tip, its PIN, any
-              follow-up messages an administrator has chosen to share, and any note from the
-              administrator. The police may use tips in their investigations.
+              account can see all tips forwarded to the police, and no others: the tip, its type of
+              crime, how it reached us, its PIN, any follow-up messages an administrator has chosen to
+              share, and any note from the administrator. The police may use tips in their
+              investigations.
             </li>
             <li>
               <Term>Your phone</Term>: the app looks up its own device record using its push token,
@@ -267,8 +285,9 @@ const Page = () => {
             </li>
             <li>
               To ask about a tip, or ask us to delete it, without revealing who you are, send a
-              message in the app that contains the tip&apos;s PIN. We may keep information that is
-              needed for a police investigation or that the law requires us to keep.
+              message that contains the tip&apos;s PIN, in the app or through the tip form on this
+              website. We may keep information that is needed for a police investigation or that the
+              law requires us to keep.
             </li>
             <li>
               Under the data protection law of The Bahamas, you can ask us whether we hold personal
@@ -306,7 +325,9 @@ const Page = () => {
             <a href="/contact" className={link}>
               contact page
             </a>
-            . To report a crime anonymously, do not email us: use the app or call 328-TIPS.
+            . To report a crime anonymously, do not email us: use the app, the{" "}
+            <TipFormLink className={link}>tip form on this website</TipFormLink>
+            , or call 328-TIPS.
           </p>
         </Section>
       </div>

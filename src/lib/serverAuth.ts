@@ -8,11 +8,19 @@
 // /admins/{uid} readable only by that same uid. A forged or expired token
 // gets a 401; a real-but-not-allowlisted user reads null.
 
+import { rtdbRestUrl } from "./rtdbRest";
+
+/** The caller's Firebase ID token from the Authorization header, if it has the shape of one. */
+export function bearerToken(req: Request): string | null {
+  const authHeader = req.headers.get("authorization") ?? "";
+  const idToken = authHeader.replace(/^Bearer\s+/i, "");
+  return idToken && idToken.split(".").length === 3 ? idToken : null;
+}
+
 export async function verifyAdmin(req: Request): Promise<boolean> {
   try {
-    const authHeader = req.headers.get("authorization") ?? "";
-    const idToken = authHeader.replace(/^Bearer\s+/i, "");
-    if (!idToken || idToken.split(".").length !== 3) {
+    const idToken = bearerToken(req);
+    if (!idToken) {
       return false;
     }
 
@@ -25,16 +33,13 @@ export async function verifyAdmin(req: Request): Promise<boolean> {
       return false;
     }
 
-    const dbUrl = process.env.NEXT_PUBLIC_DATABASE_URL;
-    if (!dbUrl) {
+    const url = rtdbRestUrl(`admins/${encodeURIComponent(uid)}`, idToken);
+    if (!url) {
       console.error("verifyAdmin: NEXT_PUBLIC_DATABASE_URL is not set");
       return false;
     }
 
-    const res = await fetch(
-      `${dbUrl.replace(/\/$/, "")}/admins/${encodeURIComponent(uid)}.json?auth=${encodeURIComponent(idToken)}`,
-      { cache: "no-store" }
-    );
+    const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) {
       return false;
     }

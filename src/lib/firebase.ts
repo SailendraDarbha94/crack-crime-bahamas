@@ -1,8 +1,17 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth, browserLocalPersistence, connectAuthEmulator, type Auth } from 'firebase/auth';
+import {
+  getAuth,
+  initializeAuth,
+  browserLocalPersistence,
+  browserSessionPersistence,
+  indexedDBLocalPersistence,
+  connectAuthEmulator,
+  type Auth,
+} from 'firebase/auth';
 import { getDatabase } from "firebase/database";
 import { getStorage } from "firebase/storage";
 import { getAnalytics, isSupported } from "firebase/analytics";
+import { analyticsMayStart } from "./analyticsPolicy";
 
 // Firebase configuration. Exported so the Team page can open a second,
 // short-lived app instance to create officer accounts without signing the
@@ -34,14 +43,45 @@ export function connectAuthEmulatorIfConfigured(instance: Auth): void {
 // Initialize Firebase app (prevent duplicate initialization)
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
+// In the browser, Auth is set up WITHOUT Firebase's popup/redirect sign-in
+// support. getAuth() would include it, and on phones and in Safari that support
+// loads a script from apis.google.com and a hidden Firebase iframe on every
+// page, for every visitor, signed in or not: including someone opening the tip
+// form. Sign-in here is by email and password only, which needs none of it.
+// The persistence list is the one getAuth() itself uses, so existing sessions
+// carry over. Later getAuth(app) calls anywhere return this same instance.
+const createAuth = (): Auth => {
+  if (typeof window === 'undefined') return getAuth(app);
+  try {
+    return initializeAuth(app, {
+      persistence: [indexedDBLocalPersistence, browserLocalPersistence, browserSessionPersistence],
+    });
+  } catch {
+    return getAuth(app); // already initialised for this app (Fast Refresh)
+  }
+};
+
 // Initialize Firebase services
-export const auth = getAuth(app);
+export const auth = createAuth();
 connectAuthEmulatorIfConfigured(auth);
 export const database = getDatabase(app);
 export const storage = getStorage(app);
 
-// Initialize Analytics only on client side and if supported
-export const analytics = typeof window !== 'undefined' && !AUTH_EMULATOR_HOST ?
+// The tab's sessionStorage, or null where the browser refuses access to it.
+const tabStorage = (): Storage | null => {
+  try {
+    return window.sessionStorage;
+  } catch {
+    return null;
+  }
+};
+
+// Initialize Analytics only on client side and if supported, and never on the
+// tip form or in a tab that has shown it (see analyticsPolicy.ts). Decided
+// once per page load. The check runs even under the emulator so the tab is
+// marked the same way in development.
+export const analytics =
+  typeof window !== 'undefined' && analyticsMayStart(window.location.pathname, tabStorage()) && !AUTH_EMULATOR_HOST ?
   isSupported().then(yes => yes ? getAnalytics(app) : null) : null;
 
 // Set auth persistence

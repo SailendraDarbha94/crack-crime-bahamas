@@ -1,11 +1,13 @@
 "use client";
 import PublicPersonCard, { PublicPerson } from "@/components/PublicPersonCard";
+import TipLabels from "@/components/TipLabels";
 import { archiveHistory, tipArchiveStatus, type ArchiveLogEntry, type PeopleKind } from "@/lib/archive";
 import app from "@/lib/firebase";
 import { FirebaseErrorHandler } from "@/lib/firebaseErrorHandler";
 import { PersonArchiveService } from "@/lib/firebaseService";
 import { deleteTipRecords, removePoliceCopy, restoreTip } from "@/lib/tipAdmin";
 import { readTipText } from "@/lib/tipCrypto";
+import { readTipLabels, type TipLabelData } from "@/lib/tipLabels";
 import { useToast } from "@/lib/toastContext";
 import { dateReader } from "@/lib/utils";
 import { getAuth } from "firebase/auth";
@@ -19,6 +21,7 @@ type ArchivedTip = {
   id: string;
   message: string;
   pin: string | null;
+  labels: TipLabelData;
   created_at?: number;
   followUps: { id: string; message: string; created_at?: number }[];
   archive: { at: number; by: string; remarks: string };
@@ -108,6 +111,7 @@ const ArchivePage = () => {
         id,
         message: readTipText(raw, "[Could not decrypt this tip]"),
         pin: raw.pin ?? null,
+        labels: readTipLabels(raw),
         created_at: raw.created_at,
         followUps,
         archive: {
@@ -300,6 +304,8 @@ const ArchivePage = () => {
                     </div>
                   </div>
                 ) : null}
+
+                <TipLabels labels={tip.labels} />
 
                 <p className="font-bold text-xl whitespace-pre-wrap">{tip.message}</p>
 
