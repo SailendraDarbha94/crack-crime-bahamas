@@ -66,9 +66,12 @@ export default function Footer() {
                     </a>
                   </li>
                   <li>
-                    <Link href="/login" className="hover:underline hover:text-amber-950 transition-colors duration-200">
+                    {/* A plain link, so the sign-in page opens with a full page load:
+                        Safari's App Store banner, shown on public pages, would
+                        otherwise stay on screen into the staff area. */}
+                    <a href="/login" className="hover:underline hover:text-amber-950 transition-colors duration-200">
                       Admin Login
-                    </Link>
+                    </a>
                   </li>
                 </ul>
               </div>

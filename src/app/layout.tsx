@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import { NextUIProvider } from "@nextui-org/react";
 import ToastContextProvider from "@/lib/toastContext";
 import WebNavbar from "@/components/WebNavbar";
+import { APP_STORE_ID } from "@/constants/appLinks";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://crackcrimebahamas.com";
 
@@ -43,6 +44,13 @@ export const metadata: Metadata = {
     images: ["/newfavicon.png"],
   },
   robots: { index: true, follow: true },
+  // Safari's own "Get the app" banner, on an iPhone or iPad. Safari draws it,
+  // shows it only where the app is available (the Bahamas App Store, for
+  // now), switches it to "Open" when the app is installed, and stops showing
+  // it once the visitor closes it. Pages where it does not belong set
+  // `itunes: null`: the tip form, the privacy policy (the app opens it, so the
+  // banner would offer the app to someone already in it), and the staff pages.
+  itunes: { appId: APP_STORE_ID },
 };
 
 export const viewport = {

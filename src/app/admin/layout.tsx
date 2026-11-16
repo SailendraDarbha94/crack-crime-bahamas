@@ -1,6 +1,11 @@
-"use client";
 import AdminGuard from "@/components/AdminGuard";
 import Sidebar from "@/components/Sidebar";
+import type { Metadata } from "next";
+
+// Staff pages carry no App Store banner (see the root layout): the app is for
+// the public. Page settings can only come from a server layout, so this file
+// is not a client component; the guard and sidebar it renders are.
+export const metadata: Metadata = { itunes: null };
 
 export default function AdminLayout({
   children,

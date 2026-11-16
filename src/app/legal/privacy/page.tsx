@@ -1,10 +1,14 @@
 import TipFormLink from "@/components/TipFormLink";
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
     "How Crime Stoppers Bahamas handles information in the Crack Crime Bahamas app and website: anonymous tips, notifications, who can see what, and how long it is kept.",
+  // No App Store banner (see the root layout): the app opens this page in its
+  // own browser, where the banner would offer the app to someone already in it.
+  itunes: null,
 };
 
 // Every statement here must match what the app and website actually do. When
@@ -147,6 +151,12 @@ const Page = () => {
               cookies. Our hosting provider&apos;s servers also record technical details of each
               request, such as the IP address and browser or app type, in logs kept for a limited
               period for security and troubleshooting.
+            </li>
+            <li>
+              <Term>App banner</Term>: on an iPhone or iPad, Safari may show a banner at the top of
+              this website&apos;s pages offering the app. Safari draws it, using the app&apos;s
+              details from the App Store; this website receives nothing from it, and it is not shown
+              on the tip form.
             </li>
           </List>
           <p>

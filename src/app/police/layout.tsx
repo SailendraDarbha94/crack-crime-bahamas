@@ -1,6 +1,11 @@
-"use client";
 import RoleGuard from "@/components/RoleGuard";
 import Sidebar from "@/components/Sidebar";
+import type { Metadata } from "next";
+
+// Staff pages carry no App Store banner (see the root layout): the app is for
+// the public. Page settings can only come from a server layout, so this file
+// is not a client component; the guard and sidebar it renders are.
+export const metadata: Metadata = { itunes: null };
 
 // Police portal. Officers land here after signing in; admins may open it too,
 // to see exactly what officers see. Everything under /police is read-only.
