@@ -10,8 +10,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:rules": "npx --yes firebase-tools@13 emulators:exec --only database --project demo-ccb \"node test/rules/tip-pins.test.mjs && node test/rules/notifications-register.test.mjs && node test/rules/police-role.test.mjs && node test/rules/police-tips.test.mjs && node test/rules/archive.test.mjs && node test/rules/tip-categories.test.mjs\"",
-    "test:unit": "node --experimental-strip-types --no-warnings test/unit/tip-pin.test.mts && node --experimental-strip-types --no-warnings test/unit/tip-crypto.test.mts && node --experimental-strip-types --no-warnings test/unit/archive.test.mts && node --experimental-strip-types --no-warnings test/unit/tip-categories.test.mts && node --experimental-strip-types --no-warnings test/unit/own-data.test.mts",
+    "test:rules": "npx --yes firebase-tools@13 emulators:exec --only database --project demo-ccb \"node test/rules/tip-pins.test.mjs && node test/rules/notifications-register.test.mjs && node test/rules/police-role.test.mjs && node test/rules/police-tips.test.mjs && node test/rules/archive.test.mjs && node test/rules/tip-categories.test.mjs && node test/rules/hostile-records.test.mjs\"",
+    "test:unit": "node --experimental-strip-types --no-warnings test/unit/tip-pin.test.mts && node --experimental-strip-types --no-warnings test/unit/tip-crypto.test.mts && node --experimental-strip-types --no-warnings test/unit/archive.test.mts && node --experimental-strip-types --no-warnings test/unit/tip-categories.test.mts && node --experimental-strip-types --no-warnings test/unit/own-data.test.mts && node --experimental-strip-types --no-warnings test/unit/safe-record.test.mts && node --experimental-strip-types --no-warnings test/unit/rtdb-rest.test.mts && node --experimental-strip-types --no-warnings test/unit/push-groups.test.mts",
     "test": "npm run test:unit && npm run test:rules"
   },
   "dependencies": {

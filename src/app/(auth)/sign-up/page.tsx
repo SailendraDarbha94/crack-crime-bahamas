@@ -168,6 +168,8 @@ const Page = () => {
                     placeholder=""
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
+                    // The database rules take a name of at most 100 characters.
+                    maxLength={100}
                     required={true}
                   />
                 </div>
@@ -186,6 +188,8 @@ const Page = () => {
                     placeholder=""
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
+                    // The database rules take a name of at most 100 characters.
+                    maxLength={100}
                     required={true}
                   />
                 </div>

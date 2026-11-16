@@ -1,5 +1,9 @@
 "use client";
+import CardBoundary from "@/components/CardBoundary";
 import app, { connectAuthEmulatorIfConfigured, database, firebaseConfig } from "@/lib/firebase";
+import { ownEntry } from "@/lib/ownData";
+import { textOf, timeOf } from "@/lib/safeRecord";
+import { readAsStaff } from "@/lib/staffRead";
 import { dateReader } from "@/lib/utils";
 import { useToast } from "@/lib/toastContext";
 import { deleteApp, initializeApp } from "firebase/app";
@@ -11,10 +15,79 @@ import {
   sendPasswordResetEmail,
   signOut,
 } from "firebase/auth";
-import { get, getDatabase, ref, remove, set } from "firebase/database";
-import React, { useEffect, useState } from "react";
+import { getDatabase, ref, remove, set } from "firebase/database";
+import React, { useEffect, useMemo, useState } from "react";
 
-type Officer = { uid: string; firstName?: string; lastName?: string; email?: string; created_at?: number };
+type Officer = {
+  /** The account's uid: always its key under /police, never anything a profile says. */
+  uid: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  /** When the profile was saved, in milliseconds; 0 when it does not say. */
+  created_at: number;
+  /**
+   * What is known of the account's profile under /users. "read": it is shown.
+   * "none": the account has none. "unreadable": something is stored but it is
+   * not a profile. "notLoaded": the profiles could not be read at all.
+   */
+  profile: "read" | "none" | "unreadable" | "notLoaded";
+};
+
+// A profile is written by the account itself, so nothing in it is trusted:
+// each field is text of a sensible length or the profile is not shown. The
+// limits are looser than the database rules', for profiles saved before them.
+const MAX_NAME = 200;
+const MAX_EMAIL = 320;
+/** The longest first or last name the database rules accept in a new profile. */
+const NAME_LIMIT = 100;
+/** The furthest date a browser can show. */
+const LATEST_DATE = 8.64e15;
+
+/** The fields of a stored profile, or null when what is stored is not a profile. */
+function readProfile(stored: unknown): Pick<Officer, "firstName" | "lastName" | "email" | "created_at"> | null {
+  if (stored === null || typeof stored !== "object" || Array.isArray(stored)) return null;
+  const fields = stored as Record<string, unknown>;
+  const limits = [["firstName", MAX_NAME], ["lastName", MAX_NAME], ["email", MAX_EMAIL]] as const;
+  for (const [name, limit] of limits) {
+    const value = fields[name];
+    if (value !== undefined && (typeof value !== "string" || value.length > limit)) return null;
+  }
+  const savedAt = timeOf(fields.created_at);
+  return {
+    firstName: textOf(fields.firstName),
+    lastName: textOf(fields.lastName),
+    email: textOf(fields.email),
+    created_at: Math.abs(savedAt) <= LATEST_DATE ? savedAt : 0,
+  };
+}
+
+/**
+ * One row per account with police access. `profiles` is /users as last read,
+ * or null when it never has been. A profile that cannot be read costs that
+ * officer's name, never the row: access must stay removable whatever an
+ * account has written about itself.
+ */
+function buildOfficers(uids: string[], profiles: Record<string, unknown> | null): Officer[] {
+  const list: Officer[] = uids.map((uid) => {
+    const unnamed = { uid, firstName: "", lastName: "", email: "", created_at: 0 };
+    if (profiles === null) return { ...unnamed, profile: "notLoaded" };
+    try {
+      // By key, and only a key /users really has: a uid such as "constructor"
+      // must not find what every object inherits.
+      const stored = ownEntry(profiles, uid);
+      if (stored === undefined || stored === null) return { ...unnamed, profile: "none" };
+      const fields = readProfile(stored);
+      // The uid is set last and from the key, so a profile cannot supply its own.
+      return fields ? { ...fields, uid, profile: "read" } : { ...unnamed, profile: "unreadable" };
+    } catch (err) {
+      console.error("An officer's profile could not be read:", err);
+      return { ...unnamed, profile: "unreadable" };
+    }
+  });
+  list.sort((a, b) => (a.lastName || a.email || a.uid).localeCompare(b.lastName || b.email || b.uid));
+  return list;
+}
 
 // Unambiguous characters only, so a password read aloud or copied from a
 // screen survives the trip.
@@ -38,6 +111,50 @@ const inputClass =
 const buttonClass =
   "bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 font-bold px-4 py-2 rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed";
 
+const rowClass =
+  "flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/35 border border-white/60 rounded-2xl px-4 py-3";
+const removeButtonClass =
+  "bg-red-700 hover:bg-red-600 text-white font-bold px-4 py-2 rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50";
+
+/**
+ * One officer. A component of its own so that anything thrown while drawing
+ * it is caught by the CardBoundary around it, and costs this row only.
+ */
+const OfficerRow = ({ officer: o, namesLoading, busy, onReset, onRemove }: {
+  officer: Officer;
+  /** The profiles are being read: an officer without one may be about to get a name. */
+  namesLoading: boolean;
+  busy: boolean;
+  onReset: () => void;
+  onRemove: () => void;
+}) => {
+  const name =
+    o.profile === "unreadable" ? "Profile could not be read"
+    : o.profile === "notLoaded" ? (namesLoading ? "Loading name…" : "(name not loaded)")
+    : `${o.firstName} ${o.lastName}`.trim() || "(no name saved)";
+  return (
+    <li className={rowClass}>
+      <div className="min-w-0">
+        <p className="font-bold text-amber-950">{name}</p>
+        <p className="text-sm text-amber-900/80 break-all">{o.email || o.uid}</p>
+        {o.profile === "read" ? (
+          <p className="text-xs text-amber-900/60">
+            {o.created_at ? `Added ${dateReader(o.created_at)}` : "Added: date unknown"}
+          </p>
+        ) : null}
+      </div>
+      <div className="flex gap-2 shrink-0">
+        <button onClick={onReset} disabled={busy || !o.email} className={buttonClass}>
+          Reset password
+        </button>
+        <button onClick={onRemove} disabled={busy} className={removeButtonClass}>
+          Remove access
+        </button>
+      </div>
+    </li>
+  );
+};
+
 /**
  * Creates a Firebase Auth account for someone else without disturbing the
  * admin's own session. There is no firebase-admin SDK here, and the client
@@ -48,7 +165,10 @@ const buttonClass =
 async function createOfficerAccount(input: {
   firstName: string; lastName: string; email: string; password: string; createdBy: string;
 }): Promise<{ uid: string; profileSaved: boolean }> {
-  const secondary = initializeApp(firebaseConfig, `officer-create-${crypto.randomUUID()}`);
+  // The name only has to differ from any other app alive in the page; it is
+  // not a secret. crypto.randomUUID() would do, but browsers from before 2022
+  // do not all have it, and without it no officer could be created there.
+  const secondary = initializeApp(firebaseConfig, `officer-create-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   try {
     const secondaryAuth = initializeAuth(secondary, { persistence: inMemoryPersistence });
     connectAuthEmulatorIfConfigured(secondaryAuth);
@@ -75,9 +195,15 @@ async function createOfficerAccount(input: {
 }
 
 const TeamPage = () => {
-  const [officers, setOfficers] = useState<Officer[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState(false);
+  // The uids under /police, or null until that has been read once.
+  const [uids, setUids] = useState<string[] | null>(null);
+  const [policeLoading, setPoliceLoading] = useState(true);
+  const [policeError, setPoliceError] = useState(false);
+  // /users as last read, or null when it never has been. Kept when a later
+  // read fails, so names already on screen stay there.
+  const [profiles, setProfiles] = useState<Record<string, unknown> | null>(null);
+  const [profilesLoading, setProfilesLoading] = useState(true);
+  const [profilesError, setProfilesError] = useState(false);
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", password: generatePassword() });
   const [creating, setCreating] = useState(false);
   const [handover, setHandover] = useState<{ email: string; password: string } | null>(null);
@@ -87,27 +213,53 @@ const TeamPage = () => {
   const [busyUid, setBusyUid] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const load = async () => {
-    setLoading(true);
-    setLoadError(false);
+  const officers = useMemo(() => (uids === null ? [] : buildOfficers(uids, profiles)), [uids, profiles]);
+
+  // The two reads are separate on purpose. Who has access comes from /police,
+  // which only admins write. The names come from /users, which each account
+  // writes for itself and which holds every account, not just officers. If
+  // the second cannot be read, or is slow, the list of who has access still
+  // shows, and access can still be removed. Both go through readAsStaff: the
+  // SDK's get() rejects the whole of /users if one profile holds a key named
+  // "hasOwnProperty", which used to hide every officer.
+  const loadPolice = async () => {
+    setPoliceLoading(true);
     try {
-      const [policeSnap, usersSnap] = await Promise.all([
-        get(ref(database, "police")),
-        get(ref(database, "users")),
-      ]);
-      const police = policeSnap.val() ?? {};
-      const users = usersSnap.val() ?? {};
-      const list: Officer[] = Object.keys(police)
-        .filter((uid) => police[uid] === true)
-        .map((uid) => ({ uid, ...(users[uid] ?? {}) }));
-      list.sort((a, b) => (a.lastName ?? a.email ?? "").localeCompare(b.lastName ?? b.email ?? ""));
-      setOfficers(list);
+      const police = await readAsStaff<unknown>("police", { records: true });
+      if (police !== null && typeof police !== "object") throw new Error("/police is not a list of accounts");
+      setUids(
+        Object.entries(police ?? {})
+          .filter(([, granted]) => granted === true)
+          .map(([uid]) => uid)
+      );
+      setPoliceError(false);
     } catch (err) {
+      // The list already on screen, if any, is left as it is.
       console.error("Could not load the police team:", err);
-      setLoadError(true);
+      setPoliceError(true);
     } finally {
-      setLoading(false);
+      setPoliceLoading(false);
     }
+  };
+
+  const loadProfiles = async () => {
+    setProfilesLoading(true);
+    try {
+      const users = await readAsStaff<unknown>("users", { records: true });
+      if (users !== null && typeof users !== "object") throw new Error("/users is not a set of profiles");
+      setProfiles((users ?? {}) as Record<string, unknown>);
+      setProfilesError(false);
+    } catch (err) {
+      console.error("Could not load the officers' profiles:", err);
+      setProfilesError(true);
+    } finally {
+      setProfilesLoading(false);
+    }
+  };
+
+  // Neither rejects, so one failing never stops the other.
+  const load = async () => {
+    await Promise.all([loadPolice(), loadProfiles()]);
   };
 
   useEffect(() => {
@@ -200,12 +352,14 @@ const TeamPage = () => {
   };
 
   const handleRemove = async (officer: Officer) => {
-    const who = officer.email ?? officer.uid;
+    const who = officer.email || officer.uid;
     if (!confirm(`Remove police access for ${who}? An open portal switches to "awaiting approval" within seconds, and everything they try to open is refused.`)) return;
     setBusyUid(officer.uid);
     try {
       await remove(ref(database, `police/${officer.uid}`));
       toast({ message: `Police access removed for ${who}`, type: "success" });
+      // Taken off the screen now, in case the fresh read below fails.
+      setUids((current) => (current ? current.filter((uid) => uid !== officer.uid) : current));
       await load();
     } catch (err) {
       console.error("Could not remove access:", err);
@@ -292,9 +446,11 @@ const TeamPage = () => {
         >
           <h2 className="text-xl font-bold text-amber-950">Add an officer</h2>
           <div className="flex flex-col sm:flex-row gap-3">
-            <input className={inputClass} placeholder="First name" value={form.firstName}
+            {/* No longer than the rules allow for a name: a profile they refuse
+                would leave the new officer listed with no name. */}
+            <input className={inputClass} placeholder="First name" value={form.firstName} maxLength={NAME_LIMIT}
               onChange={(e) => setForm({ ...form, firstName: e.target.value })} required />
-            <input className={inputClass} placeholder="Last name" value={form.lastName}
+            <input className={inputClass} placeholder="Last name" value={form.lastName} maxLength={NAME_LIMIT}
               onChange={(e) => setForm({ ...form, lastName: e.target.value })} required />
           </div>
           <input className={inputClass} type="email" placeholder="Officer's email address" value={form.email}
@@ -316,42 +472,72 @@ const TeamPage = () => {
 
         <div className="bg-white/25 backdrop-blur-xl border border-white/50 rounded-3xl p-6 shadow-[0_8px_32px_rgba(120,72,10,0.12)]">
           <h2 className="text-xl font-bold text-amber-950 mb-3">
-            Officers with access{loading ? "" : ` (${officers.length})`}
+            Officers with access{uids === null ? "" : ` (${officers.length})`}
           </h2>
-          {loading ? (
-            <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-800"></div>
+          {policeError ? (
+            <div role="alert" className="bg-white/40 border border-white/60 rounded-2xl px-4 py-3 mb-3">
+              <p className="font-bold text-amber-950">Could not load the team</p>
+              <p className="text-sm text-amber-900/80 mb-3">
+                {uids === null
+                  ? "The list of officers could not be read, so none are shown. That does not mean there are none. Check your connection and try again."
+                  : "The list could not be read again. What is below is as it was when it last loaded."}
+              </p>
+              <button type="button" onClick={loadPolice} disabled={policeLoading} className={buttonClass}>
+                {policeLoading ? "Trying again…" : "Try again"}
+              </button>
             </div>
-          ) : loadError ? (
-            <p className="text-red-800">Could not load the team. Please refresh the page.</p>
+          ) : null}
+          {profilesError ? (
+            <div role="alert" className="bg-white/40 border border-white/60 rounded-2xl px-4 py-3 mb-3">
+              <p className="font-bold text-amber-950">Could not load the officers&rsquo; names</p>
+              <p className="text-sm text-amber-900/80 mb-3">
+                {profiles === null
+                  ? "Each officer is shown by account ID until the names can be read. Access can still be removed."
+                  : "The names could not be read again. Those below are as they were when they last loaded."}
+              </p>
+              <button type="button" onClick={loadProfiles} disabled={profilesLoading} className={buttonClass}>
+                {profilesLoading ? "Trying again…" : "Try again"}
+              </button>
+            </div>
+          ) : null}
+          {uids === null ? (
+            policeError ? null : (
+              <div className="flex justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-800"></div>
+              </div>
+            )
           ) : officers.length === 0 ? (
-            <p className="text-amber-900/80">No officers yet. Add one above.</p>
+            // Not said after a failed read: an empty list that could not be
+            // refreshed is not known to be empty.
+            policeError ? null : <p className="text-amber-900/80">No officers yet. Add one above.</p>
           ) : (
             <ul className="flex flex-col gap-3">
               {officers.map((o) => (
-                <li key={o.uid} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/35 border border-white/60 rounded-2xl px-4 py-3">
-                  <div className="min-w-0">
-                    <p className="font-bold text-amber-950">
-                      {o.firstName || o.lastName ? `${o.firstName ?? ""} ${o.lastName ?? ""}`.trim() : "(no name saved)"}
-                    </p>
-                    <p className="text-sm text-amber-900/80 break-all">{o.email ?? o.uid}</p>
-                    {o.created_at ? (
-                      <p className="text-xs text-amber-900/60">Added {dateReader(o.created_at)}</p>
-                    ) : null}
-                  </div>
-                  <div className="flex gap-2 shrink-0">
-                    <button onClick={() => handleReset(o)} disabled={busyUid === o.uid || !o.email} className={buttonClass}>
-                      Reset password
-                    </button>
-                    <button
-                      onClick={() => handleRemove(o)}
-                      disabled={busyUid === o.uid}
-                      className="bg-red-700 hover:bg-red-600 text-white font-bold px-4 py-2 rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50"
-                    >
-                      Remove access
-                    </button>
-                  </div>
-                </li>
+                <CardBoundary
+                  key={o.uid}
+                  resetKey={officers}
+                  fallback={
+                    <li className={rowClass}>
+                      <div className="min-w-0">
+                        <p className="font-bold text-amber-950">This record could not be displayed</p>
+                        <p className="text-sm text-amber-900/80 break-all">{textOf(o.uid)}</p>
+                      </div>
+                      <div className="flex gap-2 shrink-0">
+                        <button onClick={() => handleRemove(o)} disabled={busyUid === o.uid} className={removeButtonClass}>
+                          Remove access
+                        </button>
+                      </div>
+                    </li>
+                  }
+                >
+                  <OfficerRow
+                    officer={o}
+                    namesLoading={profilesLoading}
+                    busy={busyUid === o.uid}
+                    onReset={() => handleReset(o)}
+                    onRemove={() => handleRemove(o)}
+                  />
+                </CardBoundary>
               ))}
             </ul>
           )}

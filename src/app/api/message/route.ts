@@ -36,13 +36,14 @@ const MAX_REFUSALS = 2;
 // throw before the tip is stored. Kept in step with the `tipPins` rules.
 const TIP_ID_PATTERN = /^[-_A-Za-z0-9]{1,128}$/;
 
-// "__proto__" has the shape of a key but must never be used as one. The admin
-// pages read /messages into a plain object, where a child of that name
-// becomes the object's prototype instead of an entry and drops out of every
-// listing: a tip filed under it, and every message added to it, would be
-// invisible to staff. The rules refuse it too.
+// Two names have the shape of a key but must never be used as one. Read into
+// a plain object, a child called "__proto__" becomes the object's prototype
+// instead of an entry, and the Firebase SDK cannot read or write a node that
+// holds a key called "hasOwnProperty" at all. A tip filed under either, and
+// every message added to it, would be out of the staff's sight. The rules
+// refuse both too.
 const isTipKey = (id: unknown): id is string =>
-  typeof id === "string" && TIP_ID_PATTERN.test(id) && id !== "__proto__";
+  typeof id === "string" && TIP_ID_PATTERN.test(id) && id !== "__proto__" && id !== "hasOwnProperty";
 
 // True when the database itself turned a write down (its rules said no), as
 // opposed to the write failing some other way, such as getting no answer.

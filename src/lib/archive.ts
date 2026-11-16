@@ -29,11 +29,20 @@ export const PEOPLE_KINDS: PeopleKind[] = ["wanteds", "missings"];
 // Fields that belong to the archive, never to the public record.
 export const ARCHIVE_FIELDS = ["archived", "archiveLog"] as const;
 
-// A follow-up stamped further ahead than this cannot be genuine (the rules
-// allow five minutes of skew; this is looser on purpose). It is ignored when
-// deciding whether a tip is reopened, so a bad stamp that somehow got stored
-// can never hold a tip open against the admin.
-export const FUTURE_SKEW_MS = 10 * 60_000;
+// A follow-up stamped further ahead than this cannot be genuine. It is ignored
+// when deciding whether a tip is reopened, so a bad stamp that somehow got
+// stored can never hold a tip open against the admin.
+//
+// "Ahead" is measured against the clock of whoever is looking, while the stamp
+// comes from the intake server. So the allowance is a day and a little, not
+// minutes: on an office PC running a quarter of an hour slow, or set to the
+// wrong time zone, a tipster's reply to an archived tip used to count as "from
+// the future" and the tip stayed quietly in the archive instead of coming back
+// to the inbox. The rules already refuse a new follow-up stamped more than
+// five minutes ahead of the database's own clock, so the width costs nothing.
+// Kept in step with FUTURE_ALLOWANCE_MS in safeRecord.ts (written out here,
+// not imported: the unit tests load this file on its own).
+export const FUTURE_SKEW_MS = 24 * 60 * 60_000 + 5 * 60_000;
 
 type StoredFollowUps = Record<string, { created_at?: unknown }> | undefined | null;
 type StoredTip = { archive?: Partial<ArchiveMark> | null; followUps?: StoredFollowUps };

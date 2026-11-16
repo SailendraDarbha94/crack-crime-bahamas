@@ -33,7 +33,9 @@ export async function verifyAdmin(req: Request): Promise<boolean> {
       return false;
     }
 
-    const url = rtdbRestUrl(`admins/${encodeURIComponent(uid)}`, idToken);
+    // rtdbRestUrl encodes each key, so the uid cannot add a path of its own.
+    if (uid.includes("/")) return false;
+    const url = rtdbRestUrl(`admins/${uid}`, idToken);
     if (!url) {
       console.error("verifyAdmin: NEXT_PUBLIC_DATABASE_URL is not set");
       return false;

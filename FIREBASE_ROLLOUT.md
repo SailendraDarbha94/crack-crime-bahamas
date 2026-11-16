@@ -126,7 +126,9 @@ firebase deploy --only database    # with rules-backup.json as database.rules.js
 ## Deferred (needs a coordinated mobile-app release)
 
 - Rotate the tip AES key (versioned envelope so old tips still decrypt)
-- Confirm the app's transport (direct RTDB vs /api) → tighten `.validate`
+- ~~Confirm the app's transport (direct RTDB vs /api) → tighten `.validate`~~
+  done: the app has only ever written through the website's routes (see
+  "Records anyone can write")
 - Firebase App Check for real anti-abuse on the public create paths
 - Custom claims via firebase-admin (replaces uid-pinned storage rules)
 
@@ -185,15 +187,17 @@ page loading). Both are shut twice over:
   inherits.
 
 For the same reason `readTipText()` will not hand the cipher an object-form
-message whose sizes do not add up. The rules accept any object as a tip's
-message, because the 2024 app stored cipher objects (ten of them are still in
-the database), and one claiming an impossible size made the decryption loop
-for ever, freezing the inbox for whoever opened it.
+message whose sizes do not add up. The 2024 app stored cipher objects (ten of
+them are still in the database, and the rules no longer take a new one: see
+"Records anyone can write"), and one claiming an impossible size made the
+decryption loop for ever, freezing the inbox for whoever opened it.
 
 What is left: someone can still file real, visible tips under mixed codes they
 chose (licence plates, say), any number of them, and a later tip quoting such a
 code joins that tip as a follow-up. An admin sees both. Read a junk tip's later
-messages before deleting it, because they go with it. Closing this for good
+messages before deleting it, because they go with it: a card draws the newest
+hundred to begin with and has a button for the earlier ones, so junk piled on
+top cannot put a genuine message out of reach. Closing this for good
 needs the intake to hold a secret or an identity of its own, which this project
 does not have yet.
 
@@ -204,32 +208,6 @@ to another tip, and deleting that decoy must leave the real tip's PIN alone.
 These rules judge new entries only. Whatever was in the index before they went
 live stays: audit it once afterwards (every entry should name an existing tip
 that carries the same PIN).
-
-**Known gaps: hostile records.** Anyone can write a new tip straight to the
-database, and `/messages/$id` accepts loosely shaped records (any object as the
-message, any extra fields, any number of follow-ups). The staff pages were
-written for the records the intake makes. Reviews of this change found ways,
-all older than it and none seen in the live data, for one crafted record to
-stop the inbox loading for every admin until it is removed in the Firebase
-console. They are not fixed yet:
-
-- a key named `hasOwnProperty` anywhere in a tip makes the SDK's `get()` of
-  `/messages` reject, so no page can read any tip;
-- a tip with more than about 100,000 follow-ups, or with `followUps` stored as
-  a long string, overflows a `Math.max(...)` in the inbox and blanks the list;
-- a `created_at` that is not a number scrambles the inbox order;
-- deleting a tip from a page opened earlier also deletes follow-ups that
-  arrived since, unseen (archiving re-reads first; deleting does not);
-- a follow-up whose write landed but whose reply was lost is stored a second
-  time as a new tip.
-
-The cure is structural rather than one key at a time: strict shapes for what
-an anonymous writer may store (scalar extra fields, a fixed shape for
-object-form messages, `followUps` an object), each tip rendered inside its own
-try/catch so one bad record is one bad card, and the staff pages reading over
-REST with the admin's token instead of through `snapshot.val()`. Before
-tightening the message shape, confirm how the oldest app versions send tips
-(see Deferred).
 
 If the index ever refuses an entry the intake believes is valid (rules and code
 out of step), the intake stores the tip anyway, without the entry: the tipster
@@ -251,8 +229,9 @@ the follow-ups an admin has shared. Officers read this node and nothing else —
 never `/messages`. A Realtime Database read covers everything beneath a node,
 so granting police a read on the original tip would also hand them every
 follow-up the tipster sends afterwards, reviewed or not. Forwarding copies
-what exists at that moment; later follow-ups stay admin-only until shared one
-by one. Withdrawing deletes the copy, and deleting a tip removes its copy too.
+the tip and the later messages shown on the card at that moment (the newest
+hundred, plus any earlier ones the admin has brought in: the card says so
+before it sends); everything else stays admin-only until shared one by one. Withdrawing deletes the copy, and deleting a tip removes its copy too.
 `forwarded_by` must equal the writer's uid, so a forward is always attributable.
 A copy is create-or-delete only — it cannot be overwritten, and a follow-up can
 be shared once — so one admin can never silently replace another's forward; to
@@ -301,6 +280,145 @@ admin's page loaded, so nothing is archived unread. The history under
 `archiveLog` is append-only against the app's own writes; an admin acting on
 the raw database can still rewrite it, as with everything else under a tip.
 
+## Records anyone can write
+
+The intake has no identity of its own, so every node it writes can be written
+by anyone, straight to the database: new tips and follow-ups under `/messages`,
+device records under `/notifications_register` (and the older `/registrations`),
+and a new account's own `/users` profile. For two years the intake also stored
+whatever body it was sent. So a stored record may be any shape, and the staff
+pages were written for the shapes the site makes. One crafted record could stop
+the inbox loading for every admin. This is held at two layers, and neither
+relies on the other.
+
+**The rules hold new records to the shape the site writes.** The mobile app has
+never written to the database itself (checked through its whole history: every
+write goes through the website's routes), so a stricter rule can only refuse
+what those routes send, and the tests file each of their writes.
+
+- A tip: `message` is text (the intake has stored only text since August 2026;
+  a new tip whose message is an object is not from the intake), `created_at` is
+  a number no more than a day ahead, the other named fields as before, and any
+  further field is a single short value: nothing nested.
+- `followUps` is a map of follow-ups, each strictly shaped as before.
+- The keys `__proto__` and `hasOwnProperty` are refused as a tip's id, as a
+  field of a tip, as a follow-up's id, and as the tip a PIN entry names. Read
+  through the SDK the first becomes an object's prototype and forges its
+  fields; the SDK cannot read a node holding the second at all.
+- A PIN entry, once made, is never rewritten, by anyone (admins write call-in
+  tips through the same index, and the create-only rule does not bind them).
+- A `/users` profile is exactly the fields sign-up and the Team page write, as
+  text and a number.
+- A device record may be any shape the app has sent (the rule cannot list
+  fields: they differ by phone and by app version) but no deeper than four
+  levels, with no string over 500 characters and neither of the two keys at any
+  level. A phone whose record breaks that is refused silently: the app ignores
+  the answer and tries again at each launch, so loosen the rule rather than
+  expect a report.
+
+Strictness lives in the rules for a field, which run only when that field is
+written. The rule on the tip itself runs on every write beneath it, so it must
+stay true of every tip already stored, or that tip could no longer be followed
+up, archived or restored. The ten cipher-object tips from 2024, and any tip
+dated with text, are seeded in the tests for exactly that.
+
+**The staff pages survive whatever is stored.**
+
+- They read through `readAsStaff()` (`src/lib/staffRead.ts`): the database's
+  REST API as the signed-in member of staff, parsed as plain JSON and passed
+  through `ownData()`. The SDK's `get()` cannot be made safe from outside: it
+  fails before any page code runs. Keys are percent-encoded when a path is
+  built, so a record stored under `%2e%2e` cannot send a read to another node.
+  A list of records is read with `{ records: true }`, which keeps every
+  record whatever its id is: one stored under `hasOwnProperty` or `__proto__`
+  is still listed, so it can be deleted.
+- A tip is turned into a `TipView` (`src/lib/tipView.ts`) before anything is
+  drawn: text where text is expected, finite times, a sort time that cannot be
+  in the far future. A card draws the newest hundred follow-ups to begin with
+  and brings in the earlier ones a hundred at a time when asked
+  (`src/lib/useShownFollowUps.ts`). Every stored message can be read; none is
+  decrypted or drawn until someone asks for it. "Newest" goes by times the
+  sender chose, which is why the earlier ones must stay within reach. Each
+  click brings in as many as the card already shows (100, 200, 400, up to
+  3,200 at once), so a long thread is a few clicks.
+- The inbox and the archive's tips draw 200 cards to begin with and more on
+  request, so a flood of tips makes the list long instead of making the page
+  impossible to open. Police copies whose tip is gone are listed first: they
+  are to be withdrawn, and must not end up pages down.
+- "In the future" is judged against the clock of whoever is looking, so it
+  allows a day and a little, both for ordering (`FUTURE_ALLOWANCE_MS` in
+  `safeRecord.ts`) and for deciding that a reply has reopened an archived tip
+  (`FUTURE_SKEW_MS` in `archive.ts`, which allowed ten minutes until now). On
+  a PC whose clock is slow or set to the wrong time zone, a new tip is still
+  at the top, and a reply to an archived tip still brings it back to the
+  inbox instead of leaving it quietly in the archive.
+- `readAsStaff()` times out with an `AbortController` and a timer.
+  `AbortSignal.timeout()` is missing from browsers older than 2022 (an iPad
+  that stops at iOS 15), where it would stop every staff page loading.
+- Each card is built inside its own try/catch and drawn inside a
+  `CardBoundary`, so one record that cannot be read or drawn is one
+  placeholder card, never an empty page. The placeholder has a button to
+  delete the record, or to withdraw it from police, where the page may do
+  that; an officer's placeholder asks them to tell Crime Stoppers.
+- A load that fails says so and offers to try again. It never looks like an
+  empty list, and a notification is never reported as sent when the device list
+  could not be read. Notifications go out in batches of 500 (the routes' limit
+  per request; past 500 registered devices every send used to fail), the
+  routes wait for Expo and answer with how many were sent, and the page says
+  so.
+- `/api/registrations` checks the token before using it as a database path and
+  stores a cleaned copy of what the app sent, never the request body itself.
+- Deleting a tip re-reads it first, as archiving does, and refuses if the
+  tipster has written since the page was loaded. What settles that is the
+  number of follow-ups (they can only ever be added), with the newest time as
+  well: a time is chosen by the sender, so one message stamped a few minutes
+  ahead would otherwise hide whatever arrived before that moment. If the
+  re-read fails, nothing is deleted and the admin is asked to try again:
+  nothing stored in a tip can make that read fail, so a failure means the
+  connection or the sign-in is in trouble, which is when the page is most
+  likely to be out of date. A record the page could not show at all (the
+  placeholder card) is deleted without any read.
+- Both notification routes send through `pushToAll()` (`src/lib/expoPush.ts`).
+  Expo refuses a whole batch of 100 when one token in it belongs to another
+  app, so a single record planted in the register with some other app's token
+  used to cost every device in its batch every notification. Expo says which
+  tokens belong together, and each app's share is now sent on its own
+  (`src/lib/pushGroups.ts`), largest first and at most five groups for one
+  refused batch. The server log gives the sizes of the groups, which shows
+  that the register holds records that are not this app's and how many; it
+  does not say which (tokens are never logged).
+
+**What is left.**
+
+- A visible decoy tip can still be filed under a chosen mixed code (see Tip
+  PINs). Closing that needs a secret or an identity for the intake.
+- Nothing limits how many tips, follow-ups or device records a stranger
+  stores. The pages draw them a page at a time, but every load still downloads
+  the node, and a register too big to download in 30 seconds cannot be sent
+  to. A flood of junk tips also buries the genuine ones in a long list.
+- The Team page shows, and sends a password reset to, the email in an
+  officer's profile. A profile is written once, normally by the Team page as
+  the account is created. If that write is ever refused, the officer could
+  write their own later with any name and address (the rules check only that
+  it is text), and the page would show it. The reset email still goes to the
+  owner of that address for their own account, so no access changes. Binding
+  the field to the account's own address in the rules would close it.
+- A tip written straight to the database may be stamped up to a day ahead
+  (the rules allow it so that a wrong clock at the intake can never cost a
+  tip). It then sits above genuine tips until that time has passed. Its card
+  shows the date, and the rest of the list is below it or a click away. The
+  cure is to order by the database's own clock, which is not built.
+- A tip that someone keeps adding to cannot be archived or deleted from its
+  card: each attempt finds a message the card had not shown, and stops. That
+  is the check doing its job, and it means a junk tip fed a follow-up every
+  few seconds can only be removed in the Firebase console (the tip, its
+  `/tipPins` entry and any `/policeTips` copy) until the writing stops.
+- A follow-up whose write landed but whose reply was lost is stored a second
+  time as a new tip. Staff see the message twice; nothing is lost.
+- Awaiting Expo: a notification request now waits for Expo's answer, so a
+  slow send can outlast the host's time limit. The page then reports that
+  batch as failed although part of it may have gone out.
+
 ## Tip type and source
 
 Every tip can carry three more fields beside its ciphertext:
@@ -333,9 +451,10 @@ held at both layers. The route accepts it only with an admin's ID token, and
 then writes the **new tip** through the database's REST API **as that admin**
 (`src/lib/rtdbRest.ts`), because the server has no identity of its own. The
 rules accept `source: 'call'` only from an admin, so nobody can mark a tip as a
-call by writing to the database directly. Because that write is an admin's, the
-create-only rule on `/tipPins/$pin` does not protect it; the route's own check
-that a PIN is unused does, and a clash is one in some 739 million.
+call by writing to the database directly. The rules never let a PIN entry be
+rewritten, by an admin or anyone else, so a clash with an existing PIN is
+refused there as well as by the route's own check that the PIN is unused; the
+route then draws another. A clash is one in some 739 million.
 
 The admin's token is used for nothing else. **Follow-ups are always written
 anonymously**, whoever typed them, because the path of a follow-up comes from

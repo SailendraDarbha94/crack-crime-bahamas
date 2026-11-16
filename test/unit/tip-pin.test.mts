@@ -89,8 +89,9 @@ const allRules = JSON.parse(readFileSync("database.rules.json", "utf8")).rules;
 const route = readFileSync("src/app/api/message/route.ts", "utf8");
 check("the key that would hide a tip from the inbox is refused by the rules and by the intake",
   allRules.messages.$messageId[".validate"].startsWith("$messageId !== '__proto__' && ") &&
-  allRules.tipPins.$pin.tipId[".validate"].endsWith(" && newData.val() !== '__proto__'") &&
-  /TIP_ID_PATTERN\.test\(id\) && id !== "__proto__"/.test(route) && /claim && isTipKey\(claim\.tipId\)/.test(route));
+  allRules.tipPins.$pin.tipId[".validate"].endsWith(" && newData.val() !== '__proto__' && newData.val() !== 'hasOwnProperty'") &&
+  /TIP_ID_PATTERN\.test\(id\) && id !== "__proto__" && id !== "hasOwnProperty"/.test(route) && /claim && isTipKey\(claim\.tipId\)/.test(route));
+check("a PIN entry, once made, cannot be rewritten by anyone", pinRule.startsWith("!data.exists() && "));
 check("deleting a tip only removes the PIN entry that is its own",
   /if \(entry && entry\.tipId === tipId\) await remove\(ref\(db, `tipPins\/\$\{pin\}`\)\)/.test(readFileSync("src/lib/tipAdmin.ts", "utf8")));
 check("the rules tie a new PIN to a tip created with it and carrying it",

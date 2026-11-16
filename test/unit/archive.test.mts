@@ -46,7 +46,14 @@ check("picks the newest follow-up",
 check("ignores follow-ups without a numeric timestamp",
   latestFollowUpAt({ followUps: { a: { created_at: 3 }, b: {}, c: { created_at: "x" } } }) === 3);
 check("ignores follow-ups stamped beyond the future skew allowance",
-  latestFollowUpAt({ followUps: { a: { created_at: T }, b: { created_at: T + 11 * 60_000 } } }, T) === T);
+  latestFollowUpAt({ followUps: { a: { created_at: T }, b: { created_at: T + 2 * 24 * 60 * 60_000 } } }, T) === T);
+// The clock a stamp is compared with is the viewer's own. A PC that runs slow,
+// or is set to the wrong time zone, must still see a reply to an archived tip.
+check("a reply reopens an archived tip for a viewer whose clock is 15 minutes, or 5 hours, slow",
+  tipArchiveStatus({ archive: { at: T - 7 * 24 * 60 * 60_000, by: "u", remarks: "c" }, followUps: { a: { created_at: T } } }, T - 15 * 60_000) === "reopened" &&
+  tipArchiveStatus({ archive: { at: T - 7 * 24 * 60 * 60_000, by: "u", remarks: "c" }, followUps: { a: { created_at: T } } }, T - 5 * 60 * 60_000) === "reopened");
+check("...and a stamp two days ahead still cannot reopen one",
+  tipArchiveStatus({ archive: { at: T, by: "u", remarks: "c" }, followUps: { a: { created_at: T + 2 * 24 * 60 * 60_000 } } }, T) === "archived");
 
 // --- history --------------------------------------------------------------------
 const history = archiveHistory({

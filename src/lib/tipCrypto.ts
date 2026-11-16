@@ -39,8 +39,9 @@ const isWordArray = (part: unknown): boolean => {
 
 /**
  * True when an object-form message (what the 2024 app stored) is shaped like a
- * real cipher. The rules accept ANY object as a tip's message, for the sake of
- * those older tips, and crypto-es trusts the sizes an object claims: one
+ * real cipher. Until November 2026 the rules accepted ANY object as a tip's
+ * message, for the sake of those older tips (a police copy still may hold
+ * one), and crypto-es trusts the sizes an object claims: one
  * claiming a salt of a thousand million million bytes sends the key derivation
  * into a loop that never ends, freezing the page for whoever opens the inbox.
  * Nothing shaped like that is handed to the cipher.

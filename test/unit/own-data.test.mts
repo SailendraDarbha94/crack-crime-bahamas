@@ -8,7 +8,7 @@
  */
 
 import { tipArchiveStatus } from "../../src/lib/archive.ts";
-import { ownData, ownEntry } from "../../src/lib/ownData.ts";
+import { ownData, ownEntry, ownRecords } from "../../src/lib/ownData.ts";
 import { sourceOf, storedLabelFields } from "../../src/lib/tipCategories.ts";
 
 let failures = 0;
@@ -74,6 +74,38 @@ check("an array with a gap keeps its positions (numbered children)", same(Object
 check("an own key spelled __proto__ is never copied onto the result",
   !Object.keys(ownData(wire(`{ "a": 1, "__proto__": { "b": 2 } }`))).includes("__proto__") && (ownData(wire(`{ "a": 1, "__proto__": { "b": 2 } }`)) as any).b === undefined);
 check("the original is not modified", forged.archive?.by === "nobody");
+
+// The other key: "hasOwnProperty". The SDK calls obj.hasOwnProperty on every
+// object it is handed, so a record carrying a key of that name can be neither
+// read through the SDK nor written back with it. Read as plain JSON it is just
+// a key; the copy must not carry it on.
+const poisoned = wire(`{ "message": "x", "created_at": 1, "hasOwnProperty": 1, "extra": { "hasOwnProperty": { "deep": true }, "kept": 2 } }`);
+check("(parsed JSON really holds the key, and it shadows the method)", typeof (poisoned as any).hasOwnProperty === "number");
+const safe = ownData(poisoned) as any;
+check("ownData drops a hasOwnProperty key at every level and keeps the rest",
+  same(safe, { message: "x", created_at: 1, extra: { kept: 2 } }) && typeof safe.hasOwnProperty === "function" && typeof safe.extra.hasOwnProperty === "function");
+check("...so the copy can be handed back to code that calls the method", safe.hasOwnProperty("message") === true && safe.extra.hasOwnProperty("kept") === true);
+
+// --- a node of records: none may vanish because of its id -----------------------------------
+// Read as plain JSON, a tip stored under the id "hasOwnProperty" or "__proto__"
+// is an ordinary entry. Staff must still see it, or they could never delete it.
+const node2 = wire(`{
+  "-Tip1": { "message": "a", "created_at": 1, "hasOwnProperty": 1 },
+  "hasOwnProperty": { "message": "b", "created_at": 2 },
+  "__proto__": { "message": "c", "created_at": 3, "__proto__": { "archive": { "at": 9 } } },
+  "constructor": { "message": "d", "created_at": 4 }
+}`);
+const records = ownRecords(node2) as Record<string, any>;
+check("every record is listed, whatever it is called",
+  same(Object.keys(records).sort(), ["-Tip1", "__proto__", "constructor", "hasOwnProperty"]) && Object.entries(records).length === 4);
+check("...and can be looked up by its id",
+  ownEntry(records, "hasOwnProperty")?.message === "b" && ownEntry(records, "__proto__")?.message === "c" && ownEntry(records, "constructor")?.message === "d");
+check("the map itself still has an ordinary prototype, and no forged fields", Object.getPrototypeOf(records) === Object.prototype && (records as any).archive === undefined);
+check("inside each record the two names are dropped as usual",
+  same(records["-Tip1"], { message: "a", created_at: 1 }) && same(ownEntry(records, "__proto__"), { message: "c", created_at: 3 }) && ownEntry(records, "__proto__")?.archive === undefined);
+check("ids nobody stored are still not found", ownEntry(records, "toString") === undefined && ownEntry(records, "valueOf") === undefined);
+check("a list of numbered records and an empty node pass through", same(ownRecords([null, { a: 1 }]), [null, { a: 1 }]) && ownRecords(null) === null && ownRecords("x") === "x");
+check("plain ownData, for a single record, still drops both names at the top", same(Object.keys(ownData(node2) as object).sort(), ["-Tip1", "constructor"]));
 
 // --- looking a record up by id ----------------------------------------------------------
 const copies: Record<string, { forwarded_at: number }> = { "-Tip1": { forwarded_at: 1 } };
