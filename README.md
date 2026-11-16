@@ -6,7 +6,9 @@ manage those listings and push notifications to the companion mobile app.
 
 This repo is the **Next.js web app** (public site + admin dashboard + API
 routes). There is a separate React Native / Expo mobile app published on Google
-Play (`com.anonymous.CrackCrimeBahamas`).
+Play (`com.anonymous.CrackCrimeBahamas`) and, for iPhone, on the App Store in
+The Bahamas (app id 6504597039, bundle id `com.ebiz.mobile.contacTracing`).
+Every link to a store on the site comes from `src/constants/appLinks.ts`.
 
 ## Tech stack
 

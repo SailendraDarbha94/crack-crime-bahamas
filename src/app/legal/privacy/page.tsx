@@ -11,7 +11,7 @@ export const metadata = {
 // the data they collect changes, change this page and its date in the same
 // commit. It is linked from the app's About Us screen and the site footer, and
 // is the privacy policy URL given to the App Store and Google Play.
-const LAST_UPDATED = "10 November 2026";
+const LAST_UPDATED = "16 November 2026";
 
 const Section = ({ title, children }: { title: string; children: ReactNode }) => (
   <section className="my-10">
@@ -45,8 +45,8 @@ const Page = () => {
           </h1>
           <p className="mt-4 text-lg leading-relaxed text-amber-950/90">
             This policy explains what information Crime Stoppers Bahamas (&ldquo;we&rdquo;) collects
-            through the Crack Crime Bahamas mobile app (listed on Google Play as
-            &ldquo;CrackCrimeBahamas&rdquo; by eBiz Ltd) and this website, how we use it, who can see
+            through the Crack Crime Bahamas mobile app (listed as &ldquo;CrackCrimeBahamas&rdquo; on
+            the App Store for iPhone and, by eBiz Ltd, on Google Play) and this website, how we use it, who can see
             it, and how long we keep it. Crime Stoppers Bahamas is a non-governmental organisation
             whose purpose is to let people give information about crime without revealing who they
             are.
@@ -62,15 +62,17 @@ const Page = () => {
             </li>
             <li>
               You can send a tip from the app, from the tip form on this website, or by phone. A
-              tip is stored as the text you write, the type of crime you choose, the date and time
-              it was sent, which of those three ways it reached us, and a 6-character PIN. If you
+              tip is stored as the text you write, the type of crime if you are asked to choose one,
+              the date and time it was sent, which of those three ways it reached us, and a
+              6-character PIN. If you
               later send a message that contains that PIN, it is added to the same tip instead of
               starting a new one. Keep your PIN private: anyone who has it can add messages to your
               tip, although they cannot read it.
             </li>
             <li>
-              You choose the type of crime from a list so that we can count tips by type. If you
-              choose Other, we also store the short description you type.
+              Where you are asked for the type of crime, as on the tip form on this website, you
+              choose it from a list so that we can count tips by type. If you choose Other, we also
+              store the short description you type.
             </li>
             <li>
               If you phone in a tip, an administrator may type what you said into the same system.
@@ -104,18 +106,21 @@ const Page = () => {
               <Term>Notification registration (mobile app)</Term>: if you allow notifications, the
               app sends us a push token and technical details of your device: its make and model, device
               type and estimated year class, operating system, version and build, memory and processor
-              type, and the device&apos;s name. On Android the device name is the one set on the phone, which often includes the
-              owner&apos;s first name. We use these only to send alerts from Crime Stoppers Bahamas.
+              type, and the device&apos;s name. On Android, and on an iPhone running iOS 15, the device name is the one set
+              on the phone, which often includes the owner&apos;s first name. On an iPhone running iOS 16
+              or later it is just &ldquo;iPhone&rdquo;.
+              We use these only to send alerts from Crime Stoppers Bahamas.
               They are not stored with any tip you send.
             </li>
             <li>
-              <Term>Location (older app versions)</Term>: the Android app now on Google Play (version
-              5.0.1) and earlier versions of the app send the phone&apos;s precise location (GPS
+              <Term>Location (older Android versions)</Term>: version 5.0.1 of the Android app, which
+              was on Google Play until 30 September 2026, sends the phone&apos;s precise location (GPS
               coordinates, with altitude, speed, direction of travel and the time of the reading) when
-              registering for notifications, so that alerts can be sent to a particular area. The next
-              version of the app, and later ones, do not send your location to us. To stop an older
-              version sending it, turn off location access for the app in your phone&apos;s settings,
-              or update the app once the new version is on Google Play.
+              registering for notifications, so that alerts can be sent to a particular area, and
+              other versions before 5.1.0 may do the same. Version 5.1.0, on Google Play since 30
+              September 2026, and the iPhone app on the App Store do not send your location to us. To
+              stop an older version sending it, turn off location access for the app in your
+              phone&apos;s settings, or update the app from Google Play.
             </li>
             <li>
               <Term>Staff accounts (website only)</Term>: Crime Stoppers administrators and police
@@ -280,8 +285,10 @@ const Page = () => {
               website&apos;s cookies in your browser.
             </li>
             <li>
-              To have your device record deleted, email us your phone&apos;s make, model and name as
-              shown in its settings.
+              To have your device record deleted, email us your phone&apos;s make and model. For an
+              Android phone, or an iPhone running iOS 15, also give its name as shown in its settings.
+              For an iPhone running iOS 16 or later, leave the name out: the record holds only
+              &ldquo;iPhone&rdquo;, not the name you gave the phone.
             </li>
             <li>
               To ask about a tip, or ask us to delete it, without revealing who you are, send a

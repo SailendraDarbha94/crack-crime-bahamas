@@ -1,4 +1,5 @@
 import TipFormLink from "@/components/TipFormLink";
+import { APP_STORE_URL, GOOGLE_PLAY_URL } from "@/constants/appLinks";
 
 export const metadata = {
   title: "Contact",
@@ -53,17 +54,31 @@ const ContactPage = () => {
             <p className="text-amber-950 font-semibold">1-242-322-3320</p>
           </a>
 
-          <a
-            href="https://play.google.com/store/apps/details?id=com.anonymous.CrackCrimeBahamas"
-            target="_blank"
-            rel="noopener"
-            className="bg-white/25 backdrop-blur-xl border border-white/50 rounded-3xl p-6 shadow-[0_8px_32px_rgba(120,72,10,0.12)] text-center hover:bg-white/35 transition-all duration-200"
-          >
+          {/* Two stores, so the card is no longer one link: it holds one for each. */}
+          <div className="bg-white/25 backdrop-blur-xl border border-white/50 rounded-3xl p-6 shadow-[0_8px_32px_rgba(120,72,10,0.12)] text-center">
             <h2 className="text-lg font-bold text-amber-950 mb-1">Mobile App</h2>
             <p className="text-amber-900/80 text-sm">
               Text a tip, see alerts and more with the Crack Crime Bahamas app
             </p>
-          </a>
+            <div className="mt-3 flex flex-wrap justify-center gap-2">
+              <a
+                href={APP_STORE_URL}
+                target="_blank"
+                rel="noopener"
+                className="bg-white/40 border border-white/60 hover:bg-white/55 text-amber-950 font-bold text-sm px-3 py-1.5 rounded-lg transition-colors duration-200"
+              >
+                iPhone: App Store
+              </a>
+              <a
+                href={GOOGLE_PLAY_URL}
+                target="_blank"
+                rel="noopener"
+                className="bg-white/40 border border-white/60 hover:bg-white/55 text-amber-950 font-bold text-sm px-3 py-1.5 rounded-lg transition-colors duration-200"
+              >
+                Android: Google Play
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </main>

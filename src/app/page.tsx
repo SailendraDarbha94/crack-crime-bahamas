@@ -1,18 +1,24 @@
 "use client";
 import TipFormLink from "@/components/TipFormLink";
-import { Button } from "@nextui-org/react";
+import { APP_STORE_URL, GOOGLE_PLAY_URL } from "@/constants/appLinks";
 import Image from "next/image";
 
-export default function Home() {
-  const appDownloader = () => {
-    setTimeout(() => {
-      window.open(
-        "https://play.google.com/store/apps/details?id=com.anonymous.CrackCrimeBahamas",
-        "_blank"
-      );
-    }, 300);
-  };
+// The app is on both stores. Each gets its own plain link: a visitor on a
+// computer may want either, and a link (unlike a button that opens a window
+// from script) is never stopped by a pop-up blocker.
+const storeLinkClass =
+  "inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 font-bold text-lg shadow-md transition-colors duration-200";
 
+const PhoneIcon = () => (
+  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <g fill="currentColor">
+      <path d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+      <path d="M8 14a1 1 0 1 0 0-2a1 1 0 0 0 0 2" />
+    </g>
+  </svg>
+);
+
+export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center p-4 md:p-12 lg:p-24">
       <h1 className="md:text-6xl lg:text-8xl text-4xl font-nunito font-extrabold mb-10 w-screen text-center text-amber-950 drop-shadow-[0_2px_10px_rgba(255,255,255,0.55)]">
@@ -32,27 +38,18 @@ export default function Home() {
             <TipFormLink className="inline-flex items-center justify-center h-10 px-4 rounded-xl bg-white/60 backdrop-blur-md border border-white/80 text-amber-950 hover:bg-white/75 font-bold text-lg shadow-md transition-colors duration-200">
               Submit a Tip
             </TipFormLink>
-            <Button
-              onPress={appDownloader}
-              radius="md"
-              variant="solid"
-              color="warning"
-              className="bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 font-bold shadow-md"
-            >
-              <span className="font-bold text-lg">Download App</span>
-              <svg
-                className="w-6 h-6"
-                fill="currentColor"
-                viewBox="0 0 16 16"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <g fill="currentColor">
-                  <path d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
-                  <path d="M8 14a1 1 0 1 0 0-2a1 1 0 0 0 0 2" />
-                </g>
-              </svg>
-            </Button>
+            <a href={APP_STORE_URL} target="_blank" rel="noopener" className={storeLinkClass}>
+              <span>App for iPhone</span>
+              <PhoneIcon />
+            </a>
+            <a href={GOOGLE_PLAY_URL} target="_blank" rel="noopener" className={storeLinkClass}>
+              <span>App for Android</span>
+              <PhoneIcon />
+            </a>
             </div>
+            <p className="mt-3 text-sm text-amber-900/70">
+              Free on Google Play, and on the App Store in The Bahamas.
+            </p>
           </div>
           <div className="hidden lg:mt-0 lg:col-span-5 lg:flex relative">
             <img

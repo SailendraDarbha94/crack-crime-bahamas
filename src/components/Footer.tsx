@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { APP_STORE_URL, GOOGLE_PLAY_URL } from "@/constants/appLinks";
 import TipFormLink from "./TipFormLink";
 
 export default function Footer() {
@@ -55,8 +56,13 @@ export default function Footer() {
                     </Link>
                   </li>
                   <li className="mb-4">
-                    <a href="https://play.google.com/store/apps/details?id=com.anonymous.CrackCrimeBahamas" target="_blank" rel="noopener" className="hover:underline hover:text-amber-950 transition-colors duration-200">
-                      Get the App
+                    <a href={APP_STORE_URL} target="_blank" rel="noopener" className="hover:underline hover:text-amber-950 transition-colors duration-200">
+                      App for iPhone
+                    </a>
+                  </li>
+                  <li className="mb-4">
+                    <a href={GOOGLE_PLAY_URL} target="_blank" rel="noopener" className="hover:underline hover:text-amber-950 transition-colors duration-200">
+                      App for Android
                     </a>
                   </li>
                   <li>
