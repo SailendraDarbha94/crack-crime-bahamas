@@ -41,7 +41,12 @@ export default function RoleGuard({
       setStatus("checking");
       try {
         const role = await getRole(uid);
-        if (cancelled) return;
+        // Tabs now follow each other's sign-in, so the user can change while
+        // this check is waiting (someone signs in as another account in a
+        // second tab). The check for the new user has already been started by
+        // the listener below; this one, for the user who is no longer signed
+        // in, must not be the one that decides what the page shows.
+        if (cancelled || auth.currentUser?.uid !== uid) return;
         if (allow.includes(role)) {
           setStatus("allowed");
           const list = role === "admin" ? "admins" : "police";
@@ -63,7 +68,7 @@ export default function RoleGuard({
           router.replace(HOME_FOR_ROLE[role]);
         }
       } catch (err) {
-        if (cancelled) return;
+        if (cancelled || auth.currentUser?.uid !== uid) return;
         console.error("Could not verify access:", err);
         setStatus("error");
       }

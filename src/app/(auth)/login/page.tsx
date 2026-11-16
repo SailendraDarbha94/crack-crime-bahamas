@@ -1,12 +1,7 @@
 "use client";
 import app from "@/lib/firebase";
 import { ToastContext } from "@/lib/toastContext";
-import {
-  browserLocalPersistence,
-  getAuth,
-  setPersistence,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
@@ -25,37 +20,39 @@ const Page = () => {
     e.preventDefault();
     setLoading(true);
     const auth = getAuth(app);
-    setPersistence(auth, browserLocalPersistence).then(() => {
-      signInWithEmailAndPassword(auth, email, password)
-        .then(async (cb) => {
-          if (cb.user) {
-            // Each role has its own section. If the role can't be read here,
-            // /admin's guard reads it again and fails closed — so the fallback
-            // never grants anything.
-            let home = "/admin";
-            try {
-              home = HOME_FOR_ROLE[await getRole(cb.user.uid)];
-            } catch {
-              // leave it to the guard
-            }
-            setLoading(false);
-            toast({
-              type: "success",
-              message: "Signed in! Redirecting",
-            });
-            router.push(home);
-          } else {
-            setLoading(false);
+    // No setPersistence() here. Where the sign-in is kept is decided once, in
+    // src/lib/firebase.ts. Forcing localStorage at this point did nothing in a
+    // browser that has it, and in one that refuses it made every sign-in fail
+    // instead of falling back to the next place on the list.
+    signInWithEmailAndPassword(auth, email, password)
+      .then(async (cb) => {
+        if (cb.user) {
+          // Each role has its own section. If the role can't be read here,
+          // /admin's guard reads it again and fails closed — so the fallback
+          // never grants anything.
+          let home = "/admin";
+          try {
+            home = HOME_FOR_ROLE[await getRole(cb.user.uid)];
+          } catch {
+            // leave it to the guard
           }
-        })
-        .catch((err) => {
           setLoading(false);
           toast({
-            type: "error",
-            message: `Error Occurred! ${err.code ? err.code : "Please Try Again Later!"}`,
+            type: "success",
+            message: "Signed in! Redirecting",
           });
+          router.push(home);
+        } else {
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        setLoading(false);
+        toast({
+          type: "error",
+          message: `Error Occurred! ${err.code ? err.code : "Please Try Again Later!"}`,
         });
-    });
+      });
   };
 
   return (

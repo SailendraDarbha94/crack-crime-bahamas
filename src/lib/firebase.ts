@@ -48,13 +48,33 @@ const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 // loads a script from apis.google.com and a hidden Firebase iframe on every
 // page, for every visitor, signed in or not: including someone opening the tip
 // form. Sign-in here is by email and password only, which needs none of it.
-// The persistence list is the one getAuth() itself uses, so existing sessions
-// carry over. Later getAuth(app) calls anywhere return this same instance.
+// Later getAuth(app) calls anywhere return this same instance.
+//
+// Where the sign-in is kept: localStorage first, and it is never moved. That
+// is where every existing session already is, so they carry over. The other
+// two are only fallbacks for a browser that refuses localStorage.
+//
+// The order matters. This list used to start with IndexedDB (as getAuth()'s
+// own does) and the file then called auth.setPersistence(browserLocalPersistence)
+// on every page load. So each page that loaded first moved the saved sign-in
+// out of localStorage into IndexedDB, and then back. For a moment it was
+// missing from localStorage, the only place another open tab reads it from:
+// 20 to 113 ms measured against the local emulators, and longer on the live
+// site, because a request to Google falls inside that moment. Every tab kept
+// the sign-in in localStorage but watched IndexedDB for changes, so a tab
+// that saw it appear there looked in localStorage, found nothing, decided the
+// user had signed out and sent them to the login page. Against the emulators,
+// reloading the site in a second tab did this to the first within 18 loads.
+// Chosen once, here, and left alone, there is no such moment: do not add a
+// setPersistence() call, on load or anywhere else.
+//
+// It also means a tab now hears at once when another tab signs in or out,
+// because it watches the place the sign-in is kept.
 const createAuth = (): Auth => {
   if (typeof window === 'undefined') return getAuth(app);
   try {
     return initializeAuth(app, {
-      persistence: [indexedDBLocalPersistence, browserLocalPersistence, browserSessionPersistence],
+      persistence: [browserLocalPersistence, indexedDBLocalPersistence, browserSessionPersistence],
     });
   } catch {
     return getAuth(app); // already initialised for this app (Fast Refresh)
@@ -83,10 +103,5 @@ const tabStorage = (): Storage | null => {
 export const analytics =
   typeof window !== 'undefined' && analyticsMayStart(window.location.pathname, tabStorage()) && !AUTH_EMULATOR_HOST ?
   isSupported().then(yes => yes ? getAnalytics(app) : null) : null;
-
-// Set auth persistence
-if (typeof window !== 'undefined') {
-  auth.setPersistence(browserLocalPersistence);
-}
 
 export default app;
