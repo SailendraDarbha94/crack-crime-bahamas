@@ -1,4 +1,5 @@
 "use client";
+import { BUTTON_BLOCK } from "@/components/ui/buttonStyles";
 import app from "@/lib/firebase";
 import { ToastContext } from "@/lib/toastContext";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
@@ -110,7 +111,7 @@ const Page = () => {
                 </div>
                 <button
                   type="submit"
-                  className="w-full rounded-xl bg-white/40 backdrop-blur-md border border-white/60 hover:bg-white/55 text-amber-950 focus:ring-4 focus:ring-amber-300/50 focus:outline-none font-bold text-lg px-5 py-2.5 text-center transition-all duration-200 active:scale-95"
+                  className={BUTTON_BLOCK}
                 >
                   {loading ? (
                     <span className="animate-pulse">Loading...</span>

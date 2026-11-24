@@ -1,4 +1,5 @@
 "use client";
+import { BUTTON } from "@/components/ui/buttonStyles";
 import app, { database } from "@/lib/firebase";
 import { getRole, HOME_FOR_ROLE, type Role } from "@/lib/roles";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
@@ -105,14 +106,14 @@ export default function RoleGuard({
           {retry ? (
             <button
               onClick={() => setAttempt((n) => n + 1)}
-              className="bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 font-bold px-5 py-2 rounded-xl transition-all duration-200 active:scale-95"
+              className={BUTTON}
             >
               Try again
             </button>
           ) : null}
           <button
             onClick={handleSignOut}
-            className="bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 font-bold px-5 py-2 rounded-xl transition-all duration-200 active:scale-95"
+            className={BUTTON}
           >
             Sign out
           </button>

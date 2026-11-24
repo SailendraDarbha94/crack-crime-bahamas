@@ -1,5 +1,6 @@
 "use client";
 
+import { BUTTON_BLOCK } from "@/components/ui/buttonStyles";
 import { useContext, useEffect, useState } from "react";
 import { getDatabase, ref, child, get, set, push } from "firebase/database";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
@@ -268,7 +269,7 @@ const Page = () => {
                 <button
                   type="button"
                   onClick={createNewUser}
-                  className="w-full rounded-xl bg-white/40 backdrop-blur-md border border-white/60 hover:bg-white/55 text-amber-950 focus:ring-4 focus:ring-amber-300/50 focus:outline-none font-bold text-lg px-5 py-2.5 text-center transition-all duration-200 active:scale-95"
+                  className={BUTTON_BLOCK}
                 >
                   Submit
                 </button>

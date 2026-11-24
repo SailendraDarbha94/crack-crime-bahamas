@@ -1,23 +1,46 @@
 "use client";
 
+import { BUTTON_SOLID_BLOCK, BUTTON_SOLID_SM } from "@/components/ui/buttonStyles";
 import { WantedPersonService } from "@/lib/firebaseService";
 import { FirebaseErrorHandler } from "@/lib/firebaseErrorHandler";
 import { useToast } from "@/lib/toastContext";
 import { useState } from "react";
 import { Input, Textarea } from "@nextui-org/react";
 
-interface AddWantedProps {
-  onSuccess?: () => void;
+/** A listed person as the page holds them, for editing. */
+export interface EditableWantedPerson {
+  id: string;
+  name?: unknown;
+  wanted_for?: unknown;
+  age?: unknown;
+  gender?: unknown;
+  alias?: unknown;
+  description?: unknown;
+  last_known_address?: unknown;
+  image?: unknown;
 }
 
-const AddWanted = ({ onSuccess }: AddWantedProps) => {
-  const [wantedFor, setWantedFor] = useState<string>("");
-  const [name, setName] = useState<string>("");
-  const [age, setAge] = useState<string>("");
-  const [last_known_address, setLastKnownAddress] = useState<string>("");
-  const [gender, setGender] = useState<string>("");
-  const [alias, setAlias] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
+interface AddWantedProps {
+  onSuccess?: () => void;
+  /** When given, the form edits this person instead of adding a new one. */
+  person?: EditableWantedPerson;
+  /** Called when the person being edited turns out to have been archived or deleted meanwhile. */
+  onGone?: () => void;
+}
+
+/** A stored field as the text the form shows: older records may hold a number for the age. */
+const asText = (value: unknown): string =>
+  typeof value === "string" ? value : typeof value === "number" && Number.isFinite(value) ? String(value) : "";
+
+const AddWanted = ({ onSuccess, person, onGone }: AddWantedProps) => {
+  const editing = person !== undefined;
+  const [wantedFor, setWantedFor] = useState<string>(asText(person?.wanted_for));
+  const [name, setName] = useState<string>(asText(person?.name));
+  const [age, setAge] = useState<string>(asText(person?.age));
+  const [last_known_address, setLastKnownAddress] = useState<string>(asText(person?.last_known_address));
+  const [gender, setGender] = useState<string>(asText(person?.gender));
+  const [alias, setAlias] = useState<string>(asText(person?.alias));
+  const [description, setDescription] = useState<string>(asText(person?.description));
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -48,6 +71,26 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
         description: description.trim(),
       };
 
+      if (person) {
+        // Only what was changed in this window is written, and the picture
+        // only if a new one was chosen. A field left as it was opened is not
+        // sent at all, so a correction another admin has made to it since
+        // this page loaded is not undone.
+        const changes: Partial<typeof personData> = {};
+        for (const key of Object.keys(personData) as (keyof typeof personData)[]) {
+          if (personData[key] !== asText(person[key]).trim()) changes[key] = personData[key];
+        }
+        if (Object.keys(changes).length === 0 && !selectedFile) {
+          toast({ message: "Nothing was changed, so there is nothing to save", type: "warning" });
+          return;
+        }
+        await WantedPersonService.updateWantedPerson(person.id, changes, selectedFile || undefined);
+        setSelectedFile(null);
+        toast({ message: "Changes saved", type: "success" });
+        onSuccess?.();
+        return;
+      }
+
       // The service writes the full record (image, created_at, country_code,
       // current_status) — no second API write needed.
       await WantedPersonService.createWantedPerson(personData, selectedFile || undefined);
@@ -72,7 +115,10 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
     } catch (err) {
       const userFriendlyMessage = FirebaseErrorHandler.handleError(err);
       toast({ message: userFriendlyMessage, type: "error" });
-      console.error("Registration failed:", err);
+      console.error(person ? "Saving the changes failed:" : "Registration failed:", err);
+      // Another admin archived or deleted this person since the list loaded:
+      // there is nothing left to save to, so show the list as it is now.
+      if (person && /no longer listed/.test(userFriendlyMessage)) onGone?.();
     } finally {
       setLoading(false);
     }
@@ -89,8 +135,10 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
       }
 
       // Validate file size (max 5MB)
+      // "Less than", as the storage rules have it: a file of exactly 5 MB
+      // would pass a looser check here and then be refused on upload.
       const maxSize = 5 * 1024 * 1024; // 5MB
-      if (file.size > maxSize) {
+      if (file.size >= maxSize) {
         toast({ message: 'File size must be less than 5MB', type: "error" });
         return;
       }
@@ -109,7 +157,7 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
           <div className="w-full bg-white rounded-lg md:mt-0 sm:max-w-md xl:p-0">
             <div className="p-4 md:p-6 space-y-4 md:space-y-6 sm:p-8 w-fu">
               <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
-                Wanted Person Report
+                {editing ? "Edit Wanted Person" : "Wanted Person Report"}
               </h1>
               <form className="space-y-2" onSubmit={registerWantedPerson}>
                 <div>
@@ -138,17 +186,24 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
                     htmlFor="imager"
                     className="block mb-2 text-sm text-center pt-4 font-medium text-gray-900"
                   >
-                    Image
+                    {editing ? "Replace the picture (optional)" : "Image"}
                   </label>
+                  {editing && !selectedFile ? (
+                    <p className="text-xs text-gray-600 text-center mb-2">
+                      {typeof person?.image === "string" && person.image && person.image !== "Image Not Available"
+                        ? "The current picture is kept unless you choose a new one."
+                        : "There is no picture yet. You can add one here."}
+                    </p>
+                  ) : null}
 
                   {selectedFile ? (
                     <div className="space-y-2">
-                      <p className="text-sm text-green-600">Selected file: {selectedFile.name}</p>
-                      <div className="flex space-x-2">
+                      <p className="text-sm text-green-600 text-center">Selected file: {selectedFile.name}</p>
+                      <div className="flex justify-center">
                         <button
                           type="button"
                           onClick={clearFileSelection}
-                          className="text-sm text-red-600 underline"
+                          className={BUTTON_SOLID_SM}
                         >
                           Clear selection
                         </button>
@@ -181,9 +236,9 @@ const AddWanted = ({ onSuccess }: AddWantedProps) => {
                 ) : (
                   <button
                     type="submit"
-                    className="w-full rounded-lg bg-slate-200 hover:bg-slate-300 focus:ring-4 focus:outline-none font-medium text-lg px-5 py-2.5 text-center"
+                    className={BUTTON_SOLID_BLOCK}
                   >
-                    Submit
+                    {editing ? "Save changes" : "Submit"}
                   </button>
                 )}
               </form>

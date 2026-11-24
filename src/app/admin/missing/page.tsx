@@ -1,5 +1,6 @@
 "use client";
 
+import { BUTTON, BUTTON_DANGER, BUTTON_LG, BUTTON_SOLID } from "@/components/ui/buttonStyles";
 import { PersonArchiveService, MissingPersonService } from "@/lib/firebaseService";
 import ArchivePrompt from "@/components/ArchivePrompt";
 import app from "@/lib/firebase";
@@ -7,7 +8,7 @@ import { getAuth } from "firebase/auth";
 import { FirebaseErrorHandler } from "@/lib/firebaseErrorHandler";
 import { useToast } from "@/lib/toastContext";
 import { useEffect, useState } from "react";
-import AddMissing from "./AddMissing";
+import AddMissing, { type EditableMissingPerson } from "./AddMissing";
 import MissingListItem from "./MissingListItem";
 import {
   Modal,
@@ -16,7 +17,6 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/react";
-import { Button } from "@nextui-org/react";
 
 interface MissingPerson {
   id: string;
@@ -38,6 +38,8 @@ const Page = () => {
   const [error, setError] = useState<string | null>(null);
   const [archivingId, setArchivingId] = useState<string | null>(null);
   const [busy, setBusy] = useState<boolean>(false);
+  // The person whose details are open for editing, or null.
+  const [editingPerson, setEditingPerson] = useState<EditableMissingPerson | null>(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const { toast } = useToast();
@@ -125,17 +127,12 @@ const Page = () => {
     <main className="font-nunito py-3 m-2 rounded-3xl">
       <h1 className="text-2xl font-bold rounded-3xl border border-white/50 bg-white/25 backdrop-blur-md py-2 text-center text-amber-950 shadow-sm">Missing Persons</h1>
       <div className="flex p-2 mb-4 justify-around">
-        <Button
-          className="font-bold text-lg"
-          variant="flat"
-          color="primary"
-          onClick={() => setShowMissing(!showMissing)}
-        >
+        <button type="button" className={BUTTON_LG} onClick={() => setShowMissing(!showMissing)}>
           {showMissing ? "Hide Missing Persons" : "Show Missing Persons"}
-        </Button>
-        <Button className="font-bold text-lg" variant="ghost" color="warning" onPress={onOpen}>
+        </button>
+        <button type="button" className={BUTTON_LG} onClick={onOpen}>
           Add Missing Person
-        </Button>
+        </button>
       </div>
       
       <Modal className="max-h-full" isOpen={isOpen} onOpenChange={onOpenChange} size="lg">
@@ -146,9 +143,50 @@ const Page = () => {
                 <AddMissing onSuccess={() => fetchMissingPersons()} />
               </ModalBody>
               <ModalFooter>
-                <Button color="secondary" variant="solid" onPress={onClose}>
+                <button type="button" className={BUTTON_SOLID} onClick={onClose}>
                   Close
-                </Button>
+                </button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        className="max-h-full"
+        isOpen={editingPerson !== null}
+        onOpenChange={(open) => { if (!open) setEditingPerson(null); }}
+        size="lg"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalBody>
+                {editingPerson ? (
+                  <AddMissing
+                    key={editingPerson.id}
+                    person={editingPerson}
+                    // A save can outlive its window (the window can be closed,
+                    // and another opened, while a picture uploads). When it
+                    // finishes it may close only the window it was started
+                    // from, never whichever one is open by then.
+                    onSuccess={() => {
+                      const opened = editingPerson;
+                      setEditingPerson((current) => (current === opened ? null : current));
+                      fetchMissingPersons();
+                    }}
+                    onGone={() => {
+                      const opened = editingPerson;
+                      setEditingPerson((current) => (current === opened ? null : current));
+                      fetchMissingPersons();
+                    }}
+                  />
+                ) : null}
+              </ModalBody>
+              <ModalFooter>
+                <button type="button" className={BUTTON_SOLID} onClick={onClose}>
+                  Close
+                </button>
               </ModalFooter>
             </>
           )}
@@ -166,7 +204,7 @@ const Page = () => {
               Error: {error}
               <button
                 onClick={fetchMissingPersons}
-                className="block mx-auto mt-2 bg-white/35 backdrop-blur-md border border-white/60 text-amber-950 px-4 py-2 rounded-xl hover:bg-white/50 transition-all duration-200 shadow-sm"
+                className={`${BUTTON} mx-auto mt-2`}
               >
                 Retry
               </button>
@@ -189,18 +227,22 @@ const Page = () => {
                   alias={missing.alias}
                   image={missing.image}
                 />
-                {missing.description && (
+                {missing.description || missing.last_known_address ? (
                   <div className="mt-2 p-2 bg-white/30 border border-white/50 rounded-xl">
-                    <h4 className="font-semibold text-amber-800">Description:</h4>
-                    <p className="text-sm text-amber-900/90">{missing.description}</p>
-                    {missing.last_known_address && (
+                    {missing.description ? (
                       <>
-                        <h4 className="font-semibold mt-2 text-amber-800">Last Known Address:</h4>
+                        <h4 className="font-semibold text-amber-800">Description:</h4>
+                        <p className="text-sm text-amber-900/90">{missing.description}</p>
+                      </>
+                    ) : null}
+                    {missing.last_known_address ? (
+                      <>
+                        <h4 className={`font-semibold text-amber-800${missing.description ? " mt-2" : ""}`}>Last Known Address:</h4>
                         <p className="text-sm text-amber-900/90">{missing.last_known_address}</p>
                       </>
-                    )}
+                    ) : null}
                   </div>
-                )}
+                ) : null}
                 {archivingId === missing.id ? (
                   <div className="my-4">
                     <ArchivePrompt
@@ -215,18 +257,25 @@ const Page = () => {
                 ) : (
                   <div className="flex justify-center gap-3">
                     <button
-                      className="bg-white/40 border border-white/60 hover:bg-white/55 text-amber-950 my-4 font-bold px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ease-out transform active:scale-95 disabled:opacity-50"
+                      className={`${BUTTON} my-4`}
+                      onClick={() => setEditingPerson({ ...missing })}
+                      disabled={busy}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className={`${BUTTON} my-4`}
                       onClick={() => setArchivingId(missing.id)}
                       disabled={busy}
                     >
-                      ARCHIVE
+                      Archive
                     </button>
                     <button
-                      className="bg-red-600/90 my-4 font-bold backdrop-blur-sm hover:bg-red-500/90 text-white hover:border-red-300/50 relative px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ease-out transform active:scale-95 disabled:opacity-50"
+                      className={`${BUTTON_DANGER} my-4`}
                       onClick={() => deleteMissingPost(missing.id, missing.image, missing.name)}
                       disabled={busy}
                     >
-                      DELETE
+                      Delete
                     </button>
                   </div>
                 )}

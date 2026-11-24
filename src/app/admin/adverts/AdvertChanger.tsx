@@ -1,8 +1,8 @@
 "use client";
+import { BUTTON, BUTTON_SM } from "@/components/ui/buttonStyles";
 import { useEffect, useState } from "react";
 import { advertImages, heroImages } from "@/lib/firebaseService";
 import { useToast } from "@/lib/toastContext";
-import { Button } from "@nextui-org/react";
 
 interface AdvertChangerProps {
   group: string;
@@ -133,8 +133,9 @@ const AdvertChanger = ({ group, label, where, aspect, variant = "advert" }: Adve
                 <div className="space-y-2">
                   <p className="text-sm text-green-600">{selectedFile.name} selected</p>
                   <button
+                    type="button"
                     onClick={clearSelection}
-                    className="text-sm text-red-600 underline"
+                    className={BUTTON_SM}
                   >
                     Clear selection
                   </button>
@@ -152,14 +153,16 @@ const AdvertChanger = ({ group, label, where, aspect, variant = "advert" }: Adve
               )}
             </div>
             <br />
-            <Button
-              onClick={uploadAdvertisement}
-              disabled={uploading || !selectedFile}
-              variant="flat"
-              className="rounded-xl block mx-auto px-5 py-2 font-bold bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-            >
-              {uploading ? 'UPLOADING...' : 'UPLOAD'}
-            </Button>
+            <div className="flex justify-center">
+              <button
+                type="button"
+                onClick={uploadAdvertisement}
+                disabled={uploading || !selectedFile}
+                className={BUTTON}
+              >
+                {uploading ? 'Uploading…' : 'Upload'}
+              </button>
+            </div>
           </div>
         )}
       </div>

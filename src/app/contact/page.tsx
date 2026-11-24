@@ -1,3 +1,4 @@
+import { BUTTON_SM } from "@/components/ui/buttonStyles";
 import TipFormLink from "@/components/TipFormLink";
 import { APP_STORE_URL, GOOGLE_PLAY_URL } from "@/constants/appLinks";
 
@@ -65,7 +66,7 @@ const ContactPage = () => {
                 href={APP_STORE_URL}
                 target="_blank"
                 rel="noopener"
-                className="bg-white/40 border border-white/60 hover:bg-white/55 text-amber-950 font-bold text-sm px-3 py-1.5 rounded-lg transition-colors duration-200"
+                className={BUTTON_SM}
               >
                 iPhone: App Store
               </a>
@@ -73,7 +74,7 @@ const ContactPage = () => {
                 href={GOOGLE_PLAY_URL}
                 target="_blank"
                 rel="noopener"
-                className="bg-white/40 border border-white/60 hover:bg-white/55 text-amber-950 font-bold text-sm px-3 py-1.5 rounded-lg transition-colors duration-200"
+                className={BUTTON_SM}
               >
                 Android: Google Play
               </a>

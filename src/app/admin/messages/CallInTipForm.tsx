@@ -1,4 +1,5 @@
 "use client";
+import { BUTTON_SM } from "@/components/ui/buttonStyles";
 import TipCategoryFields from "@/components/TipCategoryFields";
 import app from "@/lib/firebase";
 import { missingCategoryField } from "@/lib/tipCategories";
@@ -6,8 +7,7 @@ import { useToast } from "@/lib/toastContext";
 import { getAuth } from "firebase/auth";
 import { useEffect, useRef, useState } from "react";
 
-const smallButton =
-  "bg-white/40 border border-white/60 hover:bg-white/55 text-amber-950 font-bold text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed";
+const smallButton = BUTTON_SM;
 
 const MAX_TIP_LENGTH = 10000;
 

@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { BUTTON_BLOCK } from "@/components/ui/buttonStyles";
 
 type NavItem = { href: string; label: string };
 
@@ -42,7 +43,8 @@ const Sidebar = ({ variant = "admin" }: { variant?: "admin" | "police" }) => {
         <Link
           key={item.label}
           href={item.href}
-          className="bg-white/30 backdrop-blur-md border border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70 shadow-sm transition-all duration-200 active:scale-[0.98] px-2 my-2 text-center py-2 w-full font-nunito font-bold text-lg rounded-3xl"
+          // The look every button on the site is taken from: see buttonStyles.ts.
+          className={`${BUTTON_BLOCK} my-2`}
         >
           {item.label}
         </Link>

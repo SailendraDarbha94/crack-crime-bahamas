@@ -1,4 +1,5 @@
 "use client";
+import { BUTTON } from "@/components/ui/buttonStyles";
 import CardBoundary from "@/components/CardBoundary";
 import { tipArchiveStatus } from "@/lib/archive";
 import { ownEntry } from "@/lib/ownData";
@@ -203,8 +204,7 @@ const buildInbox = (messages: Records, policeCopies: Records | null, now: number
  */
 const PAGE_SIZE = 200;
 
-const plainButton =
-  "bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 font-bold px-5 py-2 rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed";
+const plainButton = BUTTON;
 const noticePanel =
   "bg-white/40 backdrop-blur-xl border border-white/60 rounded-2xl p-5 my-3 max-w-md mx-auto text-center text-amber-950 font-nunito shadow-[0_8px_32px_rgba(120,72,10,0.12)]";
 

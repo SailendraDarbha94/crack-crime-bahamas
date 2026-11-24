@@ -9,7 +9,7 @@ import {
   type Auth,
 } from 'firebase/auth';
 import { getDatabase } from "firebase/database";
-import { getStorage } from "firebase/storage";
+import { connectStorageEmulator, getStorage } from "firebase/storage";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { analyticsMayStart } from "./analyticsPolicy";
 
@@ -31,6 +31,10 @@ export const firebaseConfig = {
 // production. The database is redirected by pointing NEXT_PUBLIC_DATABASE_URL
 // at the emulator instead, so both are opt-in from the environment alone.
 const AUTH_EMULATOR_HOST = process.env.NEXT_PUBLIC_AUTH_EMULATOR_HOST;
+// The same for Storage (pictures of wanted and missing persons, adverts), as
+// "host:port". Without it a local test that uploads a picture would reach the
+// real bucket.
+const STORAGE_EMULATOR_HOST = process.env.NEXT_PUBLIC_STORAGE_EMULATOR_HOST;
 
 export function connectAuthEmulatorIfConfigured(instance: Auth): void {
   if (!AUTH_EMULATOR_HOST) return;
@@ -86,6 +90,11 @@ export const auth = createAuth();
 connectAuthEmulatorIfConfigured(auth);
 export const database = getDatabase(app);
 export const storage = getStorage(app);
+if (STORAGE_EMULATOR_HOST && !(storage as any).__emulatorConnected) {
+  const [host, port] = STORAGE_EMULATOR_HOST.split(":");
+  connectStorageEmulator(storage, host, Number(port));
+  (storage as any).__emulatorConnected = true;
+}
 
 // The tab's sessionStorage, or null where the browser refuses access to it.
 const tabStorage = (): Storage | null => {

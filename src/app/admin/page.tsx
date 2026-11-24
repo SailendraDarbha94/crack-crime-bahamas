@@ -1,4 +1,5 @@
 "use client";
+import { BUTTON_SM } from "@/components/ui/buttonStyles";
 import { tipArchiveStatus } from "@/lib/archive";
 import { database } from "@/lib/firebase";
 import { readAsStaff } from "@/lib/staffRead";
@@ -99,7 +100,7 @@ const RetryButton = ({ count, onRetry }: { count: Count; onRetry: () => void }) 
     <button
       type="button"
       onClick={onRetry}
-      className="mx-auto mb-3 bg-white/40 border border-white/60 hover:bg-white/55 text-amber-950 font-bold text-sm px-3 py-1.5 rounded-lg transition-colors duration-200"
+      className={`${BUTTON_SM} mx-auto mb-3`}
     >
       Try again
     </button>

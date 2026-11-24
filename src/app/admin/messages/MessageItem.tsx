@@ -1,4 +1,5 @@
 "use client";
+import { BUTTON_SM, buttonClass } from "@/components/ui/buttonStyles";
 import ArchivePrompt from "@/components/ArchivePrompt";
 import TipLabels from "@/components/TipLabels";
 import app from "@/lib/firebase";
@@ -63,8 +64,7 @@ export type InboxItem = InboxTip | LeftoverCopy | UnreadableRecord;
 
 type Refresh = () => Promise<void>;
 
-const smallButton =
-  "bg-white/40 border border-white/60 hover:bg-white/55 text-amber-950 font-bold text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed";
+const smallButton = BUTTON_SM;
 
 /**
  * A time as the page shows it. Every time a card is given has been through
@@ -163,9 +163,9 @@ export const UnreadableRecordCard = ({
           <button
             onClick={removeRecord}
             disabled={busy}
-            className="bg-red-700 hover:bg-red-600 text-white w-full p-2 min-w-40 rounded-md font-mono tracking-wider font-extrabold disabled:opacity-50"
+            className={buttonClass({ tone: "danger", block: true })}
           >
-            {busy ? "DELETING…" : "DELETE"}
+            {busy ? "Deleting…" : "Delete"}
           </button>
         )}
       </div>
@@ -507,7 +507,7 @@ const TipCard = ({
           <button
             onClick={copyPin}
             title="Copy this tip's PIN"
-            className="inline-flex items-center gap-2 bg-white/40 border border-white/60 hover:bg-white/55 rounded-lg px-3 py-1.5 transition-colors duration-200"
+            className={BUTTON_SM}
           >
             <span className="font-nunito text-xs uppercase tracking-wide text-amber-900/70">
               PIN
@@ -613,9 +613,9 @@ const TipCard = ({
           <button
             onClick={() => setArchiveOpen(true)}
             disabled={busy}
-            className="bg-white/40 border border-white/60 hover:bg-white/55 text-amber-950 w-full p-2 min-w-40 rounded-md font-mono tracking-wider font-extrabold disabled:opacity-50"
+            className={buttonClass({ block: true })}
           >
-            {reopened ? "ARCHIVE AGAIN" : "ARCHIVE"}
+            {reopened ? "Archive again" : "Archive"}
           </button>
         )}
       </div>
@@ -623,9 +623,9 @@ const TipCard = ({
         <button
           onClick={() => deleteMessage(item.id)}
           disabled={busy}
-          className="bg-red-700 hover:bg-red-600 text-white w-full p-2 min-w-40 rounded-md font-mono tracking-wider font-extrabold disabled:opacity-50"
+          className={buttonClass({ tone: "danger", block: true })}
         >
-          DELETE
+          Delete
         </button>
       </div>
     </div>

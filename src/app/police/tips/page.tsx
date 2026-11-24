@@ -1,4 +1,5 @@
 "use client";
+import { BUTTON, BUTTON_SM } from "@/components/ui/buttonStyles";
 import CardBoundary from "@/components/CardBoundary";
 import TipLabels from "@/components/TipLabels";
 import { latestNotFuture, textOf, timeOf } from "@/lib/safeRecord";
@@ -151,7 +152,7 @@ const TipCard = ({ tip }: { tip: ForwardedTip }) => {
               <button
                 type="button"
                 onClick={showEarlier}
-                className="bg-white/40 border border-white/60 hover:bg-white/55 text-amber-950 font-bold text-sm px-3 py-1.5 rounded-lg transition-colors duration-200"
+                className={BUTTON_SM}
               >
                 {showEarlierLabel(hidden, nextBatch)}
               </button>
@@ -227,7 +228,7 @@ const PoliceTipsPage = () => {
               type="button"
               onClick={load}
               disabled={busy}
-              className="bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 font-bold px-5 py-2 rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              className={BUTTON}
             >
               {busy ? "Trying again…" : "Try again"}
             </button>

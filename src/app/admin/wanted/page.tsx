@@ -1,5 +1,6 @@
 "use client";
 
+import { BUTTON, BUTTON_DANGER, BUTTON_LG, BUTTON_SOLID } from "@/components/ui/buttonStyles";
 import { PersonArchiveService, WantedPersonService } from "@/lib/firebaseService";
 import ArchivePrompt from "@/components/ArchivePrompt";
 import app from "@/lib/firebase";
@@ -7,7 +8,7 @@ import { getAuth } from "firebase/auth";
 import { FirebaseErrorHandler } from "@/lib/firebaseErrorHandler";
 import { useToast } from "@/lib/toastContext";
 import { useEffect, useState } from "react";
-import AddWanted from "./AddWanted";
+import AddWanted, { type EditableWantedPerson } from "./AddWanted";
 import MissingListItem from "../missing/MissingListItem";
 import {
   Modal,
@@ -16,8 +17,6 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/react";
-
-import { Button } from "@nextui-org/react";
 
 interface WantedPerson {
   id: string;
@@ -40,6 +39,8 @@ const Page = () => {
   const [error, setError] = useState<string | null>(null);
   const [archivingId, setArchivingId] = useState<string | null>(null);
   const [busy, setBusy] = useState<boolean>(false);
+  // The person whose details are open for editing, or null.
+  const [editingPerson, setEditingPerson] = useState<EditableWantedPerson | null>(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { toast } = useToast();
 
@@ -126,17 +127,12 @@ const Page = () => {
     <main className="font-nunito py-3 m-2 rounded-3xl">
       <h1 className="text-2xl font-bold rounded-3xl border border-white/50 bg-white/25 backdrop-blur-md py-2 text-center text-amber-950 shadow-sm">Wanted Persons</h1>
       <div className="flex p-2 mb-4 justify-around">
-        <Button
-          className="font-bold text-lg"
-          variant="flat"
-          color="primary"
-          onClick={() => setShowWanted(!showWanted)}
-        >
+        <button type="button" className={BUTTON_LG} onClick={() => setShowWanted(!showWanted)}>
           {showWanted ? "Hide Wanted Persons" : "Show Wanted Persons"}
-        </Button>
-        <Button variant="ghost" color="warning" className="font-bold text-lg" onPress={onOpen}>
+        </button>
+        <button type="button" className={BUTTON_LG} onClick={onOpen}>
           Add Suspect
-        </Button>
+        </button>
       </div>
       <Modal className="max-h-full" isOpen={isOpen} onOpenChange={onOpenChange} size="lg">
         <ModalContent>
@@ -146,9 +142,50 @@ const Page = () => {
                 <AddWanted onSuccess={() => fetchWantedPersons()} />
               </ModalBody>
               <ModalFooter>
-                <Button color="secondary" variant="solid" onPress={onClose}>
+                <button type="button" className={BUTTON_SOLID} onClick={onClose}>
                   Close
-                </Button>
+                </button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        className="max-h-full"
+        isOpen={editingPerson !== null}
+        onOpenChange={(open) => { if (!open) setEditingPerson(null); }}
+        size="lg"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalBody>
+                {editingPerson ? (
+                  <AddWanted
+                    key={editingPerson.id}
+                    person={editingPerson}
+                    // A save can outlive its window (the window can be closed,
+                    // and another opened, while a picture uploads). When it
+                    // finishes it may close only the window it was started
+                    // from, never whichever one is open by then.
+                    onSuccess={() => {
+                      const opened = editingPerson;
+                      setEditingPerson((current) => (current === opened ? null : current));
+                      fetchWantedPersons();
+                    }}
+                    onGone={() => {
+                      const opened = editingPerson;
+                      setEditingPerson((current) => (current === opened ? null : current));
+                      fetchWantedPersons();
+                    }}
+                  />
+                ) : null}
+              </ModalBody>
+              <ModalFooter>
+                <button type="button" className={BUTTON_SOLID} onClick={onClose}>
+                  Close
+                </button>
               </ModalFooter>
             </>
           )}
@@ -165,7 +202,7 @@ const Page = () => {
               Error: {error}
               <button
                 onClick={fetchWantedPersons}
-                className="block mx-auto mt-2 bg-white/35 backdrop-blur-md border border-white/60 text-amber-950 px-4 py-2 rounded-xl hover:bg-white/50 transition-all duration-200 shadow-sm"
+                className={`${BUTTON} mx-auto mt-2`}
               >
                 Retry
               </button>
@@ -219,18 +256,25 @@ const Page = () => {
                 ) : (
                   <div className="flex justify-center gap-3">
                     <button
-                      className="bg-white/40 border border-white/60 hover:bg-white/55 text-amber-950 my-4 font-bold px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ease-out transform active:scale-95 disabled:opacity-50"
+                      className={`${BUTTON} my-4`}
+                      onClick={() => setEditingPerson({ ...wanted })}
+                      disabled={busy}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className={`${BUTTON} my-4`}
                       onClick={() => setArchivingId(wanted.id)}
                       disabled={busy}
                     >
-                      ARCHIVE
+                      Archive
                     </button>
                     <button
-                      className="bg-red-600/90 my-4 font-bold backdrop-blur-sm hover:bg-red-500/90 text-white hover:border-red-300/50 relative px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ease-out transform active:scale-95 disabled:opacity-50"
+                      className={`${BUTTON_DANGER} my-4`}
                       onClick={() => deleteWantedPost(wanted.id, wanted.image, wanted.name)}
                       disabled={busy}
                     >
-                      DELETE
+                      Delete
                     </button>
                   </div>
                 )}

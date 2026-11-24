@@ -1,4 +1,5 @@
 "use client";
+import { BUTTON, BUTTON_DANGER_SM, BUTTON_SOLID, BUTTON_SOLID_SM } from "@/components/ui/buttonStyles";
 import {
   Modal,
   ModalContent,
@@ -12,7 +13,7 @@ import app, { database } from "@/lib/firebase";
 import { textOf } from "@/lib/safeRecord";
 import { readAsStaff } from "@/lib/staffRead";
 import { ToastContext } from "@/lib/toastContext";
-import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Input } from "@nextui-org/react";
+import { Card, CardBody, CardFooter, CardHeader, Divider, Input } from "@nextui-org/react";
 import { getAuth } from "firebase/auth";
 import { ref, remove } from "firebase/database";
 import { useContext, useEffect, useState } from "react";
@@ -245,8 +246,7 @@ function detailLines(outcome: SendOutcome): string[] {
   return lines;
 }
 
-const frostedButton =
-  "bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 font-bold px-5 py-2 rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed";
+const frostedButton = BUTTON;
 
 /**
  * A record that is not drawn as a device: its key is not a push token, it
@@ -264,9 +264,9 @@ const PlaceholderRow = ({ recordKey, title, note, onDelete }: {
       <p className="text-sm text-amber-900/80">{note}</p>
       <p className="text-sm text-amber-900/80 break-all">Record: {textOf(recordKey)}</p>
     </div>
-    <Button variant="flat" color="danger" className="shrink-0" onPress={onDelete}>
+    <button type="button" className={`${BUTTON_DANGER_SM} shrink-0`} onClick={onDelete}>
       Delete
-    </Button>
+    </button>
   </div>
 );
 
@@ -294,12 +294,13 @@ const DeviceCard = ({ device, onDelete, onDecode }: {
     </CardBody>
     <Divider />
     <CardFooter>
-      <Button variant="flat" color="danger" className="mx-auto mt-2" onPress={onDelete}>
+      {/* On a white card, so the solid tone: frosted glass would be white on white. */}
+      <button type="button" className={`${BUTTON_DANGER_SM} mx-auto mt-2`} onClick={onDelete}>
         Delete
-      </Button>
-      <Button variant="ghost" color="warning" className="mx-auto mt-2" onPress={onDecode}>
+      </button>
+      <button type="button" className={`${BUTTON_SOLID_SM} mx-auto mt-2`} onClick={onDecode}>
         Decode Address
-      </Button>
+      </button>
     </CardFooter>
   </Card>
 );
@@ -586,9 +587,9 @@ const Page = () => {
                 <p className="text-red-400">Note : The address is provided by Google Maps Geocoding service based on the latitude and longitude and may not be accurate all the time</p>
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
+                <button type="button" className={BUTTON_SOLID} onClick={onClose}>
                   Close
-                </Button>
+                </button>
               </ModalFooter>
             </>
           )}
@@ -608,7 +609,7 @@ const Page = () => {
             />
           </CardBody>
           <CardFooter>
-            <Button className="hover:bg-primary-500 hover:text-white mx-auto" variant="bordered" radius="md" color="primary" isDisabled={sending !== null} onPress={sendNotificationGeneral}>Send Notification</Button>
+            <button type="button" className={`${BUTTON_SOLID} mx-auto`} disabled={sending !== null} onClick={() => sendNotificationGeneral()}>Send Notification</button>
           </CardFooter>
         </Card>
         <Card className="w-full md:w-1/3">
@@ -642,7 +643,7 @@ const Page = () => {
             />
           </CardBody>
           <CardFooter>
-            <Button className="hover:bg-primary-500 hover:text-white mx-auto" variant="bordered" radius="md" color="primary" isDisabled={sending !== null} onPress={sendNotification}>Push Notification</Button>
+            <button type="button" className={`${BUTTON_SOLID} mx-auto`} disabled={sending !== null} onClick={() => sendNotification()}>Push Notification</button>
           </CardFooter>
         </Card>
       </div>

@@ -1,4 +1,5 @@
 "use client";
+import { BUTTON, BUTTON_DANGER_SM, BUTTON_SM, buttonClass } from "@/components/ui/buttonStyles";
 import CardBoundary from "@/components/CardBoundary";
 import PublicPersonCard, { PublicPerson } from "@/components/PublicPersonCard";
 import TipLabels from "@/components/TipLabels";
@@ -73,10 +74,8 @@ const TAB_SOURCE: Record<Tab, Source> = {
   missings: "archive/missings",
 };
 
-const smallButton =
-  "bg-white/40 border border-white/60 hover:bg-white/55 text-amber-950 font-bold text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed";
-const dangerButton =
-  "bg-red-700 hover:bg-red-600 text-white font-bold text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed";
+const smallButton = BUTTON_SM;
+const dangerButton = BUTTON_DANGER_SM;
 
 /**
  * How many archived tips are drawn to begin with, and how many more each time
@@ -726,15 +725,11 @@ const ArchivePage = () => {
             role="tab"
             aria-selected={tab === t.key}
             onClick={() => setTab(t.key)}
-            className={`px-4 py-2 rounded-2xl font-bold border transition-colors duration-200 ${
-              tab === t.key
-                ? "bg-white/55 border-white/80 shadow-sm"
-                : "bg-white/25 border-white/50 hover:bg-white/40"
-            }`}
+            className={buttonClass({ tone: tab === t.key ? "selected" : "glass" })}
           >
             {t.label}
             {/* "?" for a list that has never been read: not the same as 0. */}
-            <span className="ml-2 text-sm text-amber-900/70">{!settled ? "…" : countOf(t.key) ?? "?"}</span>
+            <span className="text-sm text-amber-900/70">{!settled ? "…" : countOf(t.key) ?? "?"}</span>
           </button>
         ))}
       </div>
@@ -757,7 +752,7 @@ const ArchivePage = () => {
             type="button"
             onClick={load}
             disabled={reloading}
-            className="bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 font-bold px-5 py-2 rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            className={BUTTON}
           >
             {reloading ? "Trying again…" : "Try again"}
           </button>
@@ -831,7 +826,7 @@ const ArchivePage = () => {
               <button
                 type="button"
                 onClick={() => setTipsDrawn((n) => n + TIPS_PAGE_SIZE)}
-                className="bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 font-bold px-5 py-2 rounded-xl transition-all duration-200 active:scale-95"
+                className={BUTTON}
               >
                 Show {Math.min(TIPS_PAGE_SIZE, (tips ?? []).length - tipsDrawn)} more
               </button>

@@ -1,3 +1,4 @@
+import { BUTTON } from "@/components/ui/buttonStyles";
 import Link from "next/link";
 
 const NotFoundPage = () => {
@@ -17,7 +18,7 @@ const NotFoundPage = () => {
           </p>
           <Link
             href="/"
-            className="inline-flex bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 focus:ring-4 focus:outline-none focus:ring-amber-300/50 font-bold rounded-xl text-sm px-5 py-2.5 text-center my-4 transition-all duration-200 active:scale-95"
+            className={`${BUTTON} my-4`}
           >
             Back to Homepage
           </Link>

@@ -1,5 +1,6 @@
 "use client";
 
+import { BUTTON } from "@/components/ui/buttonStyles";
 import { useState } from "react";
 
 const Expandable = ({
@@ -26,11 +27,11 @@ const Expandable = ({
           {isExpanded ? null : (
             <button
               onClick={handleToggle}
-              className="inline-flex items-center font-bold bg-white/40 backdrop-blur-md border border-white/60 hover:bg-white/55 mt-4 rounded-xl py-2 pl-4 pr-2 text-amber-950 transition-all duration-200 active:scale-95"
+              className={`${BUTTON} mt-4`}
             >
               Learn more
               <svg
-                className="ml-1 w-6 h-6"
+                className="w-6 h-6 -mx-1"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"

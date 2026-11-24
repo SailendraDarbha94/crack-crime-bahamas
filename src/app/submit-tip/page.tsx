@@ -1,5 +1,6 @@
 "use client";
 
+import { BUTTON, BUTTON_LG } from "@/components/ui/buttonStyles";
 import TipCategoryFields from "@/components/TipCategoryFields";
 import { fullLoadTarget, isSamePageLink } from "@/lib/analyticsPolicy";
 import { missingCategoryField } from "@/lib/tipCategories";
@@ -171,7 +172,7 @@ const SubmitTipPage = () => {
 
               <button
                 onClick={() => setResult(null)}
-                className="bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 font-bold px-5 py-2.5 rounded-xl transition-all duration-200 active:scale-95"
+                className={BUTTON}
               >
                 Submit another tip
               </button>
@@ -232,7 +233,7 @@ const SubmitTipPage = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 font-bold px-5 py-3 rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                className={BUTTON_LG}
               >
                 {loading ? "Submitting…" : "Submit Anonymously"}
               </button>

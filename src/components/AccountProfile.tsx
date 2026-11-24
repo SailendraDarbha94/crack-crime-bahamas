@@ -1,4 +1,5 @@
 "use client";
+import { BUTTON, BUTTON_DANGER } from "@/components/ui/buttonStyles";
 import app from "@/lib/firebase";
 import {
   EmailAuthProvider,
@@ -18,8 +19,7 @@ const MIN_PASSWORD = 8;
 
 const inputClass =
   "w-full rounded-xl bg-white/40 backdrop-blur-md border border-white/60 px-4 py-2.5 text-amber-950 placeholder-amber-900/50 focus:outline-none focus:ring-2 focus:ring-amber-400/60";
-const buttonClass =
-  "bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 font-bold px-5 py-2.5 rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed";
+const buttonClass = BUTTON;
 
 // Account page shared by admins and officers: who you are signed in as,
 // changing your password, a reset email, and signing out. Officers arrive
@@ -151,7 +151,7 @@ const AccountProfile = ({ title }: { title: string }) => {
           </button>
           <button
             onClick={handleSignOut}
-            className="bg-red-500/85 backdrop-blur-md border border-red-300/50 text-white hover:bg-red-600/90 font-bold px-5 py-2.5 rounded-xl transition-all duration-200 active:scale-95"
+            className={BUTTON_DANGER}
           >
             Sign Out
           </button>

@@ -1,4 +1,5 @@
 "use client"
+import { BUTTON, BUTTON_SM, buttonClass } from "@/components/ui/buttonStyles";
 import app from '@/lib/firebase';
 import { ToastContext } from '@/lib/toastContext';
 import { getAuth, signOut } from 'firebase/auth';
@@ -50,26 +51,29 @@ const WebNavbar: React.FC = () => {
 
     // The look of a menu entry, for the one entry that is not a NavLink: the
     // tip form link, which must be a full page load (see TipFormLink).
-    const navLinkClasses = "relative px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 ease-out transform active:scale-95 bg-white/30 backdrop-blur-md border border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70 shadow-sm inline-block";
+    // Every entry takes the site's one button look (see buttonStyles.ts). The
+    // bar across the top of a wide screen uses the small size, so that five
+    // entries fit beside the name; the drop-down menu on a phone uses the
+    // ordinary size, which is easier to tap. The tip form link is not a
+    // NavLink (it must be a full page load: see TipFormLink), so it is given
+    // the same classes directly.
 
-    const NavLink = ({ href, children, onClick, variant = "primary" }: {
+    const NavLink = ({ href, children, onClick, variant = "primary", compact = false }: {
         href?: string;
         children: React.ReactNode;
         onClick?: () => void;
         variant?: "primary" | "danger";
+        /** For the bar across the top of a wide screen. */
+        compact?: boolean;
     }) => {
-        const baseClasses = "relative px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 ease-out transform active:scale-95";
-        const variantClasses = {
-            primary: "bg-white/30 backdrop-blur-md border border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70 shadow-sm",
-            danger: "bg-red-500/85 backdrop-blur-md border border-red-300/50 text-white hover:bg-red-600/90 hover:border-red-200/60 shadow-sm"
-        };
+        const classes = buttonClass({ tone: variant === "danger" ? "danger" : "glass", size: compact ? "sm" : "md" });
 
         if (onClick) {
             return (
                 <button
                     onClick={onClick}
                     disabled={loading}
-                    className={`${baseClasses} ${variantClasses[variant]} disabled:opacity-50 disabled:cursor-not-allowed`}
+                    className={classes}
                 >
                     {loading && variant === "danger" ? (
                         <div className="flex items-center gap-2">
@@ -86,7 +90,7 @@ const WebNavbar: React.FC = () => {
         return (
             <Link
                 href={href ?? "#"}
-                className={`${baseClasses} ${variantClasses[variant]} inline-block`}
+                className={classes}
             >
                 {children}
             </Link>
@@ -108,7 +112,7 @@ const WebNavbar: React.FC = () => {
                         {/* Desktop Navigation */}
                         {section !== "public" ? (
                             <div className="hidden md:flex items-center space-x-3">
-                                <NavLink href={`/${section}/profile`}>
+                                <NavLink href={`/${section}/profile`} compact>
                                     <div className="flex items-center gap-3">
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -116,7 +120,7 @@ const WebNavbar: React.FC = () => {
                                         Profile
                                     </div>
                                 </NavLink>
-                                <NavLink onClick={logoutUser} variant="danger">
+                                <NavLink onClick={logoutUser} variant="danger" compact>
                                     <div className="flex items-center gap-2">
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -127,11 +131,11 @@ const WebNavbar: React.FC = () => {
                             </div>
                         ) : (
                             <div className="hidden md:flex items-center space-x-2 lg:space-x-3">
-                                <NavLink href="/"><span>Home</span></NavLink>
-                                <TipFormLink className={navLinkClasses}><span>Submit a Tip</span></TipFormLink>
-                                <NavLink href="/member"><span>Sponsor</span></NavLink>
-                                <NavLink href="/more-about-us"><span>About</span></NavLink>
-                                <NavLink href="/contact"><span>Contact</span></NavLink>
+                                <NavLink href="/" compact><span>Home</span></NavLink>
+                                <TipFormLink className={BUTTON_SM}><span>Submit a Tip</span></TipFormLink>
+                                <NavLink href="/member" compact><span>Sponsor</span></NavLink>
+                                <NavLink href="/more-about-us" compact><span>About</span></NavLink>
+                                <NavLink href="/contact" compact><span>Contact</span></NavLink>
                             </div>
                         )}
 
@@ -139,7 +143,7 @@ const WebNavbar: React.FC = () => {
                         {/* Mobile Menu Button */}
                         <button
                             onClick={toggleMobileMenu}
-                            className="md:hidden p-2 rounded-xl bg-white/30 hover:bg-white/45 border border-white/50 transition-all duration-200 ease-out transform active:scale-95"
+                            className={`${BUTTON_SM} md:hidden`}
                             aria-label="Toggle mobile menu"
                         >
                             <div className="w-6 h-6 flex flex-col justify-center items-center">
@@ -214,7 +218,7 @@ const WebNavbar: React.FC = () => {
                         ) : (
                             <div className="flex flex-col space-y-3 pt-4">
                                 <NavLink href="/"><div className="flex items-center gap-3">Home</div></NavLink>
-                                <TipFormLink className={navLinkClasses}><div className="flex items-center gap-3">Submit a Tip</div></TipFormLink>
+                                <TipFormLink className={BUTTON}><div className="flex items-center gap-3">Submit a Tip</div></TipFormLink>
                                 <NavLink href="/member"><div className="flex items-center gap-3">Become a Sponsor</div></NavLink>
                                 <NavLink href="/more-about-us"><div className="flex items-center gap-3">About Us</div></NavLink>
                                 <NavLink href="/contact"><div className="flex items-center gap-3">Contact</div></NavLink>

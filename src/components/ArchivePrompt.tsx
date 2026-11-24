@@ -1,9 +1,9 @@
 "use client";
+import { BUTTON_SM } from "@/components/ui/buttonStyles";
 import { MAX_REMARKS_LENGTH, normaliseRemarks } from "@/lib/archive";
 import { useState } from "react";
 
-const smallButton =
-  "bg-white/40 border border-white/60 hover:bg-white/55 text-amber-950 font-bold text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed";
+const smallButton = BUTTON_SM;
 
 /**
  * Asks for the remarks that travel with an archived tip or person. Remarks

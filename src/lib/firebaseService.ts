@@ -6,6 +6,7 @@ import {
   get, 
   update, 
   remove, 
+  runTransaction,
   serverTimestamp,
   child, 
   orderByChild, 
@@ -236,10 +237,131 @@ export const advertImages = new ManagedImageStore('adverts', 'advertisement.png'
 // Hub-screen hero images (home, whoWeAre) — brand artwork, not ad campaigns
 export const heroImages = new ManagedImageStore('heroes', 'hero.png');
 
+/** What an admin can change about a listed missing person. */
+export type MissingPersonDetails = {
+  name: string;
+  age: string;
+  gender: string;
+  alias: string;
+  description: string;
+  last_known_address: string;
+};
+
+/** The same for a wanted person, who also has what they are wanted for. */
+export type WantedPersonDetails = MissingPersonDetails & { wanted_for: string };
+
+const NO_IMAGE = "Image Not Available";
+
+/** The file's extension as written in its name (".jpg"), or "" when it has none. */
+const extensionOf = (file: File): string =>
+  (/\.[A-Za-z0-9]{1,5}$/.exec(file.name)?.[0] ?? "").toLowerCase();
+
+/**
+ * Change a listed person's details, and their picture when a new one is
+ * given. `kind` is "missings" or "wanteds": the name of both the database
+ * node and the Storage folder. `changes` holds only the details this admin
+ * actually changed: a page can have been open for hours, and writing back
+ * every field it loaded would undo a correction another admin made since.
+ * Everything else stored with the person is kept.
+ *
+ * The record is written in a transaction, so a person another admin has
+ * archived or deleted since the page loaded is never brought back as a half
+ * record: if they are gone, nothing is written and this throws.
+ *
+ * A new picture is uploaded under a name of its own first, and the record is
+ * pointed at it only when that upload has worked. The old picture is removed
+ * afterwards, unless another listed or archived record of the same kind still
+ * uses it; if anything goes wrong there, it is simply left in place.
+ */
+async function updateListedPerson(
+  kind: PeopleKind,
+  id: string,
+  changes: Partial<WantedPersonDetails>,
+  newImage?: File
+): Promise<void> {
+  let newImagePath: string | null = null;
+  if (newImage) {
+    newImagePath = `${kind}/${id}-${Date.now()}${extensionOf(newImage)}`;
+    await StorageService.uploadFile(newImagePath, newImage);
+  }
+
+  const forgetNewImage = async () => {
+    if (!newImagePath) return;
+    try {
+      await StorageService.deleteFile(newImagePath);
+    } catch (error) {
+      console.warn(`Could not remove the unused picture ${newImagePath}:`, error);
+    }
+  };
+
+  // The callback can run more than once (first against the local copy, then
+  // against the database's); the last run is the one that was written.
+  let oldImagePath: unknown = null;
+  let result;
+  try {
+    result = await runTransaction(dbRef(database, `${kind}/${id}`), (current) => {
+      oldImagePath = current?.image ?? null;
+      // Nothing here (or not yet known locally): write nothing. If the
+      // database does hold the record, the transaction runs again with it.
+      if (current === null || typeof current !== "object") return current;
+      return { ...current, ...changes, ...(newImagePath ? { image: newImagePath } : {}) };
+    });
+  } catch (error) {
+    // A failure here does not prove nothing was written: when the connection
+    // drops just after the write was sent, the SDK reports "disconnect"
+    // although the database may have applied it. So the new picture is not
+    // simply deleted: the database is asked whether the record points at it,
+    // and it is removed only if not (and left alone if that cannot be read).
+    if (newImagePath) await removePictureIfUnused(kind, newImagePath);
+    throw error;
+  }
+  if (!result.committed || !result.snapshot.exists()) {
+    await forgetNewImage();
+    throw new Error("This person is no longer listed — they may already be archived or deleted.");
+  }
+
+  if (newImagePath && typeof oldImagePath === "string" && oldImagePath && oldImagePath !== NO_IMAGE && oldImagePath !== newImagePath) {
+    await removePictureIfUnused(kind, oldImagePath);
+  }
+}
+
+/**
+ * The Storage path of a person's picture as their stored record gives it, or
+ * `fallback` (what the page had loaded) when the record does not say. Null
+ * when there is no picture to speak of.
+ */
+function currentPicturePath(record: unknown, fallback: string): string | null {
+  const stored = record !== null && typeof record === "object" ? (record as { image?: unknown }).image : undefined;
+  const path = typeof stored === "string" && stored ? stored : fallback;
+  return path && path !== NO_IMAGE ? path : null;
+}
+
+/** Delete a picture from Storage unless a listed or archived person of this kind still points at it. */
+async function removePictureIfUnused(kind: PeopleKind, path: string): Promise<void> {
+  try {
+    const [listed, archived] = await Promise.all([
+      get(dbRef(database, kind)),
+      get(dbRef(database, `archive/${kind}`)),
+    ]);
+    const uses = (node: unknown) =>
+      node !== null && typeof node === "object" &&
+      Object.values(node as Record<string, { image?: unknown } | null>).some((record) => record?.image === path);
+    if (uses(listed.val()) || uses(archived.val())) return;
+    await StorageService.deleteFile(path);
+  } catch (error) {
+    console.warn(`The old picture ${path} was left in place:`, error);
+  }
+}
+
 // Missing Person specific service
 export class MissingPersonService {
   private static basePath = 'missings';
   private static storagePath = 'missings';
+
+  /** Change some of a listed missing person's details and, optionally, their picture. See updateListedPerson. */
+  static async updateMissingPerson(id: string, changes: Partial<MissingPersonDetails>, newImage?: File): Promise<void> {
+    await updateListedPerson("missings", id, changes, newImage);
+  }
 
   static async createMissingPerson(personData: any, imageFile?: File): Promise<string> {
     const timestamp = Date.now();
@@ -282,14 +404,19 @@ export class MissingPersonService {
       throw new Error("This person is no longer listed — they may already be archived or deleted.");
     }
 
+    // The picture to remove is the one the record names NOW. The page's copy
+    // can be out of date since pictures became replaceable: deleting from it
+    // would leave the person's current picture behind in Storage.
+    const picture = currentPicturePath(snapshot.val(), imagePath);
+
     // The record goes first: it is what was asked for. The picture is then
     // removed only for a person who was really deleted.
     await DatabaseService.delete(`${this.basePath}/${id}`);
-    if (imagePath !== "Image Not Available") {
+    if (picture) {
       try {
-        await StorageService.deleteFile(imagePath);
+        await StorageService.deleteFile(picture);
       } catch (error) {
-        console.warn(`Could not delete image: ${imagePath}`, error);
+        console.warn(`Could not delete image: ${picture}`, error);
       }
     }
   }
@@ -309,6 +436,11 @@ export class MissingPersonService {
 export class WantedPersonService {
   private static basePath = 'wanteds';
   private static storagePath = 'wanteds';
+
+  /** Change some of a listed wanted person's details and, optionally, their picture. See updateListedPerson. */
+  static async updateWantedPerson(id: string, changes: Partial<WantedPersonDetails>, newImage?: File): Promise<void> {
+    await updateListedPerson("wanteds", id, changes, newImage);
+  }
 
   static async createWantedPerson(personData: any, imageFile?: File): Promise<string> {
     const timestamp = Date.now();
@@ -351,14 +483,19 @@ export class WantedPersonService {
       throw new Error("This person is no longer listed — they may already be archived or deleted.");
     }
 
+    // The picture to remove is the one the record names NOW. The page's copy
+    // can be out of date since pictures became replaceable: deleting from it
+    // would leave the person's current picture behind in Storage.
+    const picture = currentPicturePath(snapshot.val(), imagePath);
+
     // The record goes first: it is what was asked for. The picture is then
     // removed only for a person who was really deleted.
     await DatabaseService.delete(`${this.basePath}/${id}`);
-    if (imagePath !== "Image Not Available") {
+    if (picture) {
       try {
-        await StorageService.deleteFile(imagePath);
+        await StorageService.deleteFile(picture);
       } catch (error) {
-        console.warn(`Could not delete image: ${imagePath}`, error);
+        console.warn(`Could not delete image: ${picture}`, error);
       }
     }
   }

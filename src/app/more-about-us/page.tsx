@@ -1,4 +1,5 @@
 "use client"
+import { BUTTON_LG } from "@/components/ui/buttonStyles";
 import Expandable from "@/components/Expandable";
 import Image from "next/image";
 import {
@@ -38,7 +39,7 @@ const Page = () => {
             </p>
             <a
               href="/member"
-              className="inline-flex items-center justify-center px-5 py-3 text-base font-bold text-center text-amber-950 bg-white/40 backdrop-blur-md border border-white/60 rounded-xl hover:bg-white/55 focus:ring-4 focus:ring-amber-300/50 transition-all duration-200 active:scale-95"
+              className={BUTTON_LG}
             >
               Become a Sponsor
             </a>

@@ -1,4 +1,5 @@
 "use client";
+import { BUTTON_LG } from "@/components/ui/buttonStyles";
 import TipFormLink from "@/components/TipFormLink";
 import { APP_STORE_URL, GOOGLE_PLAY_URL } from "@/constants/appLinks";
 import Image from "next/image";
@@ -6,8 +7,7 @@ import Image from "next/image";
 // The app is on both stores. Each gets its own plain link: a visitor on a
 // computer may want either, and a link (unlike a button that opens a window
 // from script) is never stopped by a pop-up blocker.
-const storeLinkClass =
-  "inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl bg-white/40 backdrop-blur-md border border-white/60 text-amber-950 hover:bg-white/55 font-bold text-lg shadow-md transition-colors duration-200";
+const storeLinkClass = BUTTON_LG;
 
 const PhoneIcon = () => (
   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -35,7 +35,7 @@ export default function Home() {
               acts if the the rest of us come together.
             </p>
             <div className="flex flex-wrap items-center gap-3">
-            <TipFormLink className="inline-flex items-center justify-center h-10 px-4 rounded-xl bg-white/60 backdrop-blur-md border border-white/80 text-amber-950 hover:bg-white/75 font-bold text-lg shadow-md transition-colors duration-200">
+            <TipFormLink className={BUTTON_LG}>
               Submit a Tip
             </TipFormLink>
             <a href={APP_STORE_URL} target="_blank" rel="noopener" className={storeLinkClass}>
