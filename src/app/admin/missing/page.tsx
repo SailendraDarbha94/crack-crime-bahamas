@@ -3,6 +3,7 @@
 import { BUTTON, BUTTON_LG, BUTTON_SOLID } from "@/components/ui/buttonStyles";
 import { PersonArchiveService, MissingPersonService } from "@/lib/firebaseService";
 import ArchivePrompt from "@/components/ArchivePrompt";
+import PersonListCover from "@/components/PersonListCover";
 import app from "@/lib/firebase";
 import { getAuth } from "firebase/auth";
 import { FirebaseErrorHandler } from "@/lib/firebaseErrorHandler";
@@ -34,7 +35,9 @@ interface MissingPerson {
 const Page = () => {
   const [showMissing, setShowMissing] = useState<boolean>(false);
   const [missings, setMissings] = useState<MissingPerson[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  // True from the start: the first thing the page does is load the list, and
+  // "nobody is listed" must not flash up before that has happened.
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [archivingId, setArchivingId] = useState<string | null>(null);
   const [busy, setBusy] = useState<boolean>(false);
@@ -126,7 +129,7 @@ const Page = () => {
   return (
     <main className="font-nunito py-3 m-2 rounded-3xl">
       <h1 className="text-2xl font-bold rounded-3xl border border-white/50 bg-white/25 backdrop-blur-md py-2 text-center text-amber-950 shadow-sm">Missing Persons</h1>
-      <div className="flex p-2 mb-4 justify-around">
+      <div className="flex gap-2 p-2 mb-4 justify-around">
         <button type="button" className={BUTTON_LG} onClick={() => setShowMissing(!showMissing)}>
           {showMissing ? "Hide Missing Persons" : "Show Missing Persons"}
         </button>
@@ -193,6 +196,20 @@ const Page = () => {
         </ModalContent>
       </Modal>
       
+      {/* Until the list is opened: the page is not left bare under its buttons. */}
+      {!showMissing ? (
+        <PersonListCover
+          image="/thumbnails/missingThumbnail.png"
+          kind="missing"
+          count={missings.length}
+          loading={loading}
+          error={error}
+          onRetry={fetchMissingPersons}
+          showLabel="Show Missing Persons"
+          addLabel="Add Missing Person"
+        />
+      ) : null}
+
       {showMissing && (
         <div className="w-full">
           {loading ? (
