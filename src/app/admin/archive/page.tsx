@@ -1,5 +1,5 @@
 "use client";
-import { BUTTON, BUTTON_DANGER_SM, BUTTON_SM, buttonClass } from "@/components/ui/buttonStyles";
+import { BUTTON, BUTTON_SM, buttonClass } from "@/components/ui/buttonStyles";
 import CardBoundary from "@/components/CardBoundary";
 import PublicPersonCard, { PublicPerson } from "@/components/PublicPersonCard";
 import TipLabels from "@/components/TipLabels";
@@ -75,7 +75,8 @@ const TAB_SOURCE: Record<Tab, Source> = {
 };
 
 const smallButton = BUTTON_SM;
-const dangerButton = BUTTON_DANGER_SM;
+// Named for what it does, not how it looks: Delete is drawn like any other button.
+const dangerButton = BUTTON_SM;
 
 /**
  * How many archived tips are drawn to begin with, and how many more each time

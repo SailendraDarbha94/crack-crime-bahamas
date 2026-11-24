@@ -58,15 +58,16 @@ const WebNavbar: React.FC = () => {
     // NavLink (it must be a full page load: see TipFormLink), so it is given
     // the same classes directly.
 
-    const NavLink = ({ href, children, onClick, variant = "primary", compact = false }: {
+    const NavLink = ({ href, children, onClick, logout = false, compact = false }: {
         href?: string;
         children: React.ReactNode;
         onClick?: () => void;
-        variant?: "primary" | "danger";
+        /** The Logout entry: it looks like the others, and says so while signing out. */
+        logout?: boolean;
         /** For the bar across the top of a wide screen. */
         compact?: boolean;
     }) => {
-        const classes = buttonClass({ tone: variant === "danger" ? "danger" : "glass", size: compact ? "sm" : "md" });
+        const classes = buttonClass({ size: compact ? "sm" : "md" });
 
         if (onClick) {
             return (
@@ -75,9 +76,9 @@ const WebNavbar: React.FC = () => {
                     disabled={loading}
                     className={classes}
                 >
-                    {loading && variant === "danger" ? (
+                    {loading && logout ? (
                         <div className="flex items-center gap-2">
-                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                            <div className="w-4 h-4 border-2 border-amber-900/30 border-t-amber-900 rounded-full animate-spin"></div>
                             <span>Logging out...</span>
                         </div>
                     ) : (
@@ -120,7 +121,7 @@ const WebNavbar: React.FC = () => {
                                         Profile
                                     </div>
                                 </NavLink>
-                                <NavLink onClick={logoutUser} variant="danger" compact>
+                                <NavLink onClick={logoutUser} logout compact>
                                     <div className="flex items-center gap-2">
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -197,7 +198,7 @@ const WebNavbar: React.FC = () => {
                                 <NavLink href="/admin/notifications"><div className="flex items-center gap-3">Notifications</div></NavLink>
                                 <NavLink href="/admin/adverts"><div className="flex items-center gap-3">Advertisements</div></NavLink>
                                 <NavLink href="/admin/team"><div className="flex items-center gap-3">Police Team</div></NavLink>
-                                <NavLink onClick={logoutUser} variant="danger">
+                                <NavLink onClick={logoutUser} logout>
                                     <div className="flex items-center gap-3">
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -213,7 +214,7 @@ const WebNavbar: React.FC = () => {
                                 <NavLink href="/police/missing"><div className="flex items-center gap-3">Missing Persons</div></NavLink>
                                 <NavLink href="/police/wanted"><div className="flex items-center gap-3">Wanted Persons</div></NavLink>
                                 <NavLink href="/police/profile"><div className="flex items-center gap-3">Profile</div></NavLink>
-                                <NavLink onClick={logoutUser} variant="danger"><div className="flex items-center gap-3">Logout</div></NavLink>
+                                <NavLink onClick={logoutUser} logout><div className="flex items-center gap-3">Logout</div></NavLink>
                             </div>
                         ) : (
                             <div className="flex flex-col space-y-3 pt-4">

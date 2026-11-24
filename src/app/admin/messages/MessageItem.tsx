@@ -163,7 +163,7 @@ export const UnreadableRecordCard = ({
           <button
             onClick={removeRecord}
             disabled={busy}
-            className={buttonClass({ tone: "danger", block: true })}
+            className={buttonClass({ block: true })}
           >
             {busy ? "Deleting…" : "Delete"}
           </button>
@@ -623,7 +623,7 @@ const TipCard = ({
         <button
           onClick={() => deleteMessage(item.id)}
           disabled={busy}
-          className={buttonClass({ tone: "danger", block: true })}
+          className={buttonClass({ block: true })}
         >
           Delete
         </button>

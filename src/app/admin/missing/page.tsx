@@ -1,6 +1,6 @@
 "use client";
 
-import { BUTTON, BUTTON_DANGER, BUTTON_LG, BUTTON_SOLID } from "@/components/ui/buttonStyles";
+import { BUTTON, BUTTON_LG, BUTTON_SOLID } from "@/components/ui/buttonStyles";
 import { PersonArchiveService, MissingPersonService } from "@/lib/firebaseService";
 import ArchivePrompt from "@/components/ArchivePrompt";
 import app from "@/lib/firebase";
@@ -271,7 +271,7 @@ const Page = () => {
                       Archive
                     </button>
                     <button
-                      className={`${BUTTON_DANGER} my-4`}
+                      className={`${BUTTON} my-4`}
                       onClick={() => deleteMissingPost(missing.id, missing.image, missing.name)}
                       disabled={busy}
                     >

@@ -1,5 +1,5 @@
 "use client";
-import { BUTTON, BUTTON_DANGER_SM, BUTTON_SOLID, BUTTON_SOLID_SM } from "@/components/ui/buttonStyles";
+import { BUTTON, BUTTON_SM, BUTTON_SOLID, BUTTON_SOLID_SM } from "@/components/ui/buttonStyles";
 import {
   Modal,
   ModalContent,
@@ -264,7 +264,7 @@ const PlaceholderRow = ({ recordKey, title, note, onDelete }: {
       <p className="text-sm text-amber-900/80">{note}</p>
       <p className="text-sm text-amber-900/80 break-all">Record: {textOf(recordKey)}</p>
     </div>
-    <button type="button" className={`${BUTTON_DANGER_SM} shrink-0`} onClick={onDelete}>
+    <button type="button" className={`${BUTTON_SM} shrink-0`} onClick={onDelete}>
       Delete
     </button>
   </div>
@@ -295,7 +295,7 @@ const DeviceCard = ({ device, onDelete, onDecode }: {
     <Divider />
     <CardFooter>
       {/* On a white card, so the solid tone: frosted glass would be white on white. */}
-      <button type="button" className={`${BUTTON_DANGER_SM} mx-auto mt-2`} onClick={onDelete}>
+      <button type="button" className={`${BUTTON_SOLID_SM} mx-auto mt-2`} onClick={onDelete}>
         Delete
       </button>
       <button type="button" className={`${BUTTON_SOLID_SM} mx-auto mt-2`} onClick={onDecode}>

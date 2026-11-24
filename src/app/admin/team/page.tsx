@@ -1,5 +1,5 @@
 "use client";
-import { BUTTON, BUTTON_DANGER } from "@/components/ui/buttonStyles";
+import { BUTTON } from "@/components/ui/buttonStyles";
 import CardBoundary from "@/components/CardBoundary";
 import app, { connectAuthEmulatorIfConfigured, database, firebaseConfig } from "@/lib/firebase";
 import { ownEntry } from "@/lib/ownData";
@@ -113,7 +113,7 @@ const buttonClass = BUTTON;
 
 const rowClass =
   "flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/35 border border-white/60 rounded-2xl px-4 py-3";
-const removeButtonClass = BUTTON_DANGER;
+const removeButtonClass = BUTTON;
 
 /**
  * One officer. A component of its own so that anything thrown while drawing

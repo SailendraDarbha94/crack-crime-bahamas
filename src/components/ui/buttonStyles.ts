@@ -14,9 +14,10 @@
  *              frosted glass would be white on white. It is filled with the
  *              pale amber that glass shows as on the page.
  *   selected – the current tab or choice in a row of glass buttons.
- *   danger   – deleting, removing access, signing out: the same shape in red,
- *              so the one button that cannot be undone never looks like the
- *              others.
+ *
+ * There is no red tone. Delete, Remove access and Logout look like every
+ * other button: what protects them is the question asked before anything is
+ * deleted, not their colour.
  *
  * Sizes: `sm` for an action inside a card or a line of text, `md` for most
  * buttons, `lg` for the main action of a page or form. `block` makes the
@@ -27,7 +28,7 @@
  * classes beside it: two classes for the same thing fight, and which one wins
  * depends on the order of the stylesheet, not on the order they are written.
  */
-export type ButtonTone = "glass" | "solid" | "selected" | "danger";
+export type ButtonTone = "glass" | "solid" | "selected";
 export type ButtonSize = "sm" | "md" | "lg";
 
 const SHAPE =
@@ -37,7 +38,6 @@ const TONE: Record<ButtonTone, string> = {
   glass: "bg-white/30 backdrop-blur-md border-white/50 text-amber-950 hover:bg-white/45 hover:border-white/70",
   solid: "bg-amber-100 border-amber-300 text-amber-950 hover:bg-amber-200 hover:border-amber-400",
   selected: "bg-white/60 backdrop-blur-md border-white/90 text-amber-950",
-  danger: "bg-red-600/90 backdrop-blur-md border-red-300/60 text-white hover:bg-red-500/90 hover:border-red-200/70",
 };
 
 const TEXT: Record<ButtonSize, string> = {
@@ -70,10 +70,6 @@ export const BUTTON_SM = buttonClass({ size: "sm" });
 export const BUTTON_LG = buttonClass({ size: "lg" });
 /** As wide as its container: the sidebar's links, a form's submit button. */
 export const BUTTON_BLOCK = buttonClass({ size: "lg", block: true });
-
-/** Deleting, removing access, signing out. */
-export const BUTTON_DANGER = buttonClass({ tone: "danger" });
-export const BUTTON_DANGER_SM = buttonClass({ tone: "danger", size: "sm" });
 
 /** The same buttons for a white surface, such as a pop-up form. */
 export const BUTTON_SOLID = buttonClass({ tone: "solid" });

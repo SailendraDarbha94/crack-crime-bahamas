@@ -1,5 +1,5 @@
 "use client";
-import { BUTTON, BUTTON_DANGER } from "@/components/ui/buttonStyles";
+import { BUTTON } from "@/components/ui/buttonStyles";
 import app from "@/lib/firebase";
 import {
   EmailAuthProvider,
@@ -151,7 +151,7 @@ const AccountProfile = ({ title }: { title: string }) => {
           </button>
           <button
             onClick={handleSignOut}
-            className={BUTTON_DANGER}
+            className={BUTTON}
           >
             Sign Out
           </button>
